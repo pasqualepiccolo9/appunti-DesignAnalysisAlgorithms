@@ -242,7 +242,7 @@ Nel caso in cui $z$ era originariamente rosso, e quindi il genitore nel corrispo
 
 \clearpage
 \subsubsection{Caso 3.3: Nodo $y$ rosso}
-\paragraph{Soluzione:} Si esegue una \emph{rotazione} su $y$ e $z$, seguita da una ricolorazione di $y$ in nero e di $z$ in rosso. Inoltre, poichè $y$ era originariamente rosso, il nuovo sottoalbero di $z$ deve avere una radice nera $y'$ e deve avere un'altezza nera uguale a quella originale di $T_{\text{heavy}}$. Pertanto, un deficit nero rimane nel nodo $z$ dopo la trasformazione, e quindi riapplichiamo l'algoritmo per risolvere il deficit in $z$, sapendo che il nuovo figlio $y'$, che è la radice di $T_{\text{heavy}}$ è ora nero, e quindi che si applica o il Caso 1 o il Caso 2. Inoltre, la prossima applicazione sarà l'ultima, perché il Caso 1 è sempre terminale e il Caso 2 sarà terminale dato che $z$ è rosso.
+\paragraph{Soluzione:} Si esegue una \emph{rotazione} su $y$ e $z$, seguita da una ricolorazione di $y$ in nero e di $z$ in rosso. Inoltre, poichè $y$ era originariamente rosso, il nuovo sottoalbero di $z$ deve avere una radice nera $y'$ e deve avere un'altezza nera uguale a quella originale di $T_{\text{heavy}}$. Pertanto, un deficit nero rimane nel nodo $z$ dopo la trasformazione, e quindi riapplichiamo l'algoritmo per risolvere il deficit in $z$, sapendo che il nuovo figlio $y'$, che è la radice di $T_{\text{heavy}}$ è ora nero, e quindi che si applica o il Caso 3.1 o il Caso 3.2. Inoltre, la prossima applicazione sarà l'ultima, perché il Caso 3.1 è sempre terminale e il Caso 3.2 sarà terminale dato che $z$ è rosso.
 
 \begin{figure}[ht!]
     \centering
