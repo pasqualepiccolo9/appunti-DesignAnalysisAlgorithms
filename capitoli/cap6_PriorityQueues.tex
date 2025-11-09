@@ -233,6 +233,8 @@ Durante l'algoritmo, il confine $i$ tra queste due parti si sposta.
 \subsection*{Fase 1: costruzione di un Max Heap}
 \textbf{Obiettivo:} Trasformare l'array $C$ in un unico Max-Heap.
 
+\vspace{1\baselineskip}
+\noindent
 In questa fase, si parte da un heap vuoto e si sposta il confine $i$ \textbf{da sinistra verso destra}, da $1$ a $n$. La parte sinistra (l'Heap) cresce, mentre la parte destra (la Sequenza di input) si riduce.
 
 Per ogni passo $i$, da $i=1$ fino a $n$:
@@ -241,11 +243,14 @@ Per ogni passo $i$, da $i=1$ fino a $n$:
     \item \textbf{Aggiustamento (Up-Heap Bubbling):} L'aggiunta di $C[i-1]$ potrebbe violare la proprietà del Max-Heap. Si esegue quindi un \textbf{Up-Heap Bubbling} a partire da $C[i-1]$. Questo elemento viene scambiato con il suo genitore finché non è più piccolo del genitore o non raggiunge la radice $C[0]$.
 \end{enumerate}
 
+\noindent
 Alla fine della Fase 1, $i=n$. La parte Heap occupa l'intero array $C[0 \dots n-1]$ e la Sequenza è vuota. L'intero array è ora un Max-Heap valido.
 
 \subsection*{Fase 2: estrazione degli elementi in ordine}
 \textbf{Obiettivo:} Estrarre gli elementi dall'Heap in ordine decrescente per costruire l'array ordinato.
 
+\vspace{1\baselineskip}
+\noindent
 In questa fase, si parte con tutti gli elementi nell'Heap e la Sequenza vuota. Si sposta il confine \textbf{da destra verso sinistra}.
 
 Per ogni passo $i$, da $i=1$ fino a $n$:
@@ -254,6 +259,7 @@ Per ogni passo $i$, da $i=1$ fino a $n$:
     \item \textbf{Aggiustamento (Down-Heap Bubbling):} Dopo lo scambio, $C[n-i]$ contiene il massimo ed è ora "bloccato" (fa parte della Sequenza ordinata). L'Heap si è ridotto (ora va da $C[0]$ a $C[n-i-1]$). L'elemento che è finito in $C[0]$ (quello che era $C[n-i]$) è probabilmente fuori posto e viola la proprietà del max-Heap. Si esegue quindi un \textbf{Down-Heap Bubbling} a partire dalla radice $C[0]$. Questo elemento "scende" scambiandosi con il suo figlio \textit{maggiore}, finché non è più grande di entrambi i figli o non raggiunge una foglia dell'Heap.
 \end{enumerate}
 
+\noindent
 Alla fine della Fase 2, $i=n$. La parte "Heap" è vuota e la "Sequenza" (ora ordinata in senso crescente) occupa l'intero array.
 
 \begin{figure}
