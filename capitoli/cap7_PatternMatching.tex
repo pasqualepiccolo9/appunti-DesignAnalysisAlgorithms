@@ -67,3 +67,44 @@ $$ P = \text{"abacab"} $$
 
 \clearpage
 \section{L'algoritmo di Boyer-Moore}
+Come vedremo tra poco, non è sempre necessario confrontare ogni carattere del pattern con il testo. L'algoritmo di \emph{Boyer-Moore} sfrutta questa osservazione per saltare alcune posizioni nel testo, riducendo così il numero di confronti necessari. 
+
+L'idea principale dell'algoritmo di \emph{Boyer-Moore} è di migliorare l'efficienza dell'algoritmo \emph{Brute Force} utilizzando due tecniche (euristiche) principali:
+
+\begin{itemize}
+    \item \textbf{Looking-Glass Heuristic}: Quando si confrontano i caratteri del pattern con il testo, si inizia dal carattere più a destra del pattern e si procede verso sinistra.
+    \item \textbf{Character-Jump Heuristic}: Durante la verifica di un possibile piazzamento di $P$ in $T$, un mismatch tra $T[i] = c$ e $P[k]$ viene gestito come segue:
+    
+    Supponiamo che $T[i] \neq P[k]$ e $T[i] = c$.
+        \begin{itemize}
+            \item Se $c$ non appare in $p$, $p$ può essere "spostato" completamente oltre $T[i]$ ($P[0]$ viene allineato con $T[i+1]$).
+            \item Altrimenti, $T[i]$ viene allineato con l'ultima occorrenza di $c$ in $P$.
+        \end{itemize}
+\end{itemize}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{immagini/PatternMatching/ex_BoyerMoore.png}
+    \caption{Una semplice dimostrazione dell'algoritmo di Boyer-Moore. Nel primo confronto si ha $T[4] \neq P[4]$ con $T[4] = \text{'e'}$ che non è presente in $P$, per cui spostiamo $P$ oltre $T[4]$. Nel secondo confronto si ha $T[9] \neq P[4]$ con $T[9] = \text{'s'}$ che è presente in $P$, in particolare l'ultima occorrenza di 's' è in $P[2]$, per cui allineiamo $P[2]$ con $T[9]$.}
+    \label{exBoyerMoore}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{immagini/PatternMatching/ex2_BoyerMoore.png}
+    \caption{Esmepio completo che mostra il numero di confronti.}
+    \label{ex2BoyerMoore}
+\end{figure}
+
+\clearpage
+\noindent
+Per formalizzare l'algoritmo di \emph{Boyer-Moore} possiamo generalizzare il funzionamento come di seguito:
+
+\begin{itemize}
+    \item Quando viene trovata una corrispondenza (a partire dall'ultimo carattere del pattern), l'algoritmo continua cercando di estendere la corrispondenza con il penultimo carattere del pattern nel suo allineamento corrente. Questo processo continua fino a quando tutti i caratteri del pattern sono stati confrontati con esito positivo o fino a quando si verifica un mismatch.
+    \item Quando si verifica un mismsatch, e il carattere del testo che ha causato il mismatch non è presente nel pattern, il pattern viene spostato completamente oltre quel carattere del testo. Se il carattere del testo è presente da qualche altra parte nel pattern, dobbiamo considerare due diversi casi a seconda che la sua ultima occorrenza sia $(a)$ precedente o $(b)$ successiva al carattere del pattern che era allineato con il carattere del testo che ha causato il mismatch.
+\end{itemize}
+
+Questi due casi sono rappresentati in figura \ref{fig:BM_mismatch_cases} e approfonfiti di seguito:
+
+
