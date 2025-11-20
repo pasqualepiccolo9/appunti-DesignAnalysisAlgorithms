@@ -1,5 +1,7 @@
 # Directory degli output temporanei
-build/
+# Ignora i contenuti, ma salva i PDF
+build/*
+!build/*.pdf
 
 # File ausiliari LaTeX
 *.aux
