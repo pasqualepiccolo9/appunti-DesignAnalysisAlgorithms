@@ -214,6 +214,7 @@ $$ P = \text{"abacab"} $$
     \centering
     \includegraphics[width=1\textwidth]{immagini/PatternMatching/BM_Lfunction.png}
     \caption{Esempio di Pattern Matching con algoritmo di Boyer-Moore, con anche la tabella delle last occurrence. L'algoritmo esegue 13 confronti tra caratteri, numerati in figura.}
+    \label{fig:BM_Lfunction}
 \end{figure}
 
 
@@ -300,3 +301,34 @@ def compute_kmp_fail(P):
     return fail
 \end{lstlisting}
 \vspace{1\baselineskip}
+
+\subsection*{Performance}
+Tralasciando momentaneamente il calcolo della failure function, il tempo di esecuzione dell'algoritmo KMP è chiaramente proporzionale al numero di iterazioni del ciclo while. Ai fini dell'analisi, definiamo $s = j-k$ come la quantità totale di spostamento del pattern $P$ rispetto al testo $T$. Notiamo che durante l'esecuzione dell'algoritmo, abbiamo sempre $s \leq n$. Ad ogni iterazione del ciclo si verifica uno dei seguenti tre casi:
+\begin{itemize}
+    \item Se $T[j] = P[k]$, allora sia $j$ che $k$ aumentano di 1, e quindi $s$ non cambia.
+    \item Se $T[j] \neq P[k]$ e $k > 0$, allora $j$ non cambia e $s$ aumenta di almeno 1, poiché in questo caso $s$ cambia da $j-k$ a $j-f(k-1)$, che è un'aggiunta pari a $k-f(k-1)$, che è positiva perché $f(k-1) < k$.
+    \item Se $T[j] \neq P[k]$ e $k = 0$, allora $j$ aumenta di 1 e $s$ aumenta di 1, poiché $k$ non cambia.
+\end{itemize}
+
+\noindent
+Quindi, in ogni iterazione del ciclo, o $j$ o $s$ vengono incrementati di almeno 1 (eventualmente entrambi); pertanto, il numero totale di iterazioni del ciclo while nell'algoritmo KMP è al massimo $2n$. Per rendere tutto ciò possibile si presuppone che la failure function di $P$ sia già stata precedentemente calcolata.
+
+L'algoritmo per il calcolo della failure function ha una complessità di $O(m)$. La sua analisi è analoga a quella del principale algoritmo KMP, ma esegue dei confronti tra il pattern di lunghezza $m$ con se stesso.
+
+Dunque, combinando entrambi i risultati, otteniamo che l'algoritmo KMP ha una complessità temporale complessiva di $O(n + m)$.
+La correttezza dell'algoritmo KMP deriva direttamente dalla definizione della failure function. Qualsiasi confronto che viene saltato è in realtà superfluo, poiché la funzione di fallimento garantisce che tutti i confronti ignorati siano ridondanti.
+
+\clearpage
+\subsection*{Esempio}
+Supponiamo di avere un testo 
+$$ T = \text{"abacaabaccabacabaabb"} $$
+e un pattern
+$$ P = \text{"abacab"} $$
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/PatternMatching/KMP_full_example.png}
+    \caption{Esempio di Pattern Matching con algoritmo KMP, con anche la tabella della failure function. L'algoritmo esegue 19 confronti tra caratteri, numerati in figura (sono necessari ulteriori confronti per il calcolo della failure function non presenti in figura).}
+    \label{KMP_full_example}
+\end{figure}
+
