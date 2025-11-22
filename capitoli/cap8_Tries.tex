@@ -1,3 +1,31 @@
 \chapter{Tries}
 \label{cap:Tries}
 
+Il problema del \emph{pattern matching} presentato nel capitolo \ref{cap:PatternMatching} velocizza la ricerca in un testo effettuando una pre-elaborazione del pattern (per calcolare la funzione di fallimento nell'algoritmo di Knuth-Morris-Pratt o la funzione last nell'algoritmo di Boyer-Moore). In questa sezione, adottiamo un approccio complementare, presentando algoritmi di ricerca di stringhe che effettuano una pre-elaborazione del testo. Questo approccio è adatto per applicazioni in cui viene eseguita una serie di query su un testo fisso, in modo che il costo iniziale della pre-elaborazione del testo sia compensato da un'accelerazione in ogni query successiva. A questo proposito introduciamo i \emph{tries} (pronunciato "try"), una struttura dati basata su alberi per memorizzare stringhe al fine di supportare un rapido pattern matching. La principale applicazione dei tries è nel recupero delle informazioni, da cui il nome "trie" che deriva dalla parola "retrieval".
+
+
+\section{Standard Tries}
+Sia $S$ un insieme di $s$ stringhe su un alfabeto $\Sigma$ tale che nessuna stringa in $S$ sia prefisso di un'altra stringa. Uno \textbf{Standard Trie} per $S$ è un albero ordinato $T$ con le seguenti proprietà:
+\begin{itemize}
+    \item Ogni nodo di $T$, eccetto la radice, è etichettato con un carattere di $\Sigma$.
+    \item I figli di un nodo interno di $T$ hanno etichette distinte.
+    \item $T$ ha $s$ foglie, ciascuna associata a una stringa di $S$, tale che la concatenazione delle etichette dei nodi sul percorso dalla radice a una foglia $v$ di $T$ dia la stringa di $S$ associata a $v$.
+\end{itemize}
+
+\noindent
+Dunque, un trie $T$ rappresenta le stringhe di $S$ tramite i percorsi dalla radice alle foglie di $T$. È importante assumere che nessuna stringa in $S$ sia prefisso di un'altra sintra poichè ciò garantisce che ogni stringa di $S$ sia univocamente associata a una foglia di $T$. Possiamo sempre soddisfare questa assunzione aggiungendo un carattere speciale che non è nell'alfabeto originale $\Sigma$ alla fine di ogni stringa.
+
+\clearpage
+\noindent
+Uno standard trie che memorizza una collezione $S$ di $s$ stringhe di lunghezza totale $n$ da un alfabeto $\Sigma$ ha le seguenti proprietà:
+\begin{itemize}
+    \item L'altezza di $T$ è uguale alla lunghezza della stringa più lunga in $S$.
+    \item Ogni nodo interno di $T$ può avere da 1 a $|\Sigma|$ figli.
+    \item $T$ ha $s$ foglie.
+    \item Il numero di nodi di $T$ è al più $n+1$. 
+        \begin{itemize}
+            \item Infatti, il caso peggiore per il numero di nodi di un trie si verifica quando nessuna coppia di stringhe condivide un prefisso non vuoto; cioè, ad eccezione della radice, tutti i nodi interni hanno un solo figlio.
+        \end{itemize}
+\end{itemize}
+
+
