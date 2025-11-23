@@ -50,6 +50,57 @@ Per costruire uno standard trie per un insieme $S$ di stringhe, possiamo utilizz
 \vspace{1\baselineskip}
 Come si può notare anche dall'esempio in Figura \ref{fig:std_tries_ex}, c'è una potenziale inefficienza di spazio nello standard trie dovuta alla presenza di molti nodi che hanno un solo figlio, e l'esistenza di tali nodi rappresenta uno spreco. La ricerca di una soluzione a questo problema ha portato allo sviluppo del \emph{Compressed Trie}, o \emph{Patricia Trie}.  
 
-\clearpage
 
+\clearpage
 \section{Compressed Tries}
+Un \textbf{Compressed Trie} è una variante dello standard trie che garantisce che ogni nodo interno del trie abbia almeno due figli. Questa regola viene applicata comprimendo le catene di nodi con un solo figlio. 
+
+Sia $T$ un trie standard. Diciamo che un nodo interno $v$ di $T$ è \textbf{ridondante} se $v$ ha un solo figlio e non è la radice. Diciamo anche che una \emph{catena} di $k \geq 2$ archi,
+$$ (v_0, v_1)(v_1, v_2) \cdots (v_{k-1}, v_k) $$
+è \textbf{ridondante} se:
+\begin{itemize}[nosep]
+    \item $v_i$ è ridondante per $i = 1, \ldots, k-1$.
+    \item $v_0$ e $v_k$ non sono ridondanti.
+\end{itemize}
+
+\noindent
+Si può trasformare $T$ in un \emph{Compressed Trie} sostituendo ogni catena ridondante $(v_0,v_1) \cdots (v_{k-1},v_k)$ di $k \geq 2$ archi con un singolo arco $(v_0,v_k)$, rietichettando $v_k$ con la concatenazione delle etichette dei nodi $v_1, \ldots, v_k$.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/Tries/compressed_tries_ex.png}
+    \caption{Compressed Trie per le stringhe \{bear, bell, bid, bull, buy, sell, stock, stop\}. (Confronta questo con lo standard trie mostrato in Figura \ref{fig:std_tries_ex}.) Oltre alla compressione ai nodi foglia, nota il nodo interno con etichetta "to" condivisa dalle parole "stock" e "stop".}
+    \label{fig:compressed_tries_ex}
+\end{figure}
+
+I nodi di un compressed trie sono etichettati con delle stringhe, che sono sottostringhe delle stringhe nella collezione, piuttosto che con singoli caratteri. Il vantaggio di un compressed trie rispetto a uno standard trie è che il numero di nodi del compressed trie è proporzionale al numero di stringhe e non alla loro lunghezza totale.
+
+\vspace{1\baselineskip}
+\noindent
+Un compressed trie che memorizza una collezione $S$ di $s$ stringhe in un alfabeto di dimensione $d$ ha le seguenti proprietà:
+
+\begin{itemize}
+    \item Ciascun nodo interno di $T$ ha almeno due figli e al massimo $d$ figli.
+    \item $T$ ha $s$ nodi foglia.
+    \item Il numero di nodi di $T$ è $O(s)$.
+\end{itemize}
+
+\clearpage
+\noindent
+Il \emph{Compressed Trie} offre un reale vantaggio quando viene utilizzato come struttura di indicizzazione ausiliaria per una collezione di stringhe già memorizzate in una struttura primaria.
+
+Supponiamo, ad esempio, che la collezione $S$ di stringhe sia un array di stringhe $S[0], S[1], \ldots, S[s-1]$. Invece di memorizzare esplicitamente l'etichetta $X$ di un nodo, la rappresentiamo implicitamente mediante una combinazione di tre interi $(i, j : k)$, tali che $X = S[i][ j : k]$; cioè, $X$ è la porzione di $S[i]$ costituita dai caratteri dalla posizione $j$ fino a, ma non includendo, la posizione $k$.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{immagini/Tries/compressed_tries_usage.png}
+    \caption{(a) Collezione $S$ di stringhe memorizzata in un array. (b) Rappresentazione compatta del compressed trie per $S$.}
+    \label{fig:compressed_tries_usage}    
+\end{figure}
+
+\noindent
+In questo modo è possibile ridurre lo spazio totale per il trie stesso da $O(n)$ per lo standard trie a $O(s)$ per il compressed trie, dove $n$ è la lunghezza totale delle stringhe in $S$ e $s$ è il numero di stringhe in $S$. Naturalmente, dobbiamo comunque memorizzare le diverse stringhe in $S$, ma riduciamo comunque lo spazio per il trie.
+
+La ricerca in un compressed trie non è necessariamente più veloce che in un albero standard, poiché è ancora necessario confrontare ogni carattere del pattern desiderato con le etichette, potenzialmente multi-carattere, durante la traversata dei percorsi nel trie.
+
+
