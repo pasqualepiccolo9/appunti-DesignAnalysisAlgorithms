@@ -18,7 +18,7 @@ Dunque, un trie $T$ rappresenta le stringhe di $S$ tramite i percorsi dalla radi
 \clearpage
 \noindent
 Uno standard trie che memorizza una collezione $S$ di $s$ stringhe di lunghezza totale $n$ da un alfabeto $\Sigma$ ha le seguenti proprietà:
-\begin{itemize}
+\begin{itemize}[nosep]
     \item L'altezza di $T$ è uguale alla lunghezza della stringa più lunga in $S$.
     \item Ogni nodo interno di $T$ può avere da 1 a $|\Sigma|$ figli.
     \item $T$ ha $s$ foglie.
@@ -28,5 +28,28 @@ Uno standard trie che memorizza una collezione $S$ di $s$ stringhe di lunghezza 
         \end{itemize}
 \end{itemize}
 
+\subsection*{Ricerca}
+Un trie $T$ per un insieme $S$ di stringhe permette di implementare una mappa in cui le chiavi sono le stringhe stesse; la ricerca di una stringa $X$ avviene tracciando dalla radice il percorso indicato dai caratteri di $X$ e, se tale percorso termina in un nodo foglia, la stringa è presente nella mappa, mentre se il percorso si interrompe o termina in un nodo interno la stringa non è una chiave valida. 
 
-Un trie $T$ per un insieme $S$ di stringhe permette di implementare una mappa in cui le chiavi sono le stringhe stesse; la ricerca di una stringa $X$ avviene tracciando dalla radice il percorso indicato dai caratteri di $X$ e, se tale percorso termina in un nodo foglia, la stringa è presente nella mappa, mentre se il percorso si interrompe o termina in un nodo interno la stringa non è una chiave valida. Sebbene il tempo di esecuzione per cercare una stringa di lunghezza $m$ sia limitato superiormente da $O(m \cdot |\Sigma|)$, l'uso di tabelle hash o di lookup diretto per gestire i figli di un nodo permette di ridurre il tempo per operazione a un valore atteso di $O(1)$ o $O(\log |\Sigma|)$, portando il tempo tipico di ricerca a $O(m)$. Grazie a queste caratteristiche, il trie è adatto per il \emph{word matching} esatto e per le query sui prefissi, ma non per il pattern matching di sottostringhe arbitrarie. La costruzione della struttura avviene tramite un algoritmo incrementale che richiede un tempo atteso $O(n)$, dove $n$ è la lunghezza totale delle stringhe in $S$. Infine, poiché il trie standard può presentare inefficienze spaziali dovute alla presenza di nodi con un solo figlio, è stata sviluppata la variante del trie compresso, nota anche come Patricia trie, per ottimizzare l'uso della memoria.
+Il tempo di esecuzione per cercare una stringa di lunghezza $m$ è limitato superiormente da $O(m \cdot |\Sigma|)$, in quanto possiamo visitare al più $m+1$ nodi di $T$ e spendiamo $O(|\Sigma|)$ tempo in ogni nodo per determinare il figlio che ha come etichetta il carattere successivo. Tuttavia, possiamo migliorare il tempo speso in un nodo a $O(\log |\Sigma|)$ o atteso $O(1)$, mappando i caratteri ai figli utilizzando una tabella hash in ogni nodo, oppure utilizzando una lookup table diretta di dimensione $|\Sigma|$ in ogni nodo, se $|\Sigma|$ è sufficientemente piccolo (come nel caso delle stringhe di DNA). Per questi motivi, ci aspettiamo tipicamente che una ricerca per una stringa di lunghezza $m$ venga eseguita in tempo $O(m)$.
+
+\subsection*{Word Matching}
+Grazie a queste caratteristiche, il trie è adatto per il \textbf{word matching} esatto e per le query sui prefissi (per via dell'operazione di ricerca appena descritta), ma non per il pattern matching di sottostringhe arbitrarie. Il \emph{word matching} è un caso particolare di pattern matching in cui vogliamo determinare se un dato pattern corrisponde esattamente a una delle parole del testo. Il word matching si differenzia dal pattern matching standard analizzato nel capitolo \ref{cap:PatternMatching} perché in questo caso il pattern non può corrispondere a una sottostringa arbitraria del testo, ma solo a una delle sue parole.
+
+\subsection*{Costruzione di uno Standard Trie}
+Per costruire uno standard trie per un insieme $S$ di stringhe, possiamo utilizzare un algoritmo incrementale che inserisce le stringhe una alla volta. Ricordiamo l'assunzione che nessuna stringa di $S$ sia prefisso di un'altra stringa. Per inserire una nuova stringa $X$ nel trie, seguiamo il percorso dei suoi caratteri finché esistono nodi corrispondenti. Nel punto in cui il percorso esistente si interrompe (ovvero non troviamo il carattere successivo), creiamo una nuova sequenza di nodi per tutti i caratteri restanti di $X$. Il tempo di esecuzione per inserire $X$ di lunghezza $m$ è simile a una ricerca, con prestazioni nel caso peggiore di $O(m \cdot |\Sigma|)$, o attese $O(m)$ se si utilizzano tabelle hash secondarie in ogni nodo. Pertanto, la costruzione dell'intero trie per l'insieme $S$ richiede un tempo atteso di $O(n)$, dove $n$ è la lunghezza totale delle stringhe di $S$.
+
+\vspace{1\baselineskip}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/Tries/std_tries_ex.png}
+    \caption{Word Matching tramite uno Standard Trie: (a) testo da cercare (articoli e preposizioni, noti anche come stop words, esclusi); (b) standard trie per le parole nel testo, con le foglie che mantengono l'informazione relativa all'indice in cui la data parola inizia nel testo. Ad esempio, la foglia per la parola \emph{stock} indica che la parola inizia agli indici 17, 40, 51 e 62 del testo.}
+    \label{fig:std_tries_ex}
+\end{figure}
+
+\vspace{1\baselineskip}
+Come si può notare anche dall'esempio in Figura \ref{fig:std_tries_ex}, c'è una potenziale inefficienza di spazio nello standard trie dovuta alla presenza di molti nodi che hanno un solo figlio, e l'esistenza di tali nodi rappresenta uno spreco. La ricerca di una soluzione a questo problema ha portato allo sviluppo del \emph{Compressed Trie}, o \emph{Patricia Trie}.  
+
+\clearpage
+
+\section{Compressed Tries}
