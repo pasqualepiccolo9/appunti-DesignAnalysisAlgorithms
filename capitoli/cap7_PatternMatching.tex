@@ -49,7 +49,7 @@ def find_brute(T, P):
 \subsection*{Performance}
 L'algoritmo consiste in due cicli annidati, con il ciclo esterno che scorre tutti i possibili indici iniziali del pattern nel testo $T$, e il ciclo interno che scorre ogni carattere del pattern $P$, confrontandolo con il suo potenziale carattere corrispondente nel testo. Pertanto, la correttezza dell'algoritmo deriva direttamente da questo approccio di ricerca esaustiva.
 
-Il tempo di esecuzione del pattern matching tramite \emph{Brute Force} nel caso peggiore non è buono poiché per ogni indice candidato in $T$, possiamo eseguire fino a $m$ confronti di caratteri per scoprire che $P$ non corrisponde a $T$ all'indice corrente. Dal blocco di codice si può osservare che il ciclo $for$ esterno viene eseguito al massimo $n-m+1$ volte e il ciclo $while$ interno viene eseguito al massimo $m$ volte. Pertanto, il tempo di esecuzione nel caso peggiore è $O(n m)$.
+Il tempo di esecuzione del pattern matching tramite \emph{Brute Force} nel caso peggiore non è buono poiché per ogni indice candidato in $T$, possiamo eseguire fino a $m$ confronti di caratteri per scoprire che $P$ non corrisponde a $T$ all'indice corrente. Dal blocco di codice si può osservare che il ciclo $for$ esterno viene eseguito al massimo $n-m+1$ volte e il ciclo $while$ interno viene eseguito al massimo $m$ volte. Pertanto, il tempo di esecuzione nel caso peggiore è $O(n \cdot m)$.
 
 \clearpage
 \subsection*{Esempio}
@@ -195,11 +195,11 @@ def find_boyer_moore(T, P):
 \vspace{1\baselineskip}
 
 \subsection*{Performance}
-La versione semplificata dell'algoritmo di Boyer-Moore presentata qui ha un tempo di esecuzione di $O(n m + |\Sigma|)$, in quanto la last-occurrence function richiede $O(m + |\Sigma|)$ tempo per essere costruita e la ricerca del pattern richiede $O(n m)$. 
+La versione semplificata dell'algoritmo di Boyer-Moore presentata qui ha un tempo di esecuzione di $O(n \cdot m + |\Sigma|)$, in quanto la last-occurrence function richiede $O(m + |\Sigma|)$ tempo per essere costruita e la ricerca del pattern richiede $O(n \cdot m)$. 
 
 Il caso peggiore si verifica quando si ha una coppia del tipo: 
 $$T = \text{"aaa...aaa"} \quad P = \text{"baa...aaa"}$$
-In questo caso, l'algoritmo di Boyer-Moore si comporta come l'algoritmo Brute Force, eseguendo $O(n m)$ confronti tra caratteri.
+In questo caso, l'algoritmo di Boyer-Moore si comporta come l'algoritmo Brute Force, eseguendo $O(n \cdot m)$ confronti tra caratteri.
 
 Tuttavia, l'algoritmo originale di Boyer-Moore utilizza euristiche più avanzate ed efficienti che consentono di ottenere un tempo di esecuzione medio di $O(n + m + |\Sigma|)$.
 

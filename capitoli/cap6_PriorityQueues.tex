@@ -179,7 +179,7 @@ Concludiamo che la struttura dati Heap è una realizzazione molto efficiente del
 
 
 \section{Costruzione di un Heap da una lista di elementi: Heapify}
-A partire da un Heap vuoto, $n$ inserimenti successivi al suo interno richiederebbero un tempo complessivo di $O(n \log n)$, poiché ogni inserimento richiede un tempo $O(\log n)$. Tuttavia, se le $n$ coppie chiave-valore sono note a prescindere, esiste un algoritmo più efficiente chiamato \textbf{Heapify} che consente di costruire un Heap a partire da una lista di $n$ elementi in tempo lineare $O(n)$.
+A partire da un Heap vuoto, $n$ inserimenti successivi al suo interno richiederebbero un tempo complessivo di $O(n \cdot \log n)$, poiché ogni inserimento richiede un tempo $O(\log n)$. Tuttavia, se le $n$ coppie chiave-valore sono note a prescindere, esiste un algoritmo più efficiente chiamato \textbf{Heapify} che consente di costruire un Heap a partire da una lista di $n$ elementi in tempo lineare $O(n)$.
 
 \subsection*{Fusione di due Heap}
 Supponiamo di avere due Heap della stessa altezza $h$, e un nuovo elemento con chiave $k$. Vogliamo creare un nuovo Heap di altezza $h + 1$ che contenga tutti gli elementi dei due Heap e l'elemento con chiave $k$. Per fare ciò, possiamo seguire questi passaggi:
@@ -217,7 +217,7 @@ Per semplicità ipotizziamo che il numero di elementi $n$ sia un intero tale che
 
 \clearpage
 \section{Heap-Sort}
-L'algoritmo \textbf{Heap-Sort} sfrutta la struttura dati Heap: data la lista di partenza, inserisco tutti gli elementi in un \textbf{Max-Heap} (al fine di avere gli elementi in ordine crescente alla fine dell'algoritmo) e poi estraggo ripetutamente l'elemento massimo (la radice del Max-Heap) per costruire la lista ordinata. Questo algoritmo viene eseguito già in tempo $O(n \log n)$, poiché l'inserimento di $n$ elementi in un Heap richiede un tempo $O(n)$ (grazie all'algoritmo Heapify) e ogni estrazione dell'elemento massimo richiede un tempo $O(\log n)$, per un totale di $n$ estrazioni.
+L'algoritmo \textbf{Heap-Sort} sfrutta la struttura dati Heap: data la lista di partenza, inserisco tutti gli elementi in un \textbf{Max-Heap} (al fine di avere gli elementi in ordine crescente alla fine dell'algoritmo) e poi estraggo ripetutamente l'elemento massimo (la radice del Max-Heap) per costruire la lista ordinata. Questo algoritmo viene eseguito già in tempo $O(n \cdot \log n)$, poiché l'inserimento di $n$ elementi in un Heap richiede un tempo $O(n)$ (grazie all'algoritmo Heapify) e ogni estrazione dell'elemento massimo richiede un tempo $O(\log n)$, per un totale di $n$ estrazioni.
 
 \subsection*{L'idea per un ordinamento in-place}
 L'algoritmo che presentiamo di seguito è una versione più raffinata dello stesso Heap-sort che anziché utilizzare memoria aggiuntiva permette di avere un \textbf{ordinamento in-place} (cioè occupa al più memoria aggiuntiva $O(1)$) dell'Heap-sort.

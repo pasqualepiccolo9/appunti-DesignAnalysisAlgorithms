@@ -61,7 +61,7 @@ L'altezza di un (a, b)-Tree con $n$ elementi è:
 \end{itemize}
 
 \noindent
-Per ogni nodo, è necessario eseguire una ricerca tra tutti i suoi elementi. Un nodo è una \emph{Map} di al più $b-1$ elementi, per cui possiamo denotare con $f(b)$ il costo della ricerca in un nodo. Se l'elemento non è stato trovato è necessario scendere in uno dei figli, per cui il costo totale della ricerca in un (a, b)-Tree è: $$O(f(b) \log n / \log a)$$
+Per ogni nodo, è necessario eseguire una ricerca tra tutti i suoi elementi. Un nodo è una \emph{Map} di al più $b-1$ elementi, per cui possiamo denotare con $f(b)$ il costo della ricerca in un nodo. Se l'elemento non è stato trovato è necessario scendere in uno dei figli, per cui il costo totale della ricerca in un (a, b)-Tree è: $$O(f(b) \cdot \log n / \log a)$$
 Se $f(b)$ è costante, il costo della ricerca è migliore di $O(\log n)$.
 
 
@@ -146,7 +146,7 @@ Per eliminare un elemento ($k, v$) in un (a, b)-Tree, si procede come segue:
 
 \subsection*{Complessità delle operazioni di inserimento e cancellazione}
 \noindent
-Si tenga presente che la ricerca di un nodo, come visto prima, impiega un tempo $O(f(b) \log n / \log a)$. Supponendo che la gestione di un overflow/underflow richieda al più $g(b)$ [$g(b)$ dipende dall'implementazione del nodo], e considerando che potrebbe essere necessario ripetere al più tali operazioni dal livello $h-1$ fino alla radice. Quindi, il costo totale dell'inserimento in un (a, b)-Tree è: 
+Si tenga presente che la ricerca di un nodo, come visto prima, impiega un tempo $O(f(b) \cdot \log n / \log a)$. Supponendo che la gestione di un overflow/underflow richieda al più $g(b)$ [$g(b)$ dipende dall'implementazione del nodo], e considerando che potrebbe essere necessario ripetere al più tali operazioni dal livello $h-1$ fino alla radice. Quindi, il costo totale dell'inserimento in un (a, b)-Tree è: 
 $$O\left(\left(f(b) + g(b)\right) \log n / \log a\right)$$
 
 \subsection*{Come scegliere a e b?}
@@ -174,8 +174,8 @@ Un \textbf{B-Tree} è un (a, b)-Tree con $a = \lceil (b-1)/2 \rceil$ e $b = d$.
 \noindent
 Per le considerazioni fatte sugli (a, b)-Tree, si ha che:
 \begin{itemize}
-    \item La ricerca ha una complessità di $O(f(d) \log n / (\log d - 1))$.
-    \item L'inserimento e la cancellazione hanno una complessità di $O(g(d) \log n / (\log d - 1))$.
+    \item La ricerca ha una complessità di $O(f(d) \cdot \log n / (\log d - 1))$.
+    \item L'inserimento e la cancellazione hanno una complessità di $O(g(d) \cdot \log n / (\log d - 1))$.
 \end{itemize}
 
 
