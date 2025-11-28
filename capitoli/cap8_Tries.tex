@@ -225,12 +225,39 @@ Siano $m_1$ e $m_2$ le lunghezze delle due stringhe $S_1$ e $S_2$, e sia $m = m_
 
 \clearpage
 \section{Longest Common Substring: many strings}
+Generalizziamo ora il problema della \emph{longest common substring} (LCS) a più di due stringhe.
+Supponiamo di avere $K$ stringhe la cui lunghezza totale è $m$. Per ogni $k$ compreso tra $2$ e $K$, definiamo $l(k)$ come la lunghezza della sottostringa comune più lunga per almeno $k$ delle $K$ stringhe. Il problema della LCS per più stringhe consiste nel calcolare i valori $l(2), l(3), \ldots, l(K)$ e le stringhe corrispondenti.
+
+\paragraph{Esempio:} Sia $S$ = \{ \emph{banana, anana, nana, fana} \}. In questo caso, $l(2) = 4$ (la sottostringa comune più lunga tra almeno due stringhe è \emph{nana}), $l(3) = 2$ (la sottostringa comune più lunga tra almeno tre stringhe è \emph{an}) e $l(4) = 0$ (non esiste alcuna sottostringa comune a tutte e quattro le stringhe).
 
 
+\subsection*{Soluzione}
+\begin{itemize}
+    \item Costruiamo un \textbf{Suffix Tree generalizzato}\footnote{Un \emph{Suffix Tree generalizzato} rappresenta tutti i suffissi di un insieme di stringhe, anziché di una singola stringa; Nota: è stato utilizzato nelle soluzioni dei paragrafi precedenti ai problemi proposti} $T$ per le $K$ stringhe.
+    \begin{itemize}
+        \item Ogni nodo foglia di $T$ rappresenta un suffisso di una delle $K$ stringhe e viene etichettato con l'indice della stringa a cui appartiene.
+        \begin{itemize}
+            \item Anche in questo caso, per garantire che nessuna stringa sia prefisso di un'altra, aggiungiamo un carattere speciale unico alla fine di ogni stringa.
+        \end{itemize}
+        \item Per ogni nodo interno $v$ di $T$, calcoliamo $C(v)$ come il numero di identificatori di stringa distinti che compaiono alle foglie del sottoalbero radicato in $v$.
+        \begin{itemize}
+            \item Questa operazione è il \textbf{collo di bottiglia della soluzione} e può essere eseguita in tempo $O(K \cdot m)$.
+        \end{itemize}
+        \item Per ogni nodo $v$ di $T$, calcoliamo la lunghezza della stringa corrispondente al percorso dalla radice a $v$.
+    \end{itemize}
 
-
-
-
+    \item I valori di $l(k)$ possono essere calcolati facilmente visitando l'albero in tempo lineare:
+    \begin{itemize}
+        \item Durante questa visita, costruiamo un vettore $V$ in cui, per ogni valore di $k$ da $2$ a $K$, la cella $V(k)$ memorizza la massima string-depth trovata tra i nodi che hanno $C(v) = k$ (cioè i nodi condivisi da esattamente $k$ stringhe).
+        \item Infine, calcoliamo i valori finali partendo da $k = K$ e andando a ritroso: impostiamo $l(k)$ uguale a $V(k)$ se questo è maggiore del valore successivo, altrimenti $l(k)$ eredita il valore di $l(k+1)$ (questo serve a propagare la soluzione: se una stringa è condivisa da $K$ elementi, vale anche come stringa condivisa da $K-1$).
+        $$l(k) = 
+        \begin{cases} 
+            V(k) & \text{se } V(k) > l(k+1) \\ 
+            l(k+1) & \text{altrimenti}
+        \end{cases}
+        $$
+    \end{itemize}
+\end{itemize}
 
 
 
