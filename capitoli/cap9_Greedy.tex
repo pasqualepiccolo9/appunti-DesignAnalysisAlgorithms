@@ -67,4 +67,172 @@ La parte più complicata nella progettazione di un algoritmo greedy è la \textb
 
 
 \clearpage
-\section{Coin Change}
+\section{Coin Change: The Cashier Algorithm}
+Il problema del \emph{Coin Change} (cambio di monete) consiste nel trovare il numero minimo di monete necessarie per rappresentare un dato importo di denaro, utilizzando un insieme predefinito di tagli di monete. 
+
+Il problema prende in input un importo R (in centesimi di euro) e richiede in output il numero minimo di monete necessarie per rappresentare tale importo, utilizzando solo, ad esempio, monete di taglio 2€, 1€, 50c, 20c, 10c, 5c, 2c e 1c. Si assume di avere a disposizione un numero illimitato di monete per ogni taglio.
+
+\vspace{1\baselineskip}
+\hrule
+
+\begin{verbatim}
+Sort coins denominations by value: c[1] > c[2] > ... > c[k] 
+1. S = {}           // inizializza soluzione parziale (insieme vuoto)
+2. while (x != 0) { // finché l'importo da cambiare non è zero
+3.    let k be the largest integer such that c[k] <= x
+4.    if (k = 0)
+5.        return "no solution found"
+6.    x = x - c[k]  // riduci l'importo rimanente
+7.    S = {S, c[k]} // aggiungi c[k] alla soluzione
+8. }
+9. return S         // restituisci la soluzione completa
+\end{verbatim}
+
+\hrule 
+\vspace{1\baselineskip}
+
+\begin{lstlisting}
+def coin_change(amount_rem):
+    coin_combinations = [50, 20, 10, 5, 2, 1]   # Valori in centesimi
+    result = []                  
+
+    for coin in coin_combinations:
+        coin_count = amount_rem // coin # Divisione intera per ottenere il numero massimo di monete di questo taglio
+        result += [coin] * coin_count   # Aggiungi le monete alla soluzione
+        amount_rem -= coin * coin_count # Aggiorna l'importo rimanente
+        if amount_rem == 0:
+            return result       # Restituisci la soluzione completa
+
+    if amount_rem > 0:      # Se non e' stato possibile coprire l'importo
+        return "No solution found"
+\end{lstlisting}
+\vspace{1\baselineskip}
+
+\noindent
+In generale, questo algoritmo restituisce sempre una soluzione (non necessariamente ottimale) se $c[k] = 1$ (cioè se esiste una moneta di taglio unitario). Tuttavia, l'algoritmo è ottimale solo per alcuni sistemi di monete specifici, come quello europeo, i cosiddetti \textbf{sistemi canonici}. 
+
+Un insieme di monete è un \textbf{sistema canonico} se l'algoritmo del cassiere fornisce la soluzione ottimale per ogni importo $R$ da cambiare. In generale, non tutti i sistemi di monete sono canonici e determinare se un sistema di monete è canonico può essere un problema complesso.
+
+
+\clearpage
+\section{Scheduling}
+Il problema dello \emph{scheduling} riguarda la pianificazione di un insieme di attività o compiti su risorse limitate, come macchine, lavoratori o tempo. L'obiettivo è ottimizzare l'uso delle risorse per massimizzare l'efficienza, minimizzare i tempi di completamento o soddisfare altre metriche di performance. Le attività possono avere vincoli di tempo, priorità diverse e requisiti specifici, rendendo il problema complesso e variegato.
+
+In generale, dato un insieme di $n$ attività ognuna con un \emph{tempo di inizio} $s_i$ e un \emph{tempo di fine} $f_i$ (con $s_i < f_i$), si chiede di:
+
+\begin{itemize}
+    \item \textbf{Task Scheduling}: Minimizzare il numero di macchine (in generale risorse) necessarie per completare tutte le attività senza sovrapposizioni.
+    \item \textbf{Interval Scheduling}: Massimizzare il numero di attività che possono essere completate senza sovrapposizioni, utilizzando una singola macchina.
+\end{itemize}
+
+\subsection{Task Scheduling}
+In questa tipologia di problemi, abbiamo delle risorse identiche limitate (useremo il termine "macchine" per semplicità) e desideriamo assegnare un insieme di attività a queste macchine in modo tale che nessuna attività si sovrapponga temporalmente su una stessa macchina. L'obiettivo è minimizzare il numero di macchine utilizzate per completare tutte le attività.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.99\textwidth]{immagini/Greedy/ex_task_scheduling.png}
+    \caption{(a) Una istanza del problema di Task Scheduling, in cui le risorse sono delle aule e le attività sono lezioni da assegnare. (b) Una soluzione in cui tutte le attività sono pianificate utilizzando tre risorse: ogni riga rappresenta un insieme di attività che possono essere tutte pianificate su una singola risorsa.}
+    \label{ex:task_scheduling}
+\end{figure}
+
+\clearpage
+\subsection*{Soluzione Greedy}
+Una soluzione greedy molto intuitiva per questo problema consiste nell'ordinare le attività in ordine crescente di tempo di inizio. Successivamente, si itera attraverso l'elenco delle attività e si assegna ciascuna attività alla prima macchina disponibile che non abbia conflitti di orario con le attività già assegnate. Se nessuna macchina è disponibile, si aggiunge una nuova macchina.
+
+\vspace{1\baselineskip}
+\hrule
+
+\begin{verbatim}
+Sort intervals by starting time so that s[1] <= s[2] <= ... <= s[n]
+1.  d = 0    // inizializza il numero di macchine
+2.  for j = 1 to n {
+3.      if (task j is compatible with some machine k)
+4.          schedule task j on machine K
+5.      else 
+6.          allocate a new machine d + 1
+7.          schedule task j on machine d + 1
+8.          d = d + 1
+9.  }
+10. return d  // restituisci il numero di macchine utilizzate
+\end{verbatim}
+
+\hrule
+\vspace{2\baselineskip}
+
+\noindent
+L'algoritmo ha complessità complessiva $O(n \log n)$, dominata
+dall'ordinamento iniziale delle attività per tempo di inizio.
+
+Nella fase di assegnazione si utilizza una \emph{Min-Priority Queue} (min-heap) contenente, per ciascuna macchina, il tempo di fine dell'ultimo task eseguito. In questo modo la radice del heap rappresenta sempre la macchina che si libera per prima.
+
+Per ogni attività $j$, processata in ordine crescente di $s[j]$, è sufficiente confrontare $s[j]$ con il minimo del heap:
+
+\begin{itemize}
+    \item se $s[j] \ge f_{\min}$, la macchina si è liberata: si estrae il minimo e si inserisce il nuovo tempo di fine ($O(\log n)$);
+    \item altrimenti, tutte le macchine sono occupate: si alloca una nuova macchina e si inserisce il suo tempo di fine nel heap
+          ($O(\log n)$).
+\end{itemize}
+
+\noindent
+Poiché ogni attività effettua al più un'estrazione e un'inserzione nel heap, la fase di scansione richiede $O(n \log n)$, in linea con il costo dell'ordinamento.
+
+
+\clearpage
+\subsection{Interval Scheduling}
+In questa tipologia di problemi, abbiamo una singola macchina e desideriamo selezionare un sottoinsieme di attività da eseguire su questa macchina in modo tale che nessuna attività si sovrapponga con un'altra. L'obiettivo è massimizzare il numero di attività completate senza sovrapposizioni.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/Greedy/ex_interval_scheduling.jpg}
+    \caption{Una istanza del problema di Interval Scheduling in cui si hanno 8 attività da collocare su una singola macchina.}
+    \label{ex:interval_scheduling}
+\end{figure}
+
+\subsection*{Soluzione Greedy}
+Nel cercare una soluzione ottimale per questo problema, possiamo considerare diverse strategie greedy intuitive, e selezionare la prima attività compatibile con quelle già scelte. Alcune possibili strategie includono:
+\begin{itemize}
+    \item Ordinamento per tempo di inizio crescente. Seleziono le attività compatibili in ordine di inizio $s[i]$. 
+    \item \textbf{Ordinamento per tempo di fine crescente}. Seleziono le attività compatibili in ordine di fine $f[i]$.
+    \item Ordinamento per durata crescente. Seleziono le attività compatibili in ordine di durata $f[i] - s[i]$.
+    \item Ordinamento per numero di conflitti crescente. Per ogni attività $i$, conto il numero $c_i$ di altre attività che non sono compatibili con $i$ (cioè che si sovrappongono temporalmente con $i$). Seleziono le attività compatibili in ordine crescente di $c_i$.
+\end{itemize}
+
+\clearpage
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/Greedy/interval_scheduling_counterex.png}
+    \caption{Controesempi per le strategie greedy di Interval Scheduling basate su (a) tempo di inizio crescente, (b) durata crescente, (c) numero di conflitti crescente.}
+    \label{ex:interval_scheduling_counterex}
+\end{figure}
+
+\noindent
+Tra queste strategie, solo l'ordinamento per tempo di fine crescente garantisce una soluzione ottimale per il problema di Interval Scheduling. Le altre strategie possono portare a soluzioni subottimali, come mostrato nei controesempi della Figura \ref{ex:interval_scheduling_counterex}. Dal momento che per confutare una strategia greedy è sufficiente trovare un singolo controesempio, possiamo concludere che l'unica strategia ottimale tra quelle elencate è quella basata sul tempo di fine crescente (ci siamo limitati a confutare le strategie mostrate in Figura \ref{ex:interval_scheduling_counterex}, ma per essere certi che la strategia basata sul tempo di fine crescente sia ottimale, sarebbe necessario dimostrarne la correttezza).
+
+\vspace{1\baselineskip}
+\hrule
+
+\begin{verbatim}
+Sort intervals by finishing time so that f[1] < f[2] < ... < f[n]
+1.  n = s.length    // number of activities
+2.  A = {a[1]}      // initialize solution with first activity
+3.  k = 1           // index of last activity added to A
+4.  for m=2 to n {
+5.      if (s[m] >= f[k])
+6.          A = {A, a[m]} // add activity a[m] to A
+7.          k = m   // update index of last activity added to A
+8.  }
+9.  return A        // return the set of accepted activities 
+\end{verbatim}
+
+\hrule
+\vspace{2\baselineskip}
+
+\noindent
+L'algoritmo ha complessità complessiva $O(n \log n)$, dominata
+dall'ordinamento iniziale delle attività per tempo di fine. L'algoritmo sfrutta una semplice \emph{scansione lineare} delle attività ordinate, selezionando ogni volta la prima attività compatibile con l'ultima selezionata.
+
+
+\clearpage
+\section{Fractional Knapsack}
+
+
