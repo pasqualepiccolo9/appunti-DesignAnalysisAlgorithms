@@ -290,7 +290,84 @@ I casi in cui un algoritmo greedy fallisce nel trovare la soluzione ottimale son
 
 \clearpage
 \section{Text Compression}
+La \emph{compressione del testo} è un'operazione che mira a ridurre la quantità di spazio necessario per memorizzare o trasmettere dati testuali. Questo processo è fondamentale in molte applicazioni, come l'archiviazione di file, la trasmissione di dati su reti a larghezza di banda limitata e l'ottimizzazione delle prestazioni dei sistemi informatici. Una tecnica comune per la compressione del testo è l'uso di algoritmi di codifica che sfruttano la ridondanza nei dati per rappresentarli in modo più efficiente.
+
+Data una stringa $X$, vogliamo codificare in modo efficiente $X$ in una stringa binaria $Y$ più piccola (usando solo i caratteri 0 e 1). Uno dei modi possibili per risolvere questo problema è utilizzare la \textbf{codifica di Huffman} (Huffman code). 
+
+\subsection{Codifica di Huffman}
+Questa soluzione si basa sul calcolo della frequenza $f_c$ di ogni carattere $c$ che compare in $X$. L'idea è di assegnare codici binari più brevi ai caratteri che appaiono più frequentemente e codici più lunghi ai caratteri meno frequenti. In questo modo, la lunghezza totale della stringa codificata $Y$ sarà minimizzata.
+
+\begin{itemize}[nosep]
+    \item Una \textbf{code map} (mappa di codifica) associa ad ogni carattere un corrispondente codice binario, detto \emph{code-word}.
+    \item Un \textbf{prefix code} (codice prefisso) è un sistema di codifica binario in cui nessuna parola di codice è il prefisso di un'altra parola di codice. Questo garantisce che la decodifica sia univoca e non ambigua.
+    \item Un codice prefisso può essere rappresentato da un \textbf{encoding tree} (albero di codifica).
+    \item Un \emph{encoding tree} è un albero binario in cui:
+    \begin{itemize}[nosep]
+        \item Ogni foglia rappresenta un carattere.
+        \item La code-word associata ad un carrattere è data dal percorso dalla radice alla foglia corrispondente che memorizza tale carattere.
+        \item Per ciascun nodo, il figlio sinistro rappresenta il bit 0 e il figlio destro rappresenta il bit 1.
+    \end{itemize}
+\end{itemize}
+
+\noindent
+Data una stringa $X$, vogliamo cercare un codice prefisso (e quindi un encoding tree) per i caratteri di $X$ tale che la codifica binaria di $X$ sia la più corta possibile.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.72\textwidth]{immagini/Greedy/ex_huffman.png}
+    \caption{Esempio con $X = \text{"abracadabra"}$. L'encoding tree $T_1$ codifica $X$ in 29 bit, mentre l'encoding tree $T_2$ codifica $X$ in 24 bit, per cui la codifica di Huffman restituisce $T_2$ come soluzione ottimale.}
+    \label{ex_huffman}
+\end{figure}
 
 
+\clearpage
+\subsection*{Soluzione Greedy: l'algoritmo di Huffman}
+L'algoritmo di codifica di Huffman inizia con ciascuno dei $d$ caratteri distinti della stringa $X$ da codificare ponendoli come nodo radice di un albero binario a nodo singolo. L'algoritmo procede in una serie di passaggi. In ogni passaggio, l'algoritmo prende i due alberi binari con le frequenze più piccole e li unisce in un unico albero binario. Ripete questo processo fino a quando non rimane un solo albero. 
+
+Ogni iterazione del ciclo while nell'algoritmo di Huffman può essere implementata in tempo $O(\log d)$ utilizzando una \emph{coda di priorità rappresentata con un heap}. Inoltre, ogni iterazione estrae due nodi da $Q$ e ne aggiunge uno, un processo che verrà ripetuto $d - 1$ volte prima che rimanga esattamente un nodo in $Q$. Pertanto, questo algoritmo funziona in tempo $O(n + d \log d)$. 
+
+Sebbene una giustificazione completa della correttezza di questo algoritmo sia al di fuori del nostro ambito qui, notiamo che la sua intuizione deriva da una semplice idea: qualsiasi codice ottimale può essere convertito in un codice ottimale in cui le code-word per i due caratteri a frequenza più bassa, $a$ e $b$, differiscono solo nel loro ultimo bit. Reiterando il ragionamento per una sequenza in cui $a$ e $b$ sono sostituiti da un unico carattere $c$, si ottiene quanto segue:
+
+\vspace{1\baselineskip}
+\hrule
+
+\begin{verbatim}
+Input:  String X of length n with d distinct characters
+Output: Encoding tree for X
+
+1.  Huffman(X):
+2.      Compute the frequency f(c) of each character c of X
+3.      Initialize a priority queue Q
+4.      for each character c in X do
+5.          Create a single-node binary tree T storing c
+6.          Insert T into Q with key f(c)
+7.      while len(Q) > 1 do
+8.          (f_1, T_1) = Q.remove_min()
+9.          (f_2, T_2) = Q.remove_min()
+10.         Create a new binary tree T with left subtree T_1 and 
+            right subtree T_2
+11.         Insert T into Q with key f_1 + f_2
+12.     (f, T) = Q.remove_min()
+13.     return tree T
+\end{verbatim}
+
+\hrule
+\vspace{1\baselineskip}
 
 
+\clearpage
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{immagini/Greedy/ex1_huffman.png}
+    \caption{Esempio di esecuzione dell'algoritmo di Huffman per la stringa $X = \text{"abracadabra"}$. Ipotizzando che ciascun carattere sia rappresentato con 8 bit, la codifica standard richiederebbe 11x8 = 88 bit. La codifica di Huffman riduce questo numero a 23 bit, risparmiando così il 73.86\% di spazio.}
+    \label{ex1_huffman}
+\end{figure}
+
+\vspace{3\baselineskip}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{immagini/Greedy/ex2_huffman.png}
+    \caption{Esempio di esecuzione dell'algoritmo di Huffman per la stringa $X = \text{"a fast runner need never be afraid of the dark"}$. Ipotizzando che ciascun carattere (compreso lo spazio vuoto) sia rappresentato con 8 bit, la codifica standard richiederebbe 46x8 = 368 bit. La codifica di Huffman riduce questo numero a 165 bit, risparmiando così il 55.16\% di spazio.}
+    \label{ex2_huffman}
+\end{figure}
