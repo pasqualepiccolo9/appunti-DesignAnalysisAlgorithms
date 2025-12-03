@@ -1,4 +1,184 @@
 \chapter{Dynamic Programming}
 \label{cap:DynamicProgramming}
 
+La \emph{programmazione dinamica} è una tecnica di progettazione di algoritmi per la risoluzione di problemi di ottimizzazione (così come l'approccio Greedy discusso nel capitolo precedente). 
 
+Questa tecnica è simile alla tecnica \emph{divide-et-impera}, e proprio per questo motivo può essere applicata a una vasta gamma di problemi differenti. La programmazione dinamica può spesso essere utilizzata per trasformare problemi che sembrano richiedere un tempo esponenziale in algoritmi che li risolvono in tempo polinomiale. Inoltre, gli algoritmi che risultano dall'applicazione della tecnica di programmazione dinamica sono solitamente piuttosto semplici a livello concettuale.
+
+
+\section{Modello generale}
+Quando si progetta un algoritmo di programmazione dinamica è importante seguire in ordine i seguenti passi:
+
+\begin{enumerate}
+    \item Definire i \textbf{sotto-problemi}.
+    \item Definire come la soluzione ottimale può essere ottenuta dalle soluzioni ottimali dei sotto-problemi ... e, ricorsivamente, come la soluzione ottimale di un sotto-problema può essere ottenuta dalla soluzione ottimale dei suoi sotto-problemi.
+    \item Descrivere la soluzione ottimale attraverso un'\textbf{equazione caratteristica}.
+    \begin{itemize}[nosep]
+        \item Questa relazione lega la soluzione globale con le soluzioni dei sotto-problemi, e definisce inoltre i \emph{casi base} (\textbf{boundary conditions}), ovvero quei sotto-problemi le cui soluzioni sono banali e immediate, fondamentali per risolvere i sotto-problemi più grandi.
+    \end{itemize}
+\end{enumerate}
+
+\noindent
+È fondamentale scegliere i sotto-problemi in modo "intelligente", così come vedremo nei prossimi esempi, in modo da facilitare la definizione dell'equazione caratteristica e la risoluzione dei sotto-problemi stessi.
+
+
+\clearpage
+La programmazione dinamica è per alcuni aspetti simile alla tecnica \emph{divide-et-impera}. Sebbene entrambe le tecniche suddividano il problema originale in porzioni più piccole, la differenza sostanziale risiede nella relazione tra questi sotto-problemi.
+Nel paradigma \emph{divide-et-impera}, i sotto-problemi sono \textbf{indipendenti} (o disgiunti): la soluzione di un ramo non influenza né è necessaria per la risoluzione degli altri. 
+Al contrario, la \emph{programmazione dinamica} è applicabile quando i sotto-problemi sono \textbf{sovrapposti} (\emph{overlapping subproblems}), ovvero quando condividono a loro volta dei sotto-problemi comuni.
+
+Mentre un approccio \emph{divide-et-impera} puro ricalcolerebbe più volte la soluzione per lo stesso sotto-problema condiviso (portando spesso a una complessità esponenziale), la programmazione dinamica risolve ogni sotto-problema una sola volta e ne memorizza il risultato (\emph{memoization} o tabulazione) per riutilizzarlo in futuro, garantendo così l'efficienza polinomiale.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.75\textwidth]{immagini/Dynamic/pd_vs_dei.png}
+    \caption{Esempio di risoluzione del problema della \emph{sequenza di Fibonacci} con divide-et-impera. Questa soluzione non è ottimale dal punto di vista computazionale, in quanto uno stesso sotto-problema viene risolto più volte (ad esempio, in figura f(6) viene calcolato 4 volte).}
+    \label{fig:pd_vs_dei}
+\end{figure}
+
+\noindent
+Una possibile soluzione che sfrutta la programmazione dinamica:
+\begin{lstlisting}
+def fibonacci(n):
+    # Gestione caso base immediato
+    if n <= 1:
+        return n
+    # Creazione della tabella (array) per memorizzare irisultati
+    # Inizializzata a 0, dimensione n+1 per ospitarel'indice n
+    table = [0] * (n + 1)
+    # Impostazione dei casi base noti
+    table[0] = 0
+    table[1] = 1
+    # Riempimento della tabella dal basso verso l'alto
+    for i in range(2, n + 1):
+        table[i] = table[i-1] + table[i-2]
+    return table[n]
+\end{lstlisting}
+
+
+\clearpage
+\section{Longest Common Subsequence (LCS)}
+Una \emph{sottosequenza} di una stringa $x_0x_1x_2 \ldots x_{n-1}$ è una stringa $x_{i_0}x_{i_1} \ldots x_{i_k}$, dove $i_j < i_{j+1}$. In altre parole, una sottosequenza si ottiene eliminando alcuni caratteri dalla stringa originale senza cambiare l'ordine dei caratteri rimanenti.
+
+Da notare che è diverso dal concetto di \emph{sottostringa}: una sottostringa è una sequenza contigua di caratteri all'interno della stringa originale, mentre una sottosequenza può essere formata da caratteri non contigui. Per cui, una sottostringa è sempre una sottosequenza, ma non viceversa.
+\textbf{Esempio}: Data la stringa "AGGTAB", alcune delle sue sottosequenze sono "GTA", "ATAB", "GAB", mentre alcune delle sue sottostringhe sono "AGG", "GGTA", "TAB".
+
+\vspace{1\baselineskip}
+\noindent
+Uno dei problemi classici che può essere risolto in modo efficiente tramite la programmazione dinamica è il problema della \emph{Longest Common Subsequence} (LCS), ovvero la ricerca della sottosequenza comune più lunga tra due sequenze date.
+
+\begin{itemize}[nosep]
+    \item Date due stringhe $X = x_0 x_1 \ldots x_{n-1}$ e $Y = y_0 y_1 \ldots y_{m-1}$ su di un alfabeto $\Sigma$, trovare la stringa più lunga che è una sottosequenza di entrambe le stringhe.
+\end{itemize}
+
+\vspace{2\baselineskip}
+\subsection*{Soluzione Brute-Force}
+Tutte le possibili sottosequenze di una stringa $X$ di lunghezza $n$ sono $2^n$. Quindi, un approccio brute-force per risolvere il problema LCS sarebbe generare tutte le sottosequenze di $X$, e per ognuna di esse verificare se è anche una sottosequenza di $Y$, tenendo traccia della più lunga trovata. Questo approccio ha una complessità temporale esponenziale di $O(2^n \cdot m)$, dove $m$ è la lunghezza della stringa $Y$.
+
+\clearpage
+\subsection*{Soluzione Dynamic Programming}
+Sia $L_{n,m}$ la lunghezza della LCS tra le stringe $X = x_0 x_1 \ldots x_{n-1}$ e $Y = y_0 y_1 \ldots y_{m-1}$. $L_{n,m}$ rappresenta quindi la soluzione ottimale del problema.
+
+\subsubsection*{Scomposizione in sotto-problemi}
+Sia $L_{j,k}$ la lunghezza della LCS tra i prefissi $x_0 x_1 \ldots x_{j-1}$ e $y_0 y_1 \ldots y_{k-1}$, con $0 \leq j \leq n$ e $0 \leq k \leq m$. $L_{j,k}$ rappresenta quindi la soluzione ottimale al sotto-problema che considera solo i primi $j$ caratteri di $X$ e i primi $k$ caratteri di $Y$.
+
+Osserviamo l'ultimo carattere di entrambe le stringhe considerate nello specifico sotto-problema, e da qui ricaviamo le due \textbf{equazioni caratteristiche} che ci permettono di esprimere $L_{j,k}$ in funzione dei sotto-problemi più piccoli:
+\begin{itemize}[nosep]
+    \item Se $x_{j-1} = y_{k-1}$, allora questo carattere fa parte della LCS, e possiamo scrivere:
+    $$L_{j,k} = 1 + L_{j-1,k-1}$$
+    \item Se $x_{j-1} \neq y_{k-1}$, allora l'ultimo carattere di almeno una delle due stringhe non fa parte della LCS, e possiamo scrivere:
+    $$L_{j,k} = \max(L_{j-1,k}, L_{j,k-1})$$
+\end{itemize}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{immagini/Dynamic/lcs_equazioni.png}
+    \caption{Rappresentazione grafica delle equazioni caratteristiche per il calcolo di $L_{j,k}$.}
+    \label{fig:lcs_equazioni}
+\end{figure}
+
+\subsubsection*{Boundary Conditions}
+Il caso base si verifica quando una delle due stringhe è vuota, ovvero quando $j = 0$ o $k = 0$. In questi casi, la LCS è anch'essa vuota, quindi:
+$$L_{0,k} = 0 \quad \text{per } 0 \leq k \leq m$$
+$$L_{j,0} = 0 \quad \text{per } 0 \leq j \leq n$$
+
+\noindent
+Notiamo che la soluzione $L_{j,k}$ appare nella computazione di:
+$$ L_{j+1,k} \quad L_{j,k+1} \quad L_{j+1,k+1} $$
+per cui i sotto-problemi si sovrappongono, rendendo la programmazione dinamica una tecnica adatta per risolvere questo problema. Quindi, anziché utilizzare un approccio ricorsivo che ricalcola più volte gli stessi sotto-problemi (divide-et-impera), possiamo utilizzare una tabella bidimensionale per memorizzare i risultati dei sotto-problemi già calcolati. 
+
+\subsubsection*{Calcolo della tabella}
+La tabella avrà dimensioni $(n+1) \times (m+1)$, dove l'elemento nella cella $(j,k)$ conterrà il valore di $L_{j,k}$, ovvero la LCS tra i primi $j$ caratteri di $X$ e i primi $k$ caratteri di $Y$. Inizializziamo la prima riga e la prima colonna della tabella con i valori dei casi base, e poi riempiamo la tabella utilizzando le equazioni caratteristiche definite sopra.
+
+Anche l'ordine in cui viene riempita la tabella è importante: in questo caso (e in molti altri, ma dipende dal problema specifico) possiamo procedere per righe, in quanto la computazione di $L_{j,k}$ dipende solo dai valori presenti nelle equazioni caratteristiche, ovvero:
+\begin{itemize}[nosep]
+    \item $L_{j-1,k-1}$ (riga e colonna precedenti).
+    \item $L_{j-1,k}$ (riga precedente e stessa colonna).
+    \item $L_{j,k-1}$ (stessa riga e colonna precedente).
+\end{itemize}
+
+\vspace{1\baselineskip}
+\begin{lstlisting}
+def LCS(X, Y):
+""" Returns table such that L[j][k] is length of LCS for X[0:j] and Y[0:k] """
+n, m = len(X), len(Y)   
+L = [[0] * (m + 1) for k in range(n + 1)]   # (n+1) x (m+1) table
+for j in range(1, n + 1):           # j from 1 to n
+    for k in range(1, m + 1):       # k from 1 to m
+        if X[j-1] == Y[k-1]:        # match
+            L[j][k] = 1 + L[j-1][k-1]
+        else:                       # no match
+            L[j][k] = max(L[j-1][k], L[j][k-1])
+return L
+\end{lstlisting}
+\vspace{1\baselineskip}
+
+\noindent
+L'algoritmo che si occupa di calcolare la tabella $L$ impiega due cicli annidati, iterando rispettivamente su $j$ e $k$. All'interno del ciclo più interno, viene eseguita una semplice operazione di confronto e un'assegnazione, entrambe con complessità $O(1)$, quindi la complessità totale dell'algoritmo è $O(n \cdot m)$, dove $n$ e $m$ sono le lunghezze delle stringhe $X$ e $Y$ rispettivamente. 
+
+
+\subsubsection*{Estrazione della soluzione}
+Come già detto, la tabella $L$ contiene le lunghezze delle LCS per tutti i sotto-problemi, ma non restituisce direttamente la LCS stessa. Tuttavia, è possibile ricostruire la LCS a partire dalla tabella $L$. La soluzione può essere ricavata, a partire dalla cella $L[n][m]$ nel modo seguente:
+
+\begin{itemize}[nosep]
+    \item Considerando una generica cella $L[j][k]$:
+    \begin{itemize}[nosep]
+        \item Se $x_{j-1} = y_{k-1}$, significa che questo carattere comune ha contribuito alla lunghezza della sottosequenza basandosi sul valore precedente $L_{j-1,k-1}$. Possiamo quindi registrare $x_{j-1}$ come parte della soluzione e proseguire l'analisi dalla cella $L_{j-1,k-1}$.
+        \item Se $x_{j-1} \neq y_{k-1}$, allora la lunghezza della LCS dipende dal massimo tra $L[j][k-1]$ e $L[j-1][k]$. In questo caso, dobbiamo spostarci nella direzione del massimo valore per continuare la ricerca della LCS.
+        \item Continuiamo questo processo fino a raggiungere una cella $L[j][k] = 0$.
+    \end{itemize}
+\end{itemize}
+
+
+\vspace{1\baselineskip}
+\begin{lstlisting}
+def LCS_solution(X, Y, L):
+""" Returns the LCS of X and Y, given LCS table L """
+solution = []
+j, k = len(X), len(Y)
+while L[j][k] > 0:          # common characters remain
+    if X[j-1] == Y[k-1]:          # match
+        solution.append(X[j-1])   # add to solution
+        j -= 1
+        k -= 1
+    elif L[j-1][k] >= L[j][k-1]:  # no match
+        j -= 1
+    else:
+        k -= 1
+return ''.join(reversed(solution))  # return left-to-right LCS
+\end{lstlisting}
+\vspace{1\baselineskip}
+
+\noindent
+L'algoritmo per ricostruire la LCS ha una complessità temporale di $O(n + m)$, poiché in ogni iterazione del ciclo while si decrementa almeno uno tra $j$ e $k$, e il ciclo termina quando uno dei due raggiunge zero.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/Dynamic/lcs_table.png}
+    \caption{Illustrazione dell'algoritmo per la costruzione di una longest common subsequence a partire dall'array L. Un passo diagonale da $L_{j,k}$ a $L_{j-1,k-1}$ sul percorso evidenziato rappresenta l'uso di un carattere comune, ovvero il carattere $c = x_{j-1} = y_{k-1}$.}
+    \label{fig:lcs_table}
+\end{figure}
+
+
+\clearpage
+\section{Edit Distance}
