@@ -1,0 +1,54 @@
+\chapter{Local Search}
+\label{cap:LocalSearch}
+
+La \textbf{Local Search} (Ricerca Locale) rappresenta una delle tecniche fondamentali per la risoluzione di problemi di ottimizzazione complessi. A differenza degli algoritmi visti in precedenza, come l'approccio \textit{Greedy} o la \textit{Programmazione Dinamica}, che costruiscono la soluzione da zero, la ricerca locale opera su soluzioni complete. L'idea centrale è partire da una soluzione completa iniziale (spesso generata casualmente o ricavata da semplici euristiche) e migliorarla iterativamente esplorando un "intorno" locale di soluzioni simili.
+
+L'ottimizzazione di un problema può essere rappresentata graficamente come una curva o superficie in cui ogni punto corrisponde ad una soluzione del problema e la sua “altezza” rappresenta il costo associato a quella soluzione. Il problema diventa quello di individuare il punto più basso possibile, ovvero il minimo costo per quel problema di ottimizzazione.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.3\textwidth]{immagini/LocalSearch/curva1.png}
+    \caption{Rappresentazione grafica della curva delle soluzioni in un problema di ottimizzazione.}
+    \label{fig:local_search_landscape}
+\end{figure}
+
+\noindent
+Formalmente, consideriamo un problema di ottimizzazione definito da:
+\begin{itemize}
+    \item $C$: l'insieme delle soluzioni ammissibili.
+    \item $c$: una funzione di costo che associa ad ogni soluzione $S \in C$ un valore reale $c(S)$.
+    \item $N$: una funzione che definisce l'intorno di una soluzione, ovvero l'insieme delle soluzioni "vicine" a $S$, denotato come $N(S) \subseteq C$.
+\end{itemize}
+
+\noindent
+Graficamente, possiamo immaginare lo spazio delle soluzioni come un paesaggio: le soluzioni sono le coordinate e il costo è l'altitudine. L'algoritmo cerca di scendere verso il punto più basso (la valle più profonda).
+
+\clearpage
+\noindent
+A questo proposito, una distinzione cruciale è quella tra ottimi locali e globali:
+\begin{itemize}
+    \item Un \textbf{Minimo Globale} è una soluzione $S^*$ con costo minimo assoluto su tutto $C$.
+    \item Un \textbf{Minimo Locale} è una soluzione $S$ tale che $c(S) \leq c(S')$ per ogni vicino $S' \in N(S)$.
+    \item Il problema principale della ricerca locale è che l'algoritmo può rimanere intrappolato in un minimo locale, incapace di "vedere" una soluzione migliore che si trova oltre una "collina" di costi crescenti.
+\end{itemize}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.3\textwidth]{immagini/LocalSearch/curva2.png}
+    \caption{La ricerca locale esplora l'intorno delle soluzioni per trovare minimi locali e globali.} 
+    \label{fig:local_vs_global_minimum}
+\end{figure}
+
+\noindent
+Ad ogni iterazione, l'algoritmo di ricerca mantiene una soluzione corrente $S \in C$. Ad ogni step, sceglie un vicino $S'$ di $S$, dichiara $S'$ come nuova soluzione corrente se $c(S') \leq c(S)$, e itera. Durante l'esecuzione dell'algoritmo, ricorda la soluzione a costo minimo che ha visto finora, $S^*$; quindi, man mano che procede, trova soluzioni sempre migliori e aggiorna $S^*$ di conseguenza. L'algoritmo termina quando non riesce più a trovare un vicino$S'$ migliore della soluzione corrente $S$, restituendo $S^*$ come soluzione finale.
+
+Il \emph{punto cruciale} di un algoritmo di ricerca locale risiede nella scelta della \textbf{neighbor relation} (relazione di vicinato) e nella progettazione della regola per scegliere una soluzione vicina ad ogni passo. Da un lato, la neighbor relation deve essere sufficientemente ampia da permettere all'algoritmo di uscire da minimi locali indesiderati; dall'altro, deve essere sufficientemente ristretta da mantenere l'efficienza computazionale dell'algoritmo.
+
+A differenza dell'approccio Greedy, la ricerca locale permette di rivalutare le scelte fatte in precedenza (come già detto, si parte da una soluzione iniziale completa ma non necessariamente buona) e di esplorare soluzioni alternative. Questo rende la ricerca locale particolarmente adatta per problemi complessi dove le soluzioni ottimali sono difficili da trovare direttamente. 
+Il vantaggio dunque è che con Greedy si può facilmente incappare in qualche minimo locale senza possibilità di uscirne, mentre con la ricerca locale si ha la possibilità di esplorare l'intorno delle soluzioni e potenzialmente trovare soluzioni migliori.
+
+Va detto però che un algoritmo di ricerca locale che sia efficiente non esiste per tutti i problemi di ottimizzazione.
+
+\clearpage
+\section{Vertex Cover}
+
