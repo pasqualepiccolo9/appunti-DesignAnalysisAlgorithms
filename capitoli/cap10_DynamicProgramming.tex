@@ -633,12 +633,98 @@ ALGORITMO Knapsack01(v, c, B)
 
 
 \clearpage
-\section{Matrix Multiplication}
+\section{Matrix Chain-Product}
+Supponiamo di avere una collezione di $n$ matrici $A_1, A_2, \ldots, A_n$ e vogliamo calcolare il loro prodotto $A$. La matrice $A_i$ ha dimensioni $d_i \times d_{i+1}$, per $i = 0, 1, 2, \ldots, n-1$.
+
+Ricordiamo la definizione formale di moltiplicazione tra due matrici $B$ di dimensioni $d \times e$ e $C$ di dimensioni $e \times f$:
+$$
+A[i][j] = \sum_{k=0}^{e-1} B[i][k] \cdot C[k][j] \quad \text{richiede: } d \cdot e \cdot f \text{ moltiplicazioni scalari}
+$$
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{immagini/Dynamic/matrix_multiplication.png}
+    \caption{Esempio di moltiplicazione tra tre matrici $B$ e $C$.}
+    \label{fig:matrix_multiplication}
+\end{figure}
+
+\noindent
+La moltiplicazione di matrici è un'operazione associativa, il che significa che $B \cdot (C \cdot D) = (B \cdot C) \cdot D$. Pertanto, possiamo inserire parentesi nell'espressione in qualsiasi modo desideriamo e otterremo lo stesso risultato. Tuttavia, modificando l'ordine delle parentesi possiamo influenzare il numero di moltiplicazioni scalari necessarie per calcolare il prodotto finale, come illustrato nell'esempio seguente.
+
+\paragraph{Esempio:} Sia $B$ una matrice di dimensioni $2 \times 10$, $C$ una matrice di dimensioni $10 \times 50$ e $D$ una matrice di dimensioni $50 \times 20$. Calcolare il prodotto $B \cdot (C \cdot D)$ richiede $2 \cdot 10 \cdot 20 + 10 \cdot 50 \cdot 20 = 10400$ moltiplicazioni, mentre calcolare il prodotto $(B \cdot C) \cdot D$ richiede $2 \cdot 10 \cdot 50 + 2 \cdot 50 \cdot 20 = 3000$ moltiplicazioni.
 
 
+\vspace{1\baselineskip}
+\noindent
+Il problema del \textbf{Matrix Chain-Product} consiste nel determinare l'ordine delle moltiplicazioni tra matrici (tramite inserimento di opportune parentesi) che minimizza il numero totale di moltiplicazioni scalari necessarie per calcolare il prodotto finale.
 
+\clearpage
+\subsection*{Soluzione Dynamic Programming}
+Per risolvere il problema del Matrix Chain-Product, definiamo i sotto-problemi come segue:
+\begin{itemize}
+    \item Consideriamo una catena di matrici da $A_i \times A_{i+1} \times \cdots \times A_j$, con $0 \leq i \leq j \leq n-1$.
+    \item Definiamo $N(i,j)$ come il numero minimo di moltiplicazioni scalari necessarie per calcolare questo sotto-problema.
+    \begin{itemize}[nosep]
+        \item La soluzione al problema originale richiederà $N(0,n-1)$ moltiplicazioni scalari.
+    \end{itemize}
+\end{itemize}
 
+\noindent
+L'idea di base è che per qualsiasi ordine di moltiplicazione possibile, esiste un punto in cui la catena viene divisa in due sottocatene, ovvero il punto in cui verrà eseguito il \textbf{prodotto finale} tra due matrici risultanti. Supponiamo che questo prodotto finale si trovi all'indice $i$, per cui avremo che:
 
+$$
+\text{i:} \quad (A_0 \times \cdots \times A_i) \times (A_{i+1} \times \cdots \times A_{n-1})
+$$
+
+\noindent
+Il costo della soluzione ottimale $N(0,n-1)$ è la somma del costo di due sotto-problemi ottimali $N(0,i)$ e $N(i+1,n-1)$, più il costo del prodotto finale tra le due matrici risultanti.
+
+Quindi esistono diversi indici in cui possiamo dividere la catenza, e ogni scelta ha un costo differente. Possiamo calcolare $N(i,j)$ valutando ogni possibile punto di divisione $k$ tra $i$ e $j-1$, e scegliendo quello che minimizza il costo totale, per cui l'\textbf{equazione caratteristica} per $N(i,j)$ diventa:
+$$
+N(i,j) = \min\limits_{i \leq k < j} \{ N(i,k) + N(k+1,j) + d_i \cdot d_{k+1} \cdot d_{j+1} \}
+$$
+
+dove $d_i \cdot d_{k+1} \cdot d_{j+1}$ rappresenta il costo del prodotto finale tra le due matrici risultanti dalle sottocatene.
+
+Possiamo, tuttavia, usare l'equazione per $N(i,j)$ per derivare un algoritmo efficiente calcolando i valori di $N(i,j)$ in modo bottom-up, memorizzando le soluzioni intermedie in una tabella di valori $N(i,j)$. Possiamo iniziare assegnando $N(i,i) = 0$, che rappresenta il caso base, per $i = 0,1,\ldots,n-1$. Possiamo quindi applicare l'equazione generale per calcolare i valori $N(i,i+1)$, poiché dipendono solo dai valori $N(i,i)$ e $N(i+1,i+1)$ che sono già disponibili. Dati i valori $N(i,i+1)$, possiamo quindi calcolare i valori $N(i,i+2)$, e così via. Pertanto, possiamo costruire i valori $N(i,j)$ a partire dai valori precedentemente calcolati fino a poter finalmente calcolare il valore di $N(0,n-1)$, che è il numero che stiamo cercando.
+
+\vspace{2\baselineskip}
+\noindent
+L'algoritmo riportato di seguito calcola la tabella $N$ in tempo $O(n^3)$, poiché ci sono $O(n^2)$ celle nella tabella e il calcolo di ciascuna cella richiede tempo $O(n)$ per valutare tutti i possibili punti di divisione $k$. Lo spazio richiesto è $O(n^2)$ per memorizzare la tabella $N$.
+Per ricostruire l'ordine ottimale delle moltiplicazioni, è necessario salvare per ogni cella l'indice del punto di divisione scelto per il calcolo del costo minimo per quella stessa cella.
+
+\clearpage
+\begin{lstlisting}
+def matrix_chain(d):
+    """
+    d is a list of n+1 numbers such that size of kth matrix is d[k]-by-d[k+1].
+    Return an n-by-n table such that N[i][j] represents the minimum number of multiplications needed to compute the product of Ai through Aj inclusive. """
+    n = len(d) - 1                  # number of matrices
+    N = [[0] * n for i in range(n)] # initialize n-by-n result to zero
+    
+    for b in range(1, n):           # number of products in subchain
+        for i in range(n - b):      # start of subchain
+            j = i + b               # end of subchain
+            N[i][j] = float('inf')  # initialize to infinity
+            
+            # Find the split point k that minimizes cost
+            for k in range(i, j):
+                # Cost q = cost(left) + cost(right) + cost(multiplication)
+                q = N[i][k] + N[k+1][j] + d[i] * d[k+1] * d[j+1]
+                if q < N[i][j]:
+                    N[i][j] = q
+                    
+    return N
+\end{lstlisting}
+
+\vspace{2\baselineskip}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.42\textwidth]{immagini/Dynamic/matrix_chain_table.png}
+    \caption{La matrice triangolare superiore mostra il processo di calcolo: la diagonale principale (blu scuro) rappresenta i casi base di costo zero. Una cella specifica $(i, j)$ è evidenziata in azzurro, indicando il sottoproblema corrente. Le celle beige lungo la riga $i$ e la colonna $j$ evidenziano i sottoproblemi precedentemente risolti necessari per calcolare il valore corrente. La cella rossa nell'angolo in alto a destra è $N(0, n-1)$, e indica il risultato finale dell'algoritmo.}
+    \label{fig:matrix_chain_table}
+\end{figure}
 
 
 
