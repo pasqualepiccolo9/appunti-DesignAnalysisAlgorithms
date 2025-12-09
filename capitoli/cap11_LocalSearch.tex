@@ -92,6 +92,10 @@ Per valutare l'efficacia dell'algoritmo, analizziamo il suo comportamento in tre
 \end{itemize}
 
 
+
+
+
+
 \section{Algoritmo Metropolis}
 Come abbiamo visto con il Gradient Descent, l'approccio puramente "greedy" (che accetta solo miglioramenti) tende a rimanere intrappolato nei minimi locali. Per risolvere questo problema, è necessario introdurre un meccanismo che permetta all'algoritmo di accettare occasionalmente soluzioni peggiori, nella speranza che queste mosse "in salita" (uphill) permettano di scavalcare le barriere dei minimi locali e raggiungere il minimo globale.
 
@@ -142,6 +146,10 @@ L'intuizione fondamentale è che il processo di ricerca non è casuale ma pesato
 
 
 
+
+
+
+
 \clearpage
 \section{Simulated Annealing}
 Il \textbf{Simulated Annealing} (Ricottura Simulata) rappresenta un'evoluzione dell'algoritmo Metropolis. 
@@ -176,6 +184,127 @@ Il nome e il funzionamento dell'algoritmo derivano direttamente dal processo fis
 \noindent
 Nello stesso modo, il Simulated Annealing parte con $T$ alta per evitare di rimanere intrappolato subito in minimi locali, e abbassa $T$ lentamente per permettere all'algoritmo di convergere verso il minimo globale.
 
+\vspace{1\baselineskip}
+\noindent
+Da sottolineare che \textbf{nessuna di queste tecniche garantisce di trovare sempre la soluzione ottima}, ma il Simulated Annealing, se opportunamente configurato (scelta della cooling schedule e del numero di iterazioni), funziona meglio rispetto all'algoritmo Metropolis o al Gradient Descent puro.
+
+
+
 
 \clearpage
 \section{Max Cut}
+Un altro classico problema di ottimizzazione combinatoria che ben si presta all'approccio della ricerca locale è il \textbf{Max Cut}.
+A differenza del problema del Vertex Cover, dove l'obiettivo era minimizzare un costo, nel Max Cut l'obiettivo è \textbf{massimizzare} il valore della soluzione.
+
+\begin{itemize}
+    \item Sia dato un insieme $V$ di elementi (nodi) e un insieme $E$ di coppie di elementi (archi). Ogni coppia $e \in E$ possiede un peso positivo $w_e > 0$.
+    \item L'insieme $C$ delle soluzioni ammissibili è costituito da tutte le possibili \textbf{partizioni} di $V$ in due insiemi disgiunti $(A, B)$ tali che $A \cup B = V$ e $A \cap B = \emptyset$.
+    \item Una coppia $(u, v) \in E$ si dice "tagliata" (cut pair) se i due elementi appartengono a insiemi diversi della partizione (uno in $A$ e l'altro in $B$).
+    \item Il \textbf{cut value} (costo o valore) di una soluzione è la somma dei pesi delle coppie tagliate dalla partizione. L'obiettivo è trovare la partizione $(A, B)$ che massimizzi questo costo totale.
+\end{itemize}
+
+
+\paragraph{Esempio.}
+Consideriamo il seguente scenario:
+\begin{itemize}
+    \item $V = \{a, b, c, d, e\}$
+    \item $E = \{(a,b, 2), (a,c, 4), (b,d, 3), (c,d, 5), (d,e, 3)\}$
+\end{itemize}
+
+\noindent
+Analizziamo alcune partizioni per capire come calcolare il costo e distinguere soluzioni valide da quelle non valide:
+\begin{itemize}
+    \item \textbf{Una soluzione valida (massimo locale):} $(\{a,b\}, \{c,d,e\})$. $ \text{Costo} = 4 + 3 = 7 $.
+    \item \textbf{Una soluzione non valida:} $(\{a,b\}, \{c,d\})$. Questa non è una soluzione ammissibile perché il nodo $e$ non è stato assegnato a nessuno dei due insiemi (l'unione non è $V$).
+    \item \textbf{La soluzione ottima (massimo globale):} $(\{a,d\}, \{b,c,e\})$. $ \text{Costo Ottimo} = 2 + 4 + 3 + 5 + 3 = 17 $.
+\end{itemize}
+
+\noindent
+È doveroso fare una precisazione sulla complessità computazionale del problema.
+Sebbene in linea teorica sia sempre possibile determinare la soluzione ottima enumerando tutte le $2^{|V|}$ possibili partizioni (approccio \textit{Brute Force}), tale metodo diviene rapidamente inapplicabile all'aumentare del numero di nodi a causa dell'esplosione combinatoria.
+Dunque, per il problema del Max Cut, così come per altri particolari problemi di ottimizzazione, non esiste alcun algoritmo noto in grado di trovare la soluzione ottima in \textbf{tempo polinomiale} rispetto alla dimensione dell'input.
+Di conseguenza, per istanze di dimensioni significative, la ricerca della soluzione esatta è computazionalmente intrattabile, rendendo necessario l'utilizzo di algoritmi di approssimazione o euristiche (come la Local Search) che forniscano soluzioni di buona qualità, pur senza garanzia di ottimalità assoluta.
+
+\clearpage
+\noindent
+Per applicare la ricerca locale, definiamo una neighbor relation semplice ed efficace.
+
+\paragraph{Single-flip Neighborhood.}
+Data una partizione corrente $(A, B)$, una partizione vicina (neighbor) si ottiene spostando esattamente un nodo da un insieme all'altro.
+Questa operazione è chiamata "single-flip".
+
+\paragraph{Algoritmo Greedy.}
+Possiamo implementare un semplice algoritmo Greedy (o di ascesa del gradiente - Gradient Ascent -, dato che stiamo massimizzando) basato su questo vicinato:
+\begin{enumerate}
+    \item Si inizia con una partizione casuale $(A, B)$.
+    \item Si cerca un nodo $v$ che, se spostato nell'altro insieme, aumenta il costo totale del taglio (nodo migliorativo).
+    \item Se tale nodo esiste:
+    \begin{itemize}
+        \item Se $v \in A$, spostalo in $B$.
+        \item Altrimenti, spostalo in $A$.
+    \end{itemize}
+    \item Si ripete il passo 2 finché non esistono più nodi che migliorano la soluzione (raggiungimento di un ottimo locale).
+    \item Si restituisce la partizione finale $(A, B)$.
+\end{enumerate}
+
+\noindent
+Anche in questo caso, l'approccio Greedy può bloccarsi in ottimi locali. Per ottenere risultati migliori, si possono applicare le euristiche viste in precedenza, come il Simulated Annealing, o definire intorni più complessi che spostano più nodi contemporaneamente.
+
+\vspace{1\baselineskip}
+\noindent
+Finora abbiamo ipotizzato di muoverci nello spazio delle soluzioni spostando un singolo nodo alla volta. Tuttavia, la scelta della dimensione e della struttura del vicinato è determinante per la qualità della soluzione finale e per il tempo di esecuzione. Più ampio è il vicinato, minore è il rischio di bloccarsi in minimi locali, ma maggiore è il costo computazionale per esplorarlo.
+
+\noindent
+Possiamo distinguere tre tipologie principali di vicinato:
+
+\begin{itemize}
+    \item \textbf{1-flip neighborhood:} È il vicinato base utilizzato nell'algoritmo Greedy sopra descritto. Due partizioni $(A, B)$ e $(A', B')$ sono vicine se differiscono per la posizione di \textbf{esattamente un nodo}.
+    
+    \item \textbf{k-flip neighborhood:} È una generalizzazione del precedente. Due partizioni sono considerate vicine se differiscono per \textbf{al più $k$ nodi}.
+    \begin{itemize}[nosep]
+        \item Questo approccio permette di scavalcare minimi locali che richiederebbero lo spostamento simultaneo di più elementi.
+        \item Tuttavia, il numero di vicini cresce come $\Theta(n^k)$. Questo rende l'esplorazione computazionalmente proibitiva (troppo costosa) per valori di $k$ elevati.
+    \end{itemize}
+    
+    \item \textbf{KL-neighborhood (Kernighan-Lin):} Rappresenta un approccio sofisticato che permette di esplorare configurazioni molto distanti senza il costo esponenziale del k-flip.
+\end{itemize}
+
+
+\clearpage
+\paragraph{L'approccio Kernighan-Lin.}
+L'intuizione di Kernighan-Lin è quella di costruire un vicinato complesso attraverso una sequenza di mosse guidate. L'idea chiave è accettare temporaneamente partizioni con un \textbf{cut value} inferiore, pur di uscire da un ottimo locale ed esplorare configurazioni che potrebbero rivelarsi migliori a lungo termine.
+
+\noindent
+Per generare i vicini di una partizione iniziale $(A, B)$, si procede nel seguente modo:
+\begin{itemize}
+    \item \textbf{Iterazione 1:} Si valuta lo spostamento di ogni singolo nodo (da $A$ a $B$ o viceversa). Tra tutte le possibili mosse, si sceglie quella che porta alla nuova partizione $(A_1, B_1)$ con il \textbf{cut value} più alto tra quelle disponibili.
+    \begin{itemize}
+        \item \emph{Punto cruciale:} Si seleziona la mossa che massimizza il cut value corrente, \textbf{anche se questo valore è inferiore} rispetto a quello della configurazione di partenza $(A, B)$.
+        \item In altre parole: se tutte le mosse possibili peggiorano la soluzione, scegliamo quella che la peggiora di meno. Questo passo è fondamentale per permettere all'algoritmo di "scendere" da un massimo locale per poi risalire verso uno globale.
+    \end{itemize}
+    Il nodo appena spostato viene "marcato" (bloccato) e non potrà essere mosso nuovamente in questa fase.
+    
+    \item \textbf{Iterazioni successive ($i > 1$):} Si ripete il procedimento considerando esclusivamente i nodi \textbf{non ancora marcati} (ovvero quelli che non sono stati spostati nelle iterazioni precedenti).
+    Partendo dalla configurazione corrente $(A_{i-1}, B_{i-1})$, si valuta lo spostamento di ciascun nodo disponibile e si sceglie quello che risulta nel miglior \textbf{cut value} per la nuova configurazione $(A_i, B_i)$.
+    \begin{itemize}
+        \item Anche in questo caso, la scelta ricade sulla mossa migliore possibile al momento tra i nodi residui, indipendentemente dal fatto che il cut value aumenti o diminuisca rispetto al passo precedente.
+        \item Il nodo scelto viene spostato e marcato.
+    \end{itemize}
+    
+    \item \textbf{Conclusione della sequenza:} Il processo continua iterativamente finché \textbf{tutti} i nodi sono stati spostati e marcati esattamente una volta.
+    Questo genera una sequenza ordinata di partizioni $(A_1, B_1), \dots, (A_{n}, B_{n})$. Nota che l'ultima partizione $(A_n, B_n)$ avrà tutti i nodi scambiati rispetto all'inizio (è la partizione speculare).
+\end{itemize}
+
+\noindent
+Il "vicinato" KL è costituito dall'insieme di tutte queste partizioni intermedie generate. L'algoritmo di ricerca locale esamina questa sequenza e si sposta nella configurazione $(A_k, B_k)$ che ha il valore di taglio massimo tra tutte quelle generate.
+In pratica, questo metodo permette di eseguire una lunga sequenza di flip in un singolo passo logico dell'algoritmo, risultando un framework estremamente potente ed efficace.
+
+
+
+
+
+
+\clearpage
+\section{Hopfield Neural Networks}
+
+
