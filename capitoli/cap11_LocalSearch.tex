@@ -129,12 +129,12 @@ Fissata una temperatura $T$, l'algoritmo mantiene uno stato corrente $S$ e proce
 
 \begin{enumerate}[nosep]
     \item Viene generata una perturbazione casuale dello stato corrente $S$ per ottenere un nuovo stato vicino $S' \in N(S)$.
-    \item Si calcola la variazione di energia (costo): $\Delta E = E(S') - E(S) > 0$.
+    \item Si calcola la variazione di energia (costo): $\Delta E = E(S') - E(S)$.
     \item \textbf{Se $E(S') \le E(S)$:} la nuova soluzione è migliore (o uguale). L'algoritmo accetta sempre il cambiamento e aggiorna lo stato corrente a $S'$.
     \item \textbf{Altrimenti ($E(S') > E(S)$):} la nuova soluzione è peggiore ($\Delta E > 0$). L'algoritmo accetta il nuovo stato $S'$ solo con una certa probabilità, data da:
-    \begin{equation}
-        P(\text{accettare } S') = e^{-\frac{\Delta E}{kT}}
-    \end{equation}
+    $$
+        \mathbb{P}(\text{accettare } S') = e^{-\frac{\Delta E}{kT}}
+    $$
 \end{enumerate}
 
 \noindent
@@ -142,3 +142,40 @@ L'intuizione fondamentale è che il processo di ricerca non è casuale ma pesato
 
 
 
+\clearpage
+\section{Simulated Annealing}
+Il \textbf{Simulated Annealing} (Ricottura Simulata) rappresenta un'evoluzione dell'algoritmo Metropolis. 
+È fondamentale sottolineare che il meccanismo di decisione rimane invariato: il Simulated Annealing utilizza la \textbf{stessa funzione di Gibbs-Boltzmann} vista in precedenza per calcolare la probabilità di accettare una mossa peggiorativa ($\Delta E > 0$):
+
+$$
+    \mathbb{P}(\text{accettare } S') = e^{-\frac{\Delta E}{kT}}
+$$
+
+\noindent
+Mentre nell'algoritmo Metropolis la temperatura $T$ è costante, il Simulated Annealing introduce una variazione dinamica del parametro $T$ per bilanciare esplorazione e sfruttamento.
+
+\noindent
+Il comportamento dell'algoritmo cambia drasticamente in funzione della temperatura:
+\begin{itemize}
+    \item \textbf{Se $T$ è grande:} la probabilità di accettare una mossa "in salita" (peggiorativa) è molto alta. In questa fase l'algoritmo esplora lo spazio quasi liberamente.
+    \item \textbf{Se $T$ è piccolo:} le mosse in salita non vengono quasi mai accettate. L'algoritmo si comporta in modo simile al Gradient Descent, raffinando la soluzione locale.
+\end{itemize}
+
+\noindent
+L'idea centrale è quella di utilizzare una "manopola" per controllare $T$ durante l'esecuzione.
+Si definisce quindi una \textbf{Cooling Schedule} (piano di raffreddamento), ovvero una funzione $T(i)$ che determina il valore della temperatura all'iterazione $i$-esima, decrescendo progressivamente.
+
+\paragraph{Analogia Fisica.}
+Il nome e il funzionamento dell'algoritmo derivano direttamente dal processo fisico di ricottura (\emph{annealing}) dei materiali cristallini:
+\begin{itemize}
+    \item Se portiamo un solido ad alta temperatura, l'agitazione termica rompe i legami e non ci aspettiamo che mantenga una struttura cristallina ordinata.
+    \item Se prendiamo un solido fuso e lo "congeliamo" molto bruscamente (raffreddamento rapido), le molecole non hanno il tempo di riorganizzarsi e non otterremo un cristallo perfetto, ma un solido amorfo o con difetti (metafora del minimo locale).
+    \item L'\textbf{Annealing} (ricottura) consiste invece nel raffreddare il materiale gradualmente partendo da alte temperature. Questo permette al sistema di raggiungere l'equilibrio termico attraverso una successione di stati a temperatura intermedia, permettendo agli atomi di disporsi nella configurazione a minima energia (metafora del minimo globale).
+\end{itemize}
+
+\noindent
+Nello stesso modo, il Simulated Annealing parte con $T$ alta per evitare di rimanere intrappolato subito in minimi locali, e abbassa $T$ lentamente per permettere all'algoritmo di convergere verso il minimo globale.
+
+
+\clearpage
+\section{Max Cut}

@@ -4,6 +4,10 @@
 % a4paper imposta la pagina in formato A4, 12pt la dimensione del font
 \documentclass[a4paper, 11pt]{book}
 
+% --- PACCHETTI MATEMATICI FONDAMENTALI ---
+% NOTA: amsmath deve essere caricato PRIMA di newtxmath per evitare conflitti
+\usepackage{amsmath}
+
 % --- Font Times New Roman e lingua---
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -46,7 +50,7 @@
 \usepackage{subcaption}
 \usepackage{tabularx,booktabs}
 \usepackage{enumitem}
-\usepackage{amsmath}
+
 
 % --- PACCHETTI NECESSARI ---
 \usepackage{xcolor}      % gestione dei colori
