@@ -372,18 +372,18 @@ La logica è estremamente semplice: partendo da una configurazione arbitraria, f
 \vspace{1\baselineskip}
 
 
-\paragraph{Esempio di esecuzione.}
-Consideriamo un nodo con stato $-1$ connesso ad altri nodi. Se il "peso" dei conflitti (archi cattivi) supera quello degli accordi, il nodo inverte il suo stato a $+1$. Questo cambiamento rende "buoni" gli archi incidenti che prima erano cattivi, e viceversa.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{immagini/LocalSearch/state_flipping.png}
+    \caption{Le parti (a)-(f) mostrano i passi di un'esecuzione dell'algoritmo State-Flipping per una rete di Hopfield a cinque nodi, terminando in una configurazione stabile (i nodi sono colorati in nero o bianco per indicare il loro stato). }
+    \label{fig:state_flipping}
+\end{figure}
+
 
 \subsection{Convergenza e Complessità}
-Una domanda fondamentale è: l'algoritmo termina sempre o può entrare in un ciclo infinito di cambi di stato?
-È possibile dimostrare che l'algoritmo termina sempre.
+L'algoritmo State-flipping termina sempre con una configurazione stabile dopo al più $W = \sum_{e} |w_e|$ iterazioni.
 
-\paragraph{Teorema di Convergenza.}
-L'algoritmo State-flipping termina con una configurazione stabile dopo al più $W = \sum_{e} |w_e|$ iterazioni.
-
-\paragraph{Dimostrazione.}
-Consideriamo una funzione potenziale $\Phi(S)$ definita come la somma dei pesi assoluti di tutti gli archi "buoni" nella configurazione corrente:
+Consideriamo una funzione $\Phi(S)$ definita come la somma dei pesi assoluti di tutti gli archi "buoni" nella configurazione corrente:
 $$ \Phi(S) = \sum_{e \text{ good}} |w_e| $$
 Chiaramente, il valore minimo di questa funzione è 0 e il massimo è $W$.
 Dobbiamo mostrare che $\Phi(S)$ aumenta di almeno 1 ad ogni flip:
@@ -398,12 +398,12 @@ Dobbiamo mostrare che $\Phi(S)$ aumenta di almeno 1 ad ogni flip:
     \item Di conseguenza, scambiando i due insiemi, il guadagno in termini di peso degli archi buoni supera la perdita:
     $$ \Phi(S') \ge \Phi(S) + 1 $$
 \end{itemize}
-Poiché la funzione potenziale è limitata superiormente e cresce strettamente ad ogni passo, l'algoritmo deve terminare.
+Poiché la funzione $\Phi$ è limitata superiormente e cresce strettamente ad ogni passo, l'algoritmo deve terminare al più in un numero finito di passi $W$.
 
-\paragraph{Note sulla complessità.}
-Sebbene la convergenza sia garantita, il numero di passi può essere molto grande.
-\begin{itemize}
-    \item Il \textbf{problema decisionale} ("Esiste una configurazione stabile?") è banale: la risposta è sempre sì, poiché l'algoritmo ne trova sempre una.
-    \item Il \textbf{problema di ricerca} ("Trova una configurazione stabile") appartiene alla classe \textbf{PLS} (Polynomial Local Search). Non è noto alcun algoritmo in tempo polinomiale (nel caso peggiore) per risolvere questo problema.
-\end{itemize}
+
+
+
+
+
+
 
