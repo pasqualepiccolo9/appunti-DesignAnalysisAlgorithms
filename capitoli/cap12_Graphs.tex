@@ -242,7 +242,7 @@ Diversamente dall'edge list, l'\emph{adjacency list} è una rappresentazione di 
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.9\textwidth]{immagini/Graphs/adj_list.png}
+    \includegraphics[width=1\textwidth]{immagini/Graphs/adj_list.png}
     \caption{(a) Un grafo non orientato $G$; (b) una rappresentazione schematica della struttura adjacency list per $G$. La collezione $V$ è la lista primaria di vertici, e ogni vertice ha una lista associata di archi incidenti. Sebbene non sia mostrato in figura, presumiamo che ogni arco del grafo sia rappresentato con un'istanza di Edge unica che mantiene riferimenti ai suoi vertici estremi.}
     \label{fig:adj_list}
 \end{figure}
@@ -267,6 +267,55 @@ tipici di reti reali (web, social network, mappe stradali), dove la maggior part
 
 \clearpage
 \section{Rappresentazione mediante Adjacency Map}
+In una rappresentazione di tipo adjacency list, assumiamo che la struttura dati secondaria utilizzata per la adjacency list sia una linked list non ordinata. Tale collezione $I(v)$ utilizza uno spazio proporzionale a $O(\text{deg}(v))$, consente di aggiungere o rimuovere un arco in tempo $O(1)$ e consente di iterare su tutti gli archi incidenti al vertice $v$ in tempo $O(\text{deg}(v))$. Tuttavia, la migliore implementazione del metodo \texttt{get\_edge(u,v)} richiede un tempo di $O(\min(\text{deg}(u),\text{deg}(v)))$, poiché dobbiamo cercare all'interno di $I(u)$ o $I(v)$. Possiamo migliorare le prestazioni utilizzando una mappa basata su hash per implementare $I(v)$ per ogni vertice $v$. In particolare, lasciamo che l'estremo opposto di ogni arco incidente serva come chiave nella mappa, con la struttura dell'arco che funge da valore. Chiamiamo tale rappresentazione del grafo una \emph{adjacency map}. L'uso dello spazio per un adjacency map rimane $O(n+m)$, poiché $I(v)$ utilizza uno spazio $O(\text{deg}(v))$ per ogni vertice $v$, come nell'adjacency list. Il vantaggio dell'adjacency map, rispetto all'adjacency list, è che il metodo \texttt{get\_edge(u,v)} può essere implementato in tempo atteso $O(1)$ cercando il vertice $u$ come chiave in $I(v)$, o viceversa. Ciò fornisce un probabile miglioramento rispetto all'adjacency list, pur mantenendo il limite nel caso peggiore di $O(\min(\text{deg}(u),\text{deg}(v)))$. Nel confrontare le prestazioni dell'adjacency map con altre rappresentazioni, scopriamo che esso raggiunge essenzialmente tempi di esecuzione ottimali per tutti i metodi, rendendolo un'ottima scelta in generale come rappresentazione del grafo.
 
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/Graphs/adj_map.png}
+    \caption{(a) un grafo non orientato $G$; (b) una rappresentazione schematica della struttura adjacency map per $G$. Ogni vertice mantiene una mappa secondaria in cui i vertici adiacenti fungono da chiavi, con gli archi di collegamento come valori associati. Sebbene non sia rappresentato come tale, presumiamo che esista un'istanza Edge unica per ogni arco del grafo, e che essa mantenga riferimenti ai suoi vertici estremi.}
+    \label{fig:adj_map}
+\end{figure}
+
+
+\clearpage
+\noindent
+Questa struttura è frequentemente adottata in contesti che richiedono alta dinamicità e prestazioni bilanciate, come nelle librerie di manipolazione grafi general-purpose. Il vantaggio distintivo è l'utilizzo di una struttura di hashing per i collegamenti uscenti, che permette di accedere a uno specifico arco e di verificarne l'esistenza con un tempo atteso costante $O(1)$, pur mantenendo un consumo di memoria lineare rispetto al contenuto del grafo. Ciò facilita operazioni veloci di inserimento e rimozione degli archi. Di contro, la gestione interna delle tabelle hash introduce un certo \textit{overhead} di memoria e complessità computazionale per la gestione delle collisioni, rendendo la struttura leggermente più pesante per grafi di dimensioni molto ridotte o banali.
+
+\vspace{1\baselineskip}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/Graphs/summary_adjMap.png}
+    \caption{Riepilogo tempi di esecuzione ADT Grafo con rappresentazione Adjacency Map.}
+    \label{fig:summary_adjMap}
+\end{figure}
+
+
+\clearpage
+\section{Rappresentazione mediante Adjacency Matrix}
+La struttura \emph{adjacency matrix} per un grafo $G$ arricchisce la struttura edge list con una matrice $A$, che ci consente di localizzare un arco tra una data coppia di vertici in tempo costante nel caso peggiore. Nella rappresentazione adjacency matrix, consideriamo i vertici come gli interi nell'insieme $\{0,1, \ldots, n-1\}$ e gli archi come coppie di tali interi. Ciò ci consente di memorizzare riferimenti agli archi nelle celle di un array bidimensionale $n \times n$ $A$. In particolare, la cella $A[i, j]$ contiene un riferimento all'arco $(u,v)$, se esiste, dove $u$ è il vertice con indice $i$ e $v$ è il vertice con indice $j$. Se non esiste tale arco, allora $A[i, j] = \text{None}$. Notiamo che l'array $A$ è simmetrico se il grafo $G$ è non orientato, poiché $A[i, j] = A[j,i]$ per tutte le coppie $i$ e $j$. Il vantaggio più significativo di una matrice di adiacenza è che qualsiasi arco $(u,v)$ può essere visitato in tempo $O(1)$. Tuttavia, diverse operazioni sono meno efficienti con una matrice di adiacenza. Ad esempio, per trovare gli archi incidenti al vertice $v$, dobbiamo presumibilmente esaminare tutte le $n$ voci nella riga associata a $v$; ricordiamo che un adjacency list o map può localizzare quegli archi in tempo ottimale $O(\text{deg}(v))$. Aggiungere o rimuovere vertici da un grafo è problematico, poiché la matrice deve essere ridimensionata. Inoltre, l'uso dello spazio $O(n^2)$ di una matrice di adiacenza è tipicamente molto peggiore rispetto allo spazio $O(n+m)$ richiesto dalle altre rappresentazioni. Sebbene, nel caso peggiore, il numero di archi in un grafo denso sia proporzionale a $n^2$, la maggior parte dei grafi del mondo reale sono sparsi. In tali casi, l'uso di una matrice di adiacenza è inefficiente. Tuttavia, se un grafo è denso, le costanti di proporzionalità di una matrice di adiacenza possono essere più piccole rispetto a quelle di una lista o mappa di adiacenza. Infatti, se gli archi non hanno dati ausiliari, una matrice di adiacenza booleana può utilizzare un bit per ogni slot di arco, in modo tale che $A[i, j] = \text{True}$ se e solo se l'arco associato $(u,v)$ esiste.
+
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/Graphs/adj_matrix.png}
+    \caption{(a) un grafo non orientato $G$; (b) una rappresentazione schematica della struttura di matrice di adiacenza per $G$, in cui $n$ vertici sono mappati agli indici da $0$ a $n-1$. Sebbene non sia mostrato in figura, presumiamo che esista un'istanza Edge unica per ogni arco, e che essa mantenga riferimenti ai suoi vertici estremi. Presumiamo inoltre che esista una lista secondaria di archi (non illustrata), per consentire al metodo \texttt{edges()} di funzionare in tempo $O(m)$, per un grafo con $m$ archi.}
+    \label{fig:adj_matrix}
+\end{figure}
+
+
+\clearpage
+\noindent
+Questa struttura è indicata principalmente per la gestione di \textbf{grafi densi} o di dimensioni contenute e statiche, dove il numero di archi è elevato rispetto ai vertici. Il suo vantaggio fondamentale risiede nell'accesso immediato ai dati: verificare l'esistenza di un collegamento tra due nodi specifici avviene in tempo costante $O(1)$ tramite indirizzamento diretto degli indici. Tuttavia, questa rappresentazione impone un utilizzo della memoria quadratico $O(n^2)$ indipendentemente dal numero reale di archi, comportando un significativo spreco di spazio nei casi in cui i collegamenti siano scarsi. Inoltre, le operazioni di ridimensionamento del grafo, come l'aggiunta o la rimozione di vertici, risultano computazionalmente onerose poiché richiedono la riallocazione dell'intera struttura dati.
+
+\vspace{1\baselineskip}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/Graphs/summary_adjMatrix.png}
+    \caption{Riepilogo tempi di esecuzione ADT Grafo con rappresentazione Adjacency Matrix.}
+    \label{fig:summary_adjMatrix}
+\end{figure}
 
 
