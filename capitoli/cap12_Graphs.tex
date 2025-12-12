@@ -207,6 +207,32 @@ Esistono diverse rappresentazioni possibili di un grafo. In ognuna di esse, mant
 
 
 \clearpage
+\section{Rappresentazione mediante Edge List}
+L'\emph{edge list} è la rappresentazione più semplice possibile di un grafo, anche se non la più efficiente. Tutti gli oggetti vertice sono memorizzati in una lista non ordinata $V$, e tutti gli oggetti arco sono memorizzati in una lista non ordinata $E$.
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.75\textwidth]{immagini/Graphs/edge_list.png}
+    \caption{(a) Un grafo $G$; (b) rappresentazione schematica della struttura edge list per $G$. Si noti che un oggetto arco fa riferimento ai due oggetti vertice che corrispondono ai suoi estremi, ma che i vertici non fanno riferimento agli archi incidenti per cui non mantengono questa informazione.}
+    \label{fig:edge_list}
+\end{figure}
+
+\noindent
+Per supportare i metodi dell'ADT Grafo, assumiamo le seguenti caratteristiche aggiuntive di una rappresentazione edge list. Le collezioni $V$ ed $E$ sono rappresentate come doubly linked list.
+
+\begin{itemize}[nosep]
+    \item Oggetto \textbf{Vertex}: rappresenta un vertice del grafo. Mantiene un riferimento al suo elemento (ad esempio, una stringa o un numero) e un riferimento alla sua posizione nella lista $V$ del grafo.
+    \item Oggetto \textbf{Edge}: rappresenta un arco del grafo. Mantiene un riferimento al suo elemento (ad esempio, un peso o un'etichetta) e riferimenti ai due vertici estremi dell'arco. Inoltre, mantiene un riferimento alla sua posizione nella lista $E$ del grafo.
+\end{itemize}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{immagini/Graphs/summary_edgeList.png}
+    \caption{Riepilogo tempi di esecuzione l'ADT Grafo con rappresentazione Edge List.}
+    \label{fig:summary_edgeList}
+\end{figure}
+
 
 
 
