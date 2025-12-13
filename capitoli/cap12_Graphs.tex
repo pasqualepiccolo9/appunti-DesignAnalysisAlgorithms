@@ -319,3 +319,197 @@ Questa struttura è indicata principalmente per la gestione di \textbf{grafi den
 \end{figure}
 
 
+\clearpage
+\section{Implementazione Python (Adjacency Map)}
+In questa sezione, forniamo un'implementazione dell'ADT Grafo. La nostra implementazione supporterà grafi orientati o non orientati, ma per facilità di spiegazione, la descriviamo prima nel contesto di un grafo non orientato. 
+
+Utilizziamo una variante della rappresentazione \textbf{adjacency map}. Per ogni vertice $v$, utilizziamo un dizionario Python per rappresentare la mappa di incidenza secondaria $I(v)$. Tuttavia, non manteniamo esplicitamente le liste $V$ ed $E$, come originariamente descritto nella rappresentazione edge list. La lista $V$ è sostituita da un dizionario di primo livello $D$ che mappa ogni vertice $v$ alla sua mappa di incidenza $I(v)$; si noti che possiamo iterare su tutti i vertici generando l'insieme delle chiavi per il dizionario $D$. Utilizzando tale dizionario $D$ per mappare i vertici alle mappe di incidenza secondarie, non è necessario mantenere riferimenti a tali mappe di incidenza come parte delle strutture dei vertici. Inoltre, un vertice non ha bisogno di mantenere esplicitamente un riferimento alla sua posizione in $D$, poiché può essere determinato in tempo atteso $O(1)$. Ciò semplifica notevolmente la nostra implementazione. Tuttavia, una conseguenza del nostro design è che alcuni dei limiti di tempo di esecuzione nel caso peggiore per le operazioni dell'ADT grafo, dati nella Tabella \ref{fig:adt_graph}, \textbf{diventano limiti attesi}. Piuttosto che mantenere la lista $E$, ci accontentiamo di prendere l'unione degli archi trovati nelle varie mappe di incidenza; tecnicamente, ciò richiede un tempo $O(n+m)$ anziché strettamente $O(m)$, poiché il dizionario $D$ ha $n$ chiavi, anche se alcune mappe di incidenza sono vuote. 
+
+\vspace{1\baselineskip}
+\noindent
+Da notare che abbiamo i metodi \texttt{\_\_hash\_\_} per entrambe le classi \emph{Vertex} e \emph{Edge} in modo che tali istanze possano essere utilizzate come chiavi negli insiemi e nei dizionari basati su hash di Python. I grafi sono non orientati per impostazione predefinita, ma possono essere dichiarati come orientati con un parametro opzionale al costruttore.
+
+Internamente, gestiamo il caso orientato avendo due diverse istanze di dizionario di primo livello, \texttt{\_outgoing} e \texttt{\_incoming}, in modo tale che \texttt{outgoing[v]} mappi a un altro dizionario che rappresenta $I_{out}(v)$, e \texttt{incoming[v]} mappi a una rappresentazione di $I_{in}(v)$. Per unificare il nostro trattamento dei grafi orientati e non orientati, continuiamo a utilizzare gli identificatori \texttt{\_outgoing} e \texttt{\_incoming} nel caso non orientato, ma come alias dello stesso dizionario. Per comodità, definiamo un'utilità denominata \texttt{is\_directed} per consentirci di distinguere tra i due casi. 
+
+Per i metodi \texttt{degree} e \texttt{incident\_edges}, che accettano ciascuno un parametro opzionale per differenziare tra le orientazioni in uscita e in entrata, scegliamo la mappa appropriata prima di procedere. Per il metodo \texttt{insert\_vertex}, inizializziamo sempre \texttt{outgoing[v]} a un dizionario vuoto per il nuovo vertice $v$. Nel caso orientato, inizializziamo indipendentemente anche \texttt{incoming[v]}. Per il caso non orientato, tale passaggio non è necessario poiché \texttt{\_outgoing} e \texttt{\_incoming} sono alias.
+
+
+
+
+\clearpage
+
+\begin{lstlisting}[
+    language=Python,
+    caption={Classi Vertex ed Edge (da annidare all'interno della classe Graph).},
+    captionpos=b,
+    label={lst:Vertex},
+]
+    #------------------------- nested Vertex class -------------------------
+    class Vertex:
+        """Lightweight vertex structure for a graph."""
+        __slots__ = '_element'
+
+        def __init__(self, x):
+            """Do not call constructor directly. Use Graph's insert_vertex(x)."""
+            self._element = x
+
+        def element(self):
+            """Return element associated with this vertex."""
+            return self._element
+
+        def __hash__(self):    # will allow vertex to be a map/set key
+            return hash(id(self))
+
+
+
+    #------------------------- nested Edge class -------------------------
+    class Edge:
+        """Lightweight edge structure for a graph."""
+        __slots__ = '_origin', '_destination', '_element'
+
+        def __init__(self, u, v, x):
+            """Do not call constructor directly. Use Graph's insert_edge(u,v,x)."""
+            self._origin = u
+            self._destination = v
+            self._element = x
+
+        def endpoints(self):
+            """Return (u,v) tuple for vertices u and v."""
+            return (self._origin, self._destination)
+
+        def opposite(self, v):
+            """Return the vertex that is opposite v on this edge."""
+            return self._destination if v is self._origin else self._origin
+
+        def element(self):
+            """Return element associated with this edge."""
+            return self._element
+
+        def __hash__(self):    # will allow edge to be a map/set key
+            return hash((self._origin, self._destination))
+\end{lstlisting}
+
+
+\clearpage
+\begin{lstlisting}[
+    language=Python,
+    caption={Classe Graph con rappresentazione Adjacency Map.},
+    captionpos=b,
+    label={lst:Graph},
+]
+class Graph:
+    """Representation of a simple graph using an adjacency map."""
+
+    def __init__(self, directed=False):
+        """Create an empty graph (undirected, by default).
+
+        Graph is directed if optional parameter is set to True.
+        """
+        self._outgoing = {}
+        # only create second map for directed graph; use alias for undirected
+        self._incoming = {} if directed else self._outgoing
+
+    def is_directed(self):
+        """Return True if this is a directed graph; False if undirected.
+
+        Property is based on the original declaration of the graph, not its contents.
+        """
+        return self._incoming is not self._outgoing # directed if maps are distinct
+
+    def vertex_count(self):
+        """Return the number of vertices in the graph."""
+        return len(self._outgoing)
+
+    def vertices(self):
+        """Return an iteration of all vertices of the graph."""
+        return self._outgoing.keys()
+
+    def edge_count(self):
+        """Return the number of edges in the graph."""
+        total = sum(len(self._outgoing[v]) for v in self._outgoing)
+        # for undirected graphs, make sure not to double-count edges
+        return total if self.is_directed() else total // 2
+
+    def edges(self):
+        """Return a set of all edges of the graph."""
+        result = set()       # avoid double-reporting edges of undirected graph
+        for secondary_map in self._outgoing.values():
+            result.update(secondary_map.values()) # add edges to resulting set
+        return result
+
+    def get_edge(self, u, v):
+        """Return the edge from u to v, or None if not adjacent."""
+        return self._outgoing[u].get(v) # returns None if v not adjacent
+
+
+    def degree(self, v, outgoing=True):
+        """Return number of (outgoing) edges incident to vertex v in the graph.
+
+        If graph is directed, optional parameter used to count incoming edges.
+        """
+        adj = self._outgoing if outgoing else self._incoming
+        return len(adj[v])
+
+    def incident_edges(self, v, outgoing=True):
+        """Return all (outgoing) edges incident to vertex v in the graph.
+
+        If graph is directed, optional parameter used to request incoming edges.
+        """
+        adj = self._outgoing if outgoing else self._incoming
+        for edge in adj[v].values():
+            yield edge
+
+    def insert_vertex(self, x=None):
+        """Insert and return a new Vertex with element x."""
+        v = self.Vertex(x)
+        self._outgoing[v] = {}
+        if self.is_directed():
+            self._incoming[v] = {} # need distinct map for incoming edges
+        return v
+
+    def insert_edge(self, u, v, x=None):
+        """Insert and return a new Edge from u to v with auxiliary element x."""
+        e = self.Edge(u, v, x)
+        self._outgoing[u][v] = e
+        self._incoming[v][u] = e
+\end{lstlisting}
+
+\clearpage
+\begin{lstlisting}[
+    language=Python,
+    caption={Metodi di cancellazione per la classe Graph.},
+    captionpos=b,
+    label={lst:Graph_delete},
+]
+    def remove_vertex(self, v):
+        """Remove vertex v and all its incident edges from the graph."""
+        # Phase 1: Remove references to v from the adjacency maps of its neighbors.
+        
+        # For every neighbor w connected by an outgoing edge (v -> w),
+        # remove the link back to v from w's incoming map.
+        for w in self._outgoing[v]:
+            del self._incoming[w][v]
+            
+        # If the graph is directed, we also need to handle incoming edges (u -> v).
+        # We must remove the link to v from u's outgoing map.
+        # (In an undirected graph, _incoming is _outgoing, so the loop above covered this).
+        if self.is_directed():
+            for u in self._incoming[v]:
+                del self._outgoing[u][v]
+        
+        # Phase 2: Remove v from the graph's internal dictionaries.
+        del self._outgoing[v]
+        if self.is_directed():
+            del self._incoming[v]
+
+
+    def remove_edge(self, e):
+        """Remove edge e from the graph."""
+        u, v = e.endpoints()
+        
+        # Remove the edge from u's outgoing map
+        del self._outgoing[u][v]
+        
+        # Remove the edge from v's incoming map
+        del self._incoming[v][u]
+\end{lstlisting}
