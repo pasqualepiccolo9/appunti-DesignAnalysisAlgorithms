@@ -1,0 +1,295 @@
+\section{Depth-First Search (DFS)}
+\label{sec:DFS}
+
+La \textbf{Depth-First Search} (DFS) è una tecnica generale per l'attraversamento dei grafi che esplora "in profondità": parte da un nodo radice e avanza lungo ogni ramo il più possibile prima di tornare indietro (backtracking). 
+
+L'algoritmo DFS applicato ad un grafo con $n$ vertici e $m$ archi visita tutti i vertici e archi del grafo in tempo $O(n + m)$.
+In particolare, la DFS può essere usata per verificare se $G$ è connesso, calcolare le \emph{connected components} \footnote
+{Una \textbf{connected component} (componente connessa) è un sottografo massimale di un \emph{grafo non orientato} in cui ogni coppia di vertici è collegata da almeno un cammino, e che non può essere esteso aggiungendo altri vertici del grafo mantenendo tale proprietà.} 
+di $G$ e calcolare uno \emph{spanning forest}\footnote
+{Uno \textbf{spanning tree} è un sottoinsieme di archi che connette tutti i vertici di un grafo connesso senza cicli.
+Uno \textbf{spanning forest} è un insieme di spanning tree, uno per ciascuna componente connessa di un grafo non connesso.
+L'algoritmo DFS genera uno spanning tree se il grafo è connesso; se il grafo non è connesso, eseguita su tutte le componenti, genera uno spanning forest.
+} 
+di $G$.
+
+
+\begin{itemize}
+    \item \textbf{DFS su un singolo vertice in un grafo non connesso:} visita solamente i vertici della \emph{connected component} contenente il vertice di partenza e costruisce uno \emph{spanning tree} di tale componente. Non permette di visitare tutti i vertici del grafo, né di verificare la connettività globale o calcolare tutte le connected components.
+    
+    \item \textbf{DFS su tutti i vertici non ancora visitati in un grafo non connesso:} eseguendo DFS partendo da ciascun vertice non visitato si visitano tutti i vertici del grafo. Questo procedimento permette di calcolare tutte le \emph{connected components} e di costruire uno \emph{spanning forest} del grafo. Inoltre, se una singola DFS visita tutti i vertici, il grafo è connesso.
+    
+    \item \textbf{DFS su un singolo vertice in un grafo connesso:} in questo caso l'esecuzione di DFS sul vertice di partenza visita tutti i vertici del grafo, costruendo uno \emph{spanning tree} dell'intero grafo e permettendo di verificare la connettività globale.
+\end{itemize}
+
+\vspace{1\baselineskip}
+\noindent
+L'idea di base dell'algoritmo DFS è la seguente:
+\begin{itemize}
+    \item DFS inizia da un vertice sorgente $s$ e marca $s$ come visitato.
+    \item Quando DFS arriva in un vertice $u$ non ancora visitato:
+    \begin{itemize}[nosep]
+        \item Se esiste un arco $(u, v)$ che conduce a un vertice $v$ non ancora visitato, DFS prende tale arco, marca $v$ come visitato e applica ricorsivamente lo stesso algoritmo su $v$.
+        \item Se non ci sono archi che conducono a vertici non ancora visitati, DFS torna indietro lungo il percorso fino a raggiungere un vertice che ha dei vicini non ancora visitati.
+        \end{itemize}
+    \item Quando una chiamata DFS termina:
+    \begin{itemize}[nosep]
+        \item Se ci sono vertici non ancora visitati, se ne sceglie uno e si ripete il processo. Ogni chiamata DFS completa esplora una singola \emph{connected component}.
+        \item Se tutti i vertici sono stati visitati, l'algoritmo termina.
+    \end{itemize}
+\end{itemize}
+
+
+\clearpage
+\noindent
+Per implementare DFS abbiamo bisogno di etichettare i vertici e gli archi del grafo:
+
+\begin{itemize}
+    \item Ogni vertice può essere in uno dei seguenti stati:
+    \begin{itemize}[nosep]
+        \item \textbf{Unexplored}: il vertice non è stato ancora visitato.
+        \item \textbf{Visited}: il vertice è stato già visitato.
+    \end{itemize}
+    \item Ogni arco può essere in uno dei seguenti stati:
+    \begin{itemize}[nosep]
+        \item \textbf{Unexplored}: l'arco non è stato ancora esplorato.
+        \item \textbf{Discovery}: l'arco è stato esplorato per raggiungere un vertice non ancora visitato. Questo arco fa parte dello spanning tree.
+        \item \textbf{Back edge}: l'arco è stato esplorato e conduce a un vertice già visitato. Questo arco non fa parte dello spanning tree.
+    \end{itemize}
+\end{itemize}
+
+
+
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+Input: graph G
+Output: labeling of the edges of G as discovery or back
+1.  Algorithm DFS(G):
+2.      for all u in G.vertices()
+3.          setLabel(u, UNEXPLORED)
+4.      for all e in G.edges()
+5.          setLabel(e, UNEXPLORED)
+6.      for all v in G.vertices()
+7.          if getLabel(v) = UNEXPLORED
+8.              DFS-Visit(G, v)
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
+
+
+
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+Input: graph G and a source vertex v
+Output: labels for the edges in the connected component 
+of G containing v
+1.  Algorithm DFS(G,v):
+2.    setLabel(v, VISITED)
+3.    for all e in G.incidentEdges(v)
+4.        if getLabel(e) = UNEXPLORED
+5.            w = opposite(v,e)
+6.            if getLabel(w) = UNEXPLORED
+7.                setLabel(e, DISCOVERY)
+8.                DFS(G, w)
+9.            else
+10.               setLabel(e, BACK)
+
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
+
+\clearpage
+\begin{figure}
+    \centering
+    \includegraphics[width=0.97\textwidth]{immagini/GraphsTraversal/DFS_ex.png}
+    \caption{Esempio di DFS su un grafo non orientato a partire dal vertice A. Supponiamo che le adiacenze di un vertice siano considerate in ordine alfabetico. I vertici visitati e gli archi esplorati sono evidenziati, con gli archi di scoperta (discovery) disegnati come linee solide e gli archi non appartenenti all'albero (back edges) come linee tratteggiate; i vertici e gli archi non evidenziati sono tutti unexplored: (a) grafo di input; (b) percorso degli archi dell'albero, tracciato da A fino a quando viene esaminato l'arco di back (G,C); (c) raggiungimento di F, che è un vicolo cieco; (d) dopo il backtracking a I, riprendendo con l'arco (I,M), e raggiungendo un altro vicolo cieco in O; (e) dopo il backtracking a G, continuando con l'arco (G,L), e raggiungendo un altro vicolo cieco in H; (f) risultato finale.}
+    \label{fig:DFS_ex}
+\end{figure}
+
+\clearpage
+\noindent
+Riportiamo due proprietà fondamentali dell'algoritmo DFS:
+\begin{enumerate}
+    \item Sia $G$ un \textbf{grafo non orientato} su cui è stata eseguita una DFS a partire da un vertice $s$. Allora la visita DFS copre tutti i vertici della componente connessa di $s$, e gli archi di discovery formano uno spanning tree della componente connessa di $s$.
+    \begin{itemize}
+        \item Calcolare uno spanning tree della componente connessa di $s$ vuol dire trovare un cammino da $s$ a ogni altro vertice raggiungibile da $s$.
+    \end{itemize}
+    \item Sia $G$ un \textbf{grafo orientato}. La DFS su $G$ a partire da un vertice $s$ visita tutti i vertici di $G$ raggiungibili da $s$. Inoltre, l'albero DFS contiene percorsi orientati da $s$ a ogni vertice raggiungibile da $s$.
+\end{enumerate}
+
+
+\subsection{Analisi e implementazione dell'algoritmo DFS}
+Nell'algoritmo di visita in profondità (Depth First Search, DFS) ogni vertice del grafo viene etichettato esattamente due volte: inizialmente come \emph{UNEXPLORED}, e successivamente come \emph{VISITED} nel momento in cui viene effettivamente visitato dall'algoritmo. Analogamente, ogni arco viene etichettato due volte: la prima volta come \emph{UNEXPLORED} quando viene incontrato per la prima volta, e la seconda volta come \emph{DISCOVERY} oppure \emph{BACK}, a seconda che conduca rispettivamente a un vertice non ancora visitato oppure a un vertice già visitato. Le operazioni di lettura e scrittura delle etichette associate a vertici e archi richiedono tempo costante \(O(1)\). Inoltre, il metodo \texttt{incidentEdges(v)}, che restituisce tutti gli archi incidenti a un vertice \(v\), viene invocato una sola volta per ciascun vertice del grafo. Se il grafo è rappresentato mediante \emph{Adjacency List} o \emph{Adjacency Map}, il tempo necessario per eseguire \texttt{incidentEdges(v)} è proporzionale al grado del vertice \(v\), cioè \(O(\deg(v))\). Sommando tale costo su tutti i vertici del grafo, si ottiene \(\sum_{v} \deg(v) = 2m\), dove \(m\) è il numero di archi del grafo. Ne consegue che il tempo totale impiegato dall'algoritmo DFS è \(O(n + m)\), dove \(n\) è il numero di vertici e \(m\) il numero di archi.
+
+Per completezza, se invece il grafo è rappresentato mediante una \emph{edge list}, per determinare gli archi incidenti a un vertice è necessario scandire l'intera lista degli archi, operazione che richiede tempo \(O(m)\) per ciascun vertice; poiché tale operazione viene eseguita per tutti i \(n\) vertici, il tempo totale dell'algoritmo diventa \(O(n \cdot m)\). Infine, nel caso di una rappresentazione tramite \emph{Adjacency Matrix} , il metodo \texttt{incidentEdges(v)} richiede la scansione dell'intera riga (o colonna) associata al vertice \(v\), con costo \(O(n)\); essendo tale operazione eseguita per ogni vertice, il tempo complessivo della DFS risulta \(O(n^2)\), indipendentemente dal numero di archi presenti nel grafo.
+
+\clearpage
+\begin{lstlisting}[
+    language=Python,
+    caption={Implementazione Python dell'algoritmo DFS.},
+    captionpos=b,
+    label={lst:DFS},
+]
+    def DFS_complete(g):
+        """Makes a DFS on the graph g and returns a dictionary where each vertex is mapped to the edge used to discover it (all the roots of the DFS trees are mapped to None)."""
+        forest = {}
+        for u in g.vertices():
+            if u not in forest:
+                forest[u] = None    # u is the root of the tree
+                DFS(g, u, forest)
+        return forest
+
+
+    def DFS(g, u, discovered):
+    """Makes a DFS traversal from the vertex u that has been already visited (discovered is a dictionary mapping each visited vertex with the edge used to discover it). When new vertices are discovered they are added to the dictionary."""
+    for e in g.incident_edges(u):   # for each edge outgoing from u
+        v = e.opposite(u)
+        if v not in discovered:     # if v is not visited
+            discovered[v] = e       # edge e is added to the dictionary
+            DFS(g, v, discovered)   # runs a DFS recursively from v
+\end{lstlisting}
+
+
+\subsection{DFS su grafi orientati}
+L'algoritmo di DFS può essere utilizzato anche per attraversare grafi orientati, percorrendo ogni arco solo nella sua direzione.
+\begin{itemize}
+    \item In una DFS orientata distinguiamo quattro tipi di archi:
+    \begin{itemize}[nosep]
+        \item \textbf{discovery edges} (archi di scoperta): sono gli archi $(u, v)$ che portano a un vertice $v$ non ancora visitato. Questi archi formano la foresta (o l'albero) di esplorazione DFS.
+        \item \textbf{back edges} (archi di ritorno): sono gli archi $(u, v)$ che collegano un vertice $u$ a un suo antenato\footnote{Nel contesto dell'albero di visita DFS, un vertice $v$ è definito \textbf{antenato} di $u$ se esiste un percorso composto esclusivamente da \textit{discovery edges} che collega $v$ a $u$. Viceversa, $u$ è \textbf{discendente} di $v$ se si trova nel sotto-albero radicato in $v$.} $v$ nell'albero DFS. La presenza di un arco di ritorno durante l'esecuzione della DFS indica l'esistenza di almeno un ciclo nel grafo.
+        \item \textbf{forward edges} (archi in avanti): sono gli archi $(u, v)$ che collegano un vertice $u$ a un suo discendente $v$ nell'albero DFS (che non sia però un figlio diretto, altrimenti sarebbe classificato come \textit{discovery edge}).
+        \item \textbf{cross edges} (archi trasversali): sono tutti gli altri archi. Collegano un vertice $u$ a un vertice $v$ tale che $v$ non è né antenato né discendente di $u$. Possono collegare due rami diversi dello stesso albero DFS oppure due alberi diversi all'interno della foresta DFS.
+    \end{itemize}
+\end{itemize}
+
+
+\clearpage
+\subsection{Estensioni della DFS}
+Attraverso l'utilizzo del \textit{Template Method Pattern}, è possibile specializzare l'algoritmo di DFS per risolvere una vasta gamma di problemi sui grafi mantenendo una complessità temporale efficiente di $O(n + m)$. 
+
+Il \textit{Template Method} è un pattern che definisce lo scheletro di un algoritmo in un metodo base, delegando l'implementazione di specifici passaggi (o ``ganci'', hook) alle sottoclassi. Nel contesto della DFS, questo significa che la logica di attraversamento ricorsivo rimane invariata, ma vengono esposte delle funzioni personalizzabili che vengono invocate in momenti chiave dell'esecuzione (ad esempio: quando un vertice viene visitato per la prima volta, quando si attraversa un arco, o quando si termina la visita di un vertice). Sovrascrivendo questi metodi specifici, possiamo adattare la DFS generica per ottenere le seguenti informazioni:
+
+\begin{itemize}[nosep]
+    \item Calcolo delle \textbf{componenti connesse} di un grafo;
+    \item Costruzione di una \textbf{spanning forest} del grafo;
+    \item Individuazione di un \textbf{cammino} tra due vertici (se esistente);
+    \item Rilevamento di un \textbf{ciclo} nel grafo (se esistente);
+    \item Identificazione di tutti i vertici \textbf{raggiungibili} da un dato vertice in un grafo orientato;
+    \item Calcolo delle \textbf{componenti fortemente connesse} in un grafo orientato.
+\end{itemize}
+
+\vspace{1\baselineskip}
+\subsubsection{Connectivity Test}
+Un grafo è connesso se ogni vertice è raggiungibile da tutti gli altri vertici del grafo. Possiamo quindi utilizzare DFS per verificare se $G$ è connesso:
+\begin{itemize}[nosep]
+    \item Eseguiamo una DFS a partire da un vertice arbitrario $v$;
+    \item Se la DFS visita tutti i vertici del grafo (len(discovered) == n) allora $G$ è connesso.
+\end{itemize}
+
+\subsubsection{Strong Connectivity Test}
+Possiamo utilizzare DFS per verificare se un grafo orientato è \emph{fortemente connesso}, cioè se ogni vertice è raggiungibile da tutti gli altri vertici attraverso cammini orientati.
+\begin{itemize}[nosep]
+    \item Eseguiamo una DFS a partire da un vertice arbitrario $v$;
+    \item Se la DFS non visita tutti i vertici del grafo, allora $G$ non è fortemente connesso;
+    \item Altrimenti, costruiamo il grafo trasposto $G'$ invertendo la direzione di tutti gli archi di $G$;
+    \item Eseguiamo una DFS su $G'$ a partire da $v$;
+    \item Se la DFS non visita tutti i vertici di $G'$, allora $G$ non è fortemente connesso; altrimenti, $G$ è fortemente connesso.
+\end{itemize}
+
+\noindent
+Possiamo ragionare allo stesso modo per verificare se una \emph{componente connessa} di un grafo orientato è \emph{fortemente connessa} (\textbf{Strongly Connected Components}).
+
+Una componente connessa di un grafo orientato è fortemente connessa se ogni vertice della componente è raggiungibile da tutti gli altri vertici della componente attraverso cammini orientati.
+
+
+\clearpage
+\subsubsection{Searching Paths}
+Possiamo utilizzare DFS per trovare un cammino tra due vertici $v$ e $z$:
+\begin{itemize}[nosep]
+    \item Eseguiamo una DFS a partire da $v$;
+    \item Utilizziamo uno stack $S$ per tenere traccia del cammino dal vertice di partenza $v$ al vertice corrente (e quindi degli archi di discovery attraversati);
+    \item Quando raggiungiamo $z$, restituiamo tutti i vertici nello stack.
+\end{itemize}
+
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+1.  Algorithm pathDFS(G, v, z):
+2.      setLabel(v, VISITED)    // Segna v come visitato
+3.      S.push(v)               // Aggiunge v al percorso corrente
+4.      if v = z                // Caso base: destinazione raggiunta
+5.          return S.elements() // Restituisce il percorso trovato
+6.      for all e in G.incidentEdges(v)
+7.          if getLabel(e) = UNEXPLORED
+8.              w = opposite(v,e)
+9.              if getLabel(w) = UNEXPLORED
+10.                 setLabel(e, DISCOVERY)
+11.                 S.push(e)   // Aggiunge l'arco al percorso corrente
+12.                 pathDFS(G, w, z)
+13.                 S.pop(e)    // Backtracking: strada fallimentare
+14.             else
+15.                 setLabel(e, BACK)
+16.     S.pop(v)                // Backtracking: vicolo cieco
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
+
+
+\begin{lstlisting}[
+    language=Python,
+    caption={Implementazione Python della ricerca di un path tra due vertici. Nota: discovered è il dizionario restituito dalla DFS eseguita a partire da u (e non la DFS\_complete(g)).},
+    captionpos=b,
+    label={lst:DFS_Path},
+]
+    def construct_path(u, v, discovered):
+        """Return a list of vertices forming a path from u to v (the list is empty if v is not reachable from u). Discovered is the dictionary returned by the DFS."""
+        path = []               # when we start the path is empty
+        if v in discovered:     # if v is in the connected component of u
+            # we build backward the path from v to u
+            path.append(v)
+            walk = v
+            while walk is not u:
+                e = discovered[walk]    # find the edge used to discover walk
+                parent = e.opposite(walk)
+                path.append(parent)     # add to the path the vertex opposite to walk
+                walk = parent
+            path.reverse()              # invert the path from u to v
+        return path
+\end{lstlisting}
+
+\clearpage
+\subsubsection{Searching Cycle}
+Possiamo utilizzare DFS per cercare un ciclo semplice che contenga due vertici $v$ e $z$:
+\begin{itemize}[nosep]
+    \item Eseguiamo una DFS a partire da $v$;
+    \item Utilizziamo uno stack $S$ per tenere traccia del cammino dal vertice di partenza $v$ al vertice corrente (e quindi degli archi di discovery attraversati);
+    \item Non appena troviamo un arco di \emph{back} incidente su $z$, restituiamo tutti i vertici nello stack fino al vertice $v$.
+\end{itemize}
+
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+1.  Algorithm cycleDFS(G, v, z):
+2.      setLabel(v, VISITED)    // Marca v come visitato
+3.      S.push(v)               // Aggiunge v al percorso corrente
+4.      for all e in G.incidentEdges(v)
+5.          if getLabel(e) = UNEXPLORED
+6.              w = opposite(v,e)
+7.              S.push(e)       // Aggiunge l'arco corrente allo stack
+8.              if getLabel(w) = UNEXPLORED
+9.                  setLabel(e, DISCOVERY)
+10.                 cycleDFS(G, w, z) // Chiamata ricorsiva
+11.                 S.pop(e)    // Backtracking: nessun ciclo qui
+12.             else            // w è già visitato: CICLO TROVATO
+13.                 T = new empty stack
+14.                 repeat  // Travasa lo stack per isolare il ciclo
+15.                     o = S.pop()
+16.                     T.push(o)
+17.                 until o = w 
+18.                 return T.elements() // Restituisce la sequenza
+19.     S.pop(v)        // Backtracking: rimuove v (vicolo cieco)
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
