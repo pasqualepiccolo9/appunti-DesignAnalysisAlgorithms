@@ -148,11 +148,11 @@ Siano $n$ il numero di vertici e $m$ il numero di archi di un grafo orientato (F
 \noindent
 Due vertici $u,v$ di un grafo (orientato) sono \textbf{connessi} se esiste un cammino (orientato) da $u$ a $v$. In un grafo non orientato, la \emph{connettività} è una relazione simmetrica. In un grafo orientato, invece, la connettività non è necessariamente simmetrica: potrebbe esistere un cammino da $u$ a $v$ ma non da $v$ a $u$.
 
-Un grafo si dice \textbf{connesso} se, per ogni coppia di vertici, esiste un cammino tra di essi. Un grafo orientato è \textbf{fortemente connesso} se per ogni coppia di vertici $u,v$, $u$ raggiunge $v$ e $v$ raggiunge $u$.
+Un grafo non orientato si dice \textbf{connesso} se, per ogni coppia di vertici, esiste un cammino tra di essi. Un grafo orientato è \textbf{debolmente connesso} se, ignorando l'orientamento degli archi, il grafo non orientato risultante è connesso. Un grafo orientato è \textbf{fortemente connesso} se per ogni coppia di vertici $(u,v)$, $u$ raggiunge $v$ e $v$ raggiunge $u$.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.6\textwidth]{immagini/Graphs/connectivity.png}
+    \includegraphics[width=0.55\textwidth]{immagini/Graphs/connectivity.png}
     \caption{Esempi di grafi connessi e non connessi.}
     \label{fig:connectivity}
 \end{figure}
@@ -164,7 +164,7 @@ Una \textbf{forest} è un grafo non orientato e aciclico (ovvero privo di cicli)
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.6\textwidth]{immagini/Graphs/tree_forest.png}
+    \includegraphics[width=0.55\textwidth]{immagini/Graphs/tree_forest.png}
     \caption{Esempi di tree e forest.}
     \label{fig:tree_forest}
 \end{figure}

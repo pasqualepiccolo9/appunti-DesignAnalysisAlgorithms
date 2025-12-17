@@ -69,6 +69,87 @@ L'idea di base dell'algoritmo DFS è la seguente:
 
 
 \clearpage
+\noindent
+Per implementare DFS abbiamo bisogno di etichettare i vertici e gli archi del grafo:
+
+\begin{itemize}
+    \item Ogni vertice può essere in uno dei seguenti stati:
+    \begin{itemize}[nosep]
+        \item \textbf{Unexplored}: il vertice non è stato ancora visitato.
+        \item \textbf{Visited}: il vertice è stato già visitato.
+    \end{itemize}
+    \item Ogni arco può essere in uno dei seguenti stati:
+    \begin{itemize}[nosep]
+        \item \textbf{Unexplored}: l'arco non è stato ancora esplorato.
+        \item \textbf{Discovery}: l'arco è stato esplorato per raggiungere un vertice non ancora visitato. Questo arco fa parte dello spanning tree.
+        \item \textbf{Back edge}: l'arco è stato esplorato e conduce a un vertice già visitato. Questo arco non fa parte dello spanning tree.
+    \end{itemize}
+\end{itemize}
+
+
+
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+Input: graph G
+Output: labeling of the edges of G as discovery or back
+1.  Algorithm DFS(G):
+2.      for all u in G.vertices()
+3.          setLabel(u, UNEXPLORED)
+4.      for all e in G.edges()
+5.          setLabel(e, UNEXPLORED)
+6.      for all v in G.vertices()
+7.          if getLabel(v) = UNEXPLORED
+8.              DFS-Visit(G, v)
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
+
+
+
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+Input: graph G and a source vertex v
+Output: labels for the edges in the connected component 
+of G containing v
+1.  Algorithm DFS(G,v):
+2.    setLabel(v, VISITED)
+3.    for all e in G.incidentEdges(v)
+4.        if getLabel(e) = UNEXPLORED
+5.            w = opposite(v,e)
+6.            if getLabel(w) = UNEXPLORED
+7.                setLabel(e, DISCOVERY)
+8.                DFS(G, w)
+9.            else
+10.               setLabel(e, BACK)
+
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
+
+\clearpage
+\begin{figure}
+    \centering
+    \includegraphics[width=0.97\textwidth]{immagini/GraphsTraversal/DFS_ex.png}
+    \caption{Esempio di DFS su un grafo non orientato a partire dal vertice A. Supponiamo che le adiacenze di un vertice siano considerate in ordine alfabetico. I vertici visitati e gli archi esplorati sono evidenziati, con gli archi di scoperta (discovery) disegnati come linee solide e gli archi non appartenenti all'albero (back edges) come linee tratteggiate; i vertici e gli archi non evidenziati sono tutti unexplored: (a) grafo di input; (b) percorso degli archi dell'albero, tracciato da A fino a quando viene esaminato l'arco di back (G,C); (c) raggiungimento di F, che è un vicolo cieco; (d) dopo il backtracking a I, riprendendo con l'arco (I,M), e raggiungendo un altro vicolo cieco in O; (e) dopo il backtracking a G, continuando con l'arco (G,L), e raggiungendo un altro vicolo cieco in H; (f) risultato finale.}
+    \label{fig:DFS_ex}
+\end{figure}
+
+\clearpage
+\noindent
+Riportiamo due proprietà fondamentali dell'algoritmo DFS:
+\begin{enumerate}
+    \item Sia $G$ un \textbf{grafo non orientato} su cui è stata eseguita una DFS a partire da un vertice $s$. Allora la visita DFS copre tutti i vertici della componente connessa di $s$, e gli archi di discovery formano uno spanning tree della componente connessa di $s$.
+    \begin{itemize}
+        \item Calcolare uno spanning tree della componente connessa di $s$ vuol dire trovare un cammino da $s$ a ogni altro vertice raggiungibile da $s$.
+    \end{itemize}
+    \item Sia $G$ un \textbf{grafo orientato}. La depth-first search su $G$ a partire da un vertice $s$ visita tutti i vertici di $G$ raggiungibili da $s$. Inoltre, l'albero DFS contiene percorsi orientati da $s$ a ogni vertice raggiungibile da $s$.
+\end{enumerate}
+
+
+\subsection{Analisi e implementazione dell'algoritmo DFS}
+Nell'algoritmo di visita in profondità (Depth First Search, DFS) ogni vertice del grafo viene etichettato esattamente due volte: inizialmente come \emph{UNEXPLORED}, e successivamente come \emph{VISITED} nel momento in cui viene effettivamente visitato dall'algoritmo. Analogamente, ogni arco viene etichettato due volte: la prima volta come \emph{UNEXPLORED} quando viene incontrato per la prima volta, e la seconda volta come \emph{DISCOVERY} oppure \emph{BACK}, a seconda che conduca rispettivamente a un vertice non ancora visitato oppure a un vertice già visitato. Le operazioni di lettura e scrittura delle etichette associate a vertici e archi richiedono tempo costante \(O(1)\). Inoltre, il metodo \texttt{incidentEdges(v)}, che restituisce tutti gli archi incidenti a un vertice \(v\), viene invocato una sola volta per ciascun vertice del grafo. Se il grafo è rappresentato mediante Adjacency List o Adjacency Map, il tempo necessario per eseguire \texttt{incidentEdges(v)} è proporzionale al grado del vertice \(v\), cioè \(O(\deg(v))\). Sommando tale costo su tutti i vertici del grafo, si ottiene \(\sum_{v} \deg(v) = 2m\), dove \(m\) è il numero di archi del grafo. Ne consegue che il tempo totale impiegato dall'algoritmo DFS è \(O(n + m)\), dove \(n\) è il numero di vertici e \(m\) il numero di archi.
 
 
 
