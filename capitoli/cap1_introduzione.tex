@@ -183,7 +183,6 @@ Ecco un esempio dell'implementazione come descritta nelle slide:
 \begin{lstlisting}[language=Python, caption=Classe Position (Wrapper)]
 class Position(BinaryTree.Position):
     """Classe pubblica che avvolge un nodo."""
-    
     def __init__(self, container, node):
         """Costruttore interno, non invocato dall'utente."""
         self._container = container
@@ -198,9 +197,8 @@ class Position(BinaryTree.Position):
         return type(other) is type(self) and other._node is self._node
 \end{lstlisting}
 
-\subsubsection{Meccanismo di Validazione}
-Per garantire la robustezza, l'albero implementa un metodo interno \texttt{\_validate(p)} che controlla se una data posizione è valida prima di usarla. Una posizione è considerata valida se:
-\begin{itemize}
+\paragraph{Meccanismo di Validazione:} Per garantire la robustezza, l'albero implementa un metodo interno \texttt{\_validate(p)} che controlla se una data posizione è valida prima di usarla. Una posizione è considerata valida se:
+\begin{itemize}[nosep]
     \item È un'istanza della classe corretta.
     \item Appartiene all'istanza dell'albero corrente (\texttt{p.\_container is self}).
     \item Il nodo sottostante non è stato eliminato (spesso i nodi eliminati vengono marcati facendo puntare il loro padre a se stessi).
@@ -208,14 +206,13 @@ Per garantire la robustezza, l'albero implementa un metodo interno \texttt{\_val
 
 \subsection{Visite dell'Albero (Traversals)}
 Esistono diverse strategie per visitare sistematicamente i nodi:
-\begin{enumerate}
+\begin{enumerate}[nosep]
     \item \textbf{Preorder (Anticipata):} Visita la radice, poi ricorsivamente i sottoalberi.
     \item \textbf{Postorder (Posticipata):} Visita ricorsivamente i sottoalberi, poi la radice.
     \item \textbf{Inorder (Simmetrica):} Specifica per alberi binari. Visita sottoalbero sinistro, poi radice, poi sottoalbero destro.
     \item \textbf{Breadth-First (Visita in Ampiezza):} Visita i nodi livello per livello. Richiede l'uso di una \textbf{Coda} (Queue) per memorizzare i nodi da visitare.
 \end{enumerate}
 
-\clearpage
 \begin{lstlisting}[language=Python, caption=Algoritmo Breadth-First]
 def breadthfirst(self):
     if not self.is_empty():
