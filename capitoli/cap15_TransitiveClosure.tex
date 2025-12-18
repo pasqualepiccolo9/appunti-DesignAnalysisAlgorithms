@@ -118,10 +118,9 @@ Output: The transitive closure G^* of G
 
 \clearpage
 \subsection{Analisi e implementazione dell'algoritmo}
+Dallo pseudocodice, possiamo facilmente analizzare il tempo di esecuzione dell'algoritmo di Floyd-Warshall assumendo che la struttura dati che rappresenta $G$ supporti i metodi \texttt{get\_edge} e \texttt{insert\_edge} in tempo $O(1)$ (\emph{come Adjacency Matrix}). Il ciclo principale viene eseguito $n$ volte e il ciclo interno considera ciascuna delle $O(n^2)$ coppie di vertici, eseguendo un calcolo a tempo costante per ciascuna. Dunque, il tempo totale di esecuzione dell'algoritmo di Floyd-Warshall è $O(n^3)$ (IMPORTANTE: valido date le assunzioni fatte sulla struttura dati).
 
-
-
-
+\vspace{1\baselineskip}
 \begin{lstlisting}[
     language=Python,
     caption={Implementazione Python dell'algoritmo di Floyd-Warshall.},
@@ -145,5 +144,27 @@ def floyd_warshall(g):
                             closure.insert_edge(verts[i],verts[j])
     return closure
 \end{lstlisting}
+\vspace{1\baselineskip}
+Asintoticamente, il tempo di esecuzione $O(n^3)$ dell'algoritmo di Floyd-Warshall non è migliore di quello ottenuto eseguendo ripetutamente una DFS, una volta da ciascun vertice, per calcolare la raggiungibilità (tempo $O(n(n+m))$). Tuttavia, l'algoritmo di Floyd-Warshall eguaglia i limiti asintotici della DFS ripetuta quando un grafo è denso, o quando un grafo è sparso ma rappresentato come una Adjacency Matrix.
+
+L'importanza dell'algoritmo di Floyd-Warshall risiede nel fatto che è molto più semplice da implementare rispetto alla DFS, e molto più veloce nella pratica perché ci sono relativamente poche operazioni di basso livello nascoste nella notazione asintotica. L'algoritmo è particolarmente adatto per l'uso di una Adjacency Matrix, poiché un singolo bit può essere utilizzato per designare la raggiungibilità modellata come un arco $(u,v)$ nella chiusura transitiva. 
+
+Tuttavia, si noti che chiamate ripetute a DFS portano a prestazioni asintotiche migliori quando il grafo è sparso e rappresentato utilizzando una Adjacency List o Adjacency Map. In tal caso, una singola DFS viene eseguita in tempo $O(n+m)$, e quindi la chiusura transitiva può essere calcolata in tempo $O(n^2 + nm)$, che è preferibile a $O(n^3)$.
+
+\clearpage
+INSERISCI IMMAGINE ESEMPIO QUI
+Screen già pronto
+
+caption=Sequence of directed graphs computed by the Floyd-Warshall algorithm:
+(a) initial directed graph G = G0 and numbering of the vertices; (b) directed
+graph G1; (c) G2; (d) G3; (e) G4; (f) G5. Note that G5 = G6 = G7. If directed
+graph Gk−1 has the edges (vi,vk) and (vk,vj), but not the edge (vi,vj), in the drawing
+of directed graph Gk, we show edges (vi,vk) and (vk,vj) with dashed lines, and
+edge (vi,vj) with a thick line. For example, in (b) existing edges (MIA,LAX) and
+(LAX,ORD) result in new edge (MIA,ORD).
+
+\clearpage
+\section{Directed Acyclic Graph - DAG}
+
 
 
