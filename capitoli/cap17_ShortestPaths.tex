@@ -1,2 +1,59 @@
 \chapter{Shortest Paths}
 \label{cap:ShortestPaths}
+
+Come abbiamo già visto, la ricerca in ampiezza (BFS) permette di trovare il cammino minimo in un grafo quando tutti gli archi sono considerati equivalenti. Tuttavia, in molte applicazioni reali questa condizione non è soddisfatta: per individuare il percorso più rapido tra due città o il tragitto più veloce per un pacchetto dati in rete, è necessario distinguere tra archi con caratteristiche diverse. Infatti, in questi contesti accade che alcune distanze tra le città saranno probabilmente molto più grandi di altre, e alcune connessioni in una rete di computer sono tipicamente molto più veloci di altre (ad esempio, alcune connessioni a bassa larghezza di banda contro connessioni ad alta velocità in fibra ottica). È quindi naturale considerare dei grafi pesatidove a ogni arco è associato un peso che ne rappresenta il costo o l'importanza.
+
+\section{Weighted Graphs}
+Un \textbf{weighted graph} (grafo pesato) è un grafo che ha un'etichetta numerica $w(e)$ associata a ciascun arco $e$, chiamata il peso (weight) dell'arco $e$. Per $e = (u,v)$, indichiamo il suo peso con la notazione $w(e) = w(u,v)$. 
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{immagini/ShortestPath/weighted_graph.png}
+    \caption{Esempio di grafo pesato i cui vertici rappresentano i principali aeroporti degli Stati Uniti e i cui pesi degli archi rappresentano le distanze in miglia.}
+    \label{fig:weighted_graph}
+\end{figure}
+
+
+\clearpage
+\noindent
+Sia $G$ un grafo pesato. La lunghezza (o peso) di un percorso $P$ è la somma dei pesi degli archi di $P$. Cioè, se $P = ((v_0,v_1), (v_1,v_2), \ldots , (v_{k-1},v_k))$, allora la lunghezza di $P$, indicata con $w(P)$, è definita come:
+
+$$
+w(P) = \sum_{i=1}^{k} w(v_{i-1}, v_i)
+$$
+
+\noindent
+La \textbf{distanza} da un vertice $u$ a un vertice $v$ in $G$, indicata con $d(u,v)$, è la lunghezza di un percorso di lunghezza minima (chiamato anche \textbf{shortest path}) da $u$ a $v$, se tale percorso esiste.
+Se non esiste alcun percorso da $u$ a $v$, allora utilizziamo la convenzione $d(u,v) = \infty$.
+
+\paragraph{Proprietà di uno shortest path} 
+\begin{enumerate}
+    \item Un frammento di uno shortest path è anch'esso uno shortest path. Cioè, se $P$ è uno shortest path da $u$ a $v$ e $w$ è un vertice su $P$, allora il frammento di $P$ da $u$ a $w$ è uno shortest path da $u$ a $w$, e il frammento di $P$ da $w$ a $v$ è uno shortest path da $w$ a $v$.
+    \item Gli shortest path da un vertice sorgente $s$ a tutti gli altri vertici costituiscono uno \textbf{shortest path spanning tree} (o shortest path tree) radicato in $s$.
+\end{enumerate}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{immagini/ShortestPath/shortest_path_tree.png}
+    \caption{Esempio di uno shortest path tree radicato nel vertice PVD.}
+    \label{fig:ex_shortest_path}
+\end{figure}
+
+\paragraph{Problemi legati agli shortest path} 
+\begin{itemize}
+    \item $(u, v)$-shortest path\\
+    Dati due vertici $u$ e $v$, trovare lo shortest path tra $u$ e $v$.
+    \item Single source shortest path\\
+    Dato un vertice $s$, trovare lo shortest path tree radicato in $s$ (ovvero, trova lo shortest path da $s$ a tutti gli altri vertici).
+    \item All-pairs shortest paths\\
+    Trovare gli shortest path per tutte le coppie di vertici nel grafo.
+\end{itemize}
+
+\noindent
+Si noti come dalla soluzione del problema single source shortest path sia possibile ottenere la soluzione del problema \emph{$(u, v)$-shortest path}, mentre dalla soluzione del problema \emph{all-pairs shortest paths} sia possibile ottenere la soluzione di entrambi gli altri problemi. Tuttavia, è anche possibile risolvere il problema \emph{all-pairs shortest paths} eseguendo l'algoritmo per il \emph{single source shortest path} per ogni vertice del grafo.
+
+\clearpage
+\section{Algoritmo di Dijkstra}
+
+
+
