@@ -349,5 +349,29 @@ def shortes_path_tree(g, s, d):
 \end{lstlisting}
 
 
+\clearpage
+\section{Algoritmo di Bellman-Ford}
+L'algoritmo di Dijkstra non garantisce la correttezza della soluzione in presenza di archi con peso negativo all'interno del grafo. Questa limitazione deriva dalla natura \emph{greedy} dell'algoritmo, il quale costruisce l'insieme dei cammini minimi selezionando iterativamente i vertici in ordine non decrescente di distanza.
 
+Il fondamento logico di Dijkstra risiede nell'assunzione che, estendendo un percorso, la distanza totale non possa mai diminuire. Quando un vertice $u$ viene estratto dalla coda di priorità e aggiunto all'insieme dei nodi visitati (soluzione parziale), la sua distanza $D[u]$ è considerata \textbf{definitiva}. Se tutti i pesi sono non negativi ($w \ge 0$), questa assunzione è corretta poiché qualsiasi percorso alternativo che passi per nodi non ancora visitati avrà necessariamente una lunghezza maggiore o uguale a quella attuale.
+
+Tuttavia, l'introduzione di archi con peso negativo invalida questa proprietà. Un arco negativo potrebbe rivelare un percorso "più lungo" in termini di numero di archi, ma con un costo totale inferiore, che passa attraverso nodi che l'algoritmo ha già scartato o finalizzato.
+Consideriamo il seguente scenario critico, in riferimento alla Figura \ref{fig:negative_weight}:
+\begin{itemize}
+    \item Un vertice $C$ viene inserito nella soluzione definitiva con una stima di distanza $D(C) = 5$. Per l'algoritmo, questo valore è ottimale e non verrà più modificato.
+    \item Successivamente, l'algoritmo esplora un vertice $F$ e tenta di rilassare l'arco $(F, C)$. Se questo arco ha un peso fortemente negativo, potrebbe esistere un percorso che raggiunge $C$ passando per $F$ con un costo totale inferiore a $D(C)$ precedentemente calcolato (nel nostro caso $1 < 5$).
+    \item Poiché l'algoritmo di Dijkstra non riconsidera i vertici già inseriti nell'insieme della soluzione (in quanto l'approccio greedy non consente backtracking), esso ignorerà questo aggiornamento, mantenendo erroneamente $D(C)=5$ invece del valore corretto $1$.
+\end{itemize}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.4\textwidth]{immagini/ShortestPath/negative_weight.png}
+    \caption{Esempio di grafo con arco a peso negativo che causa un errore nell'algoritmo di Dijkstra.}
+    \label{fig:negative_weight}
+\end{figure}
+
+\noindent
+Per gestire grafi con pesi negativi (purché privi di cicli negativi\footnote{
+    Un \textbf{ciclo negativo} è un ciclo (una sequenza chiusa di nodi) il cui peso totale (la somma dei pesi degli archi che lo compongono) è negativo. In presenza di cicli negativi, il concetto di shortest path diventa indefinito, poiché si potrebbe continuare a percorrere il ciclo negativo per ridurre indefinitamente la lunghezza del percorso.
+}), è necessario ricorrere ad algoritmi alternativi come \textbf{l'algoritmo di Bellman-Ford}.
 
