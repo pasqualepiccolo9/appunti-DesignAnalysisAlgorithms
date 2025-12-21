@@ -262,8 +262,91 @@ In generale, si preferisce l'implementazione basata su heap quando il grafo è s
     \label{tab:dijkstra_implementations_comparison}
 \end{table}
 
-\clearpage
 
+\clearpage
+\subsection{Implementazione Python dell'algoritmo di Dijkstra}
+\vspace{2\baselineskip}
+\begin{lstlisting}[
+    language=Python,
+    caption={Implementazione Python dell'algoritmo di Dijkstra per il calcolo delle distanze degli shortest path da una singola sorgente a tutti i vertici raggiungibili in un grafo pesato. Si assume che il metodo \texttt{e.element()} per un arco \texttt{e} rappresenti il peso di quell'arco.},
+    captionpos=b,
+    label={lst:Dijkstra},
+]
+def shortest_path_lengths(g, src):
+    """Compute shortest-path distances from src to reachable vertices of g.
+
+    Graph g can be undirected or directed, but must be weighted such that
+    e.element() returns a numeric weight for each edge e.
+
+    Return dictionary mapping each reachable vertex to its distance from src.
+    """
+    d = { }                   # d[v] is upper bound from s to v
+    cloud = { }               # map reachable v to its d[v] value
+    pq = AdaptableHeapPriorityQueue( )  # vertex v will have key d[v]
+    pqlocator = { }           # map from vertex to its pq locator
+
+    # for each vertex v of g, add an entry to the priority queue, with
+    # the source having distance 0 and all others having infinite distance
+    for v in g.vertices( ):
+        if v is src:
+            d[v] = 0
+        else:
+            d[v] = float( inf )      # syntax for positive infinity
+        pqlocator[v] = pq.add(d[v], v)  # save locator for future updates
+
+    while not pq.is_empty( ):
+        key, u = pq.remove_min()
+        cloud[u] = key              # its correct d[u] value
+        del pqlocator[u]            # u is no longer in pq
+        for e in g.incident_edges(u):   # outgoing edges (u,v)
+            v = e.opposite(u)
+            if v not in cloud:
+                # perform relaxation step on edge (u,v)
+                wgt = e.element( )
+                if d[u] + wgt < d[v]:   # better path to v?
+                    d[v] = d[u] + wgt   # update the distance
+                    pq.update(pqlocator[v], d[v], v)  # update the pq entry
+
+    return cloud                 # only includes reachable vertices
+\end{lstlisting}
+
+\clearpage
+\noindent
+Il codice visto finora per l'algoritmo di Dijkstra calcola correttamente le distanze minime da una sorgente $s$ a tutti i vertici raggiungibili in un grafo pesato. Tuttavia, in molte applicazioni pratiche, è altrettanto importante poter ricostruire i percorsi effettivi che costituiscono gli shortest path, non solo le loro lunghezze. 
+
+La collezione di tutti gli shortest path che partono dalla sorgente $s$ può essere rappresentata in modo compatto da quella che è nota come \textbf{shortest-path tree}. I percorsi formano un albero radicato perché se uno shortest path da $s$ a $v$ passa attraverso un vertice intermedio $u$, deve necessariamente iniziare con uno shortest path da $s$ a $u$.
+In questa sezione, dimostriamo che lo shortest-path tree radicato in $s$ può essere ricostruito in tempo $O(n+m)$, dato l'insieme dei valori $d[v]$ prodotti dall'algoritmo di Dijkstra utilizzando $s$ come sorgente. Come abbiamo fatto quando abbiamo rappresentato gli alberi DFS e BFS, mapperemo ogni vertice $v \neq s$ a un genitore $u$ (eventualmente può essere $u = s$), tale che $u$ è il vertice immediatamente prima di $v$ su uno shortest path da $s$ a $v$. Se $u$ è il vertice subito prima di $v$ sullo shortest path da $s$ a $v$, deve essere che:
+
+$$ d[u] + w(u,v) = d[v] $$
+
+\noindent
+Viceversa, se l'equazione sopra è soddisfatta, allora lo shortest path da $s$ a $u$, seguito dall'arco $(u,v)$ è uno shortest path per $v$.
+La nostra implementazione presentata di seguito ricostruisce l'albero basandosi su questa logica, testando tutti gli archi entranti per ogni vertice $v$, cercando un $(u,v)$ che soddisfi l'equazione chiave. Il tempo di esecuzione è $O(n+m)$, poiché consideriamo ogni vertice e tutti gli archi entranti a quei vertici.
+
+
+\vspace{2\baselineskip}
+\begin{lstlisting}[
+    language=Python,
+    caption={Funzione in Python che ricostruisce lo shortest-path tree radicato in un vertice sorgente \texttt{s}, dato il grafo \texttt{g} e la mappa delle distanze \texttt{d} calcolate dall'algoritmo di Dijkstra. La funzione restituisce un dizionario che mappa ogni vertice raggiungibile (diverso da \texttt{s}) all'arco utilizzato per raggiungerlo dal suo genitore nello shortest-path tree.},
+    captionpos=b,
+    label={lst:Dijkstra_shortest_path_tree},
+]
+def shortes_path_tree(g, s, d):
+    """Reconstruct shortest-path tree rooted at vertex s, given distance map d.
+
+    Return tree as a map from each reachable vertex v (other than s) to the
+    edge e=(u,v) that is used to reach v from its parent u in the tree.
+    """
+    tree = { }
+    for v in d:
+        if v is not s:
+            for e in g.incident_edges(v, False): # consider INCOMING edges
+                u = e.opposite(v)
+                wgt = e.element( )
+                if d[v] == d[u] + wgt:
+                    tree[v] = e # edge e is used to reach v
+    return tree
+\end{lstlisting}
 
 
 
