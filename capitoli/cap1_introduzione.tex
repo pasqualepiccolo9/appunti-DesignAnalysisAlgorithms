@@ -24,7 +24,6 @@ Un \textit{Design Pattern} è una soluzione standard a un problema tipico di pro
 Esempi di pattern includono \textit{Iterator, Adapter, Factory} (Software Engineering) e \textit{Divide-and-Conquer, Greedy} (Algorithm Design).
 
 \section{Abstract Data Types (ADT) vs Strutture Dati}
-
 È fondamentale distinguere tra il modello astratto e la sua realizzazione concreta.
 
 \begin{itemize}
@@ -32,8 +31,44 @@ Esempi di pattern includono \textit{Iterator, Adapter, Factory} (Software Engine
     \item \textbf{Struttura Dati:} È la realizzazione concreta di un ADT. Descrive la rappresentazione in memoria dei dati e l'implementazione degli algoritmi per le operazioni (punto di vista del progettista).
 \end{itemize}
 
-\section{ADT Stack (Pila)}
+In un linguaggio object-oriented, ADT e struttura dati sono realizzati tramite delle classi. Una classe definisce sia l'interfaccia pubblica (ADT) sia l'implementazione effettiva (struttura dati).
 
+\subsection{Come si crea un ADT?}
+Per progettare un ADT bisogna seguire i seguenti passi:
+\begin{enumerate}
+    \item Identificare le operazioni.
+    \begin{itemize}
+        \item Definire le operazioni che l'ADT deve offrire e quali parametri richiedono.
+        \item Descrivere il significato (semantica) di ciascuna operazione.
+    \end{itemize}
+    \item Definire la classe tramite l'interfaccia.
+    \begin{itemize}
+        \item Scrivere la classe che rappresenta l'ADT, specificando solo i metodi pubblici (l'interfaccia) necessari all'uso dell'astrazione.
+    \end{itemize}
+    \item Implementazione un testing client.
+    \begin{itemize}
+        \item Creare un programma di test che utilizzi l'ADT per verificare correttezza e efficienza delle operazioni.
+    \end{itemize}
+\end{enumerate}
+
+\noindent
+Per ogni operazione dell'ADT bisogna specificare:
+\begin{itemize}
+    \item \textbf{Precondizioni:} condizione che deve essere vera prima dell'esecuzione dell'operazione. Se non è soddisfatta, viene generato un errore e lanciata un'eccezione.
+    \item \textbf{Post-condizione:} condizione che deve essere vera dopo l'esecuzione dell'operazione, se la precondizione era validata.
+\end{itemize}
+
+\subsection{Come si utilizza un ADT?}
+Una volta progettato e implementato un ADT, il suo utilizzo avviene esclusivamente tramite la sua interfaccia pubblica, senza conoscere i dettagli interni dell'implementazione. 
+
+\begin{enumerate}
+    \item Si crea un'istanza dell'ADT, si dichiara un oggetto della classe che implementa l'ADT.
+    \item Usare le operazioni definite dall'interfaccia, chiamare i metodi pubblici per accedere o modificare i dati.
+    \item Non accedere mai ai dati interni direttamente: i campi interni sono incapsulati e protetti.
+    \item Gestire eccezioni e precondizioni: controllare che le precondizioni delle operazioni siano rispettate; se falliscono , l'ADT può lanciare un'eccezione.
+\end{enumerate}
+
+\section{ADT Stack (Pila)}
 Uno \textbf{Stack} è una collezione di oggetti inseriti e rimossi secondo il principio \textbf{LIFO} (Last-In, First-Out).
 
 \subsection{Operazioni Fondamentali}
@@ -94,6 +129,11 @@ Un albero è un modello astratto per rappresentare strutture gerarchiche non lin
     \item \textbf{Altezza (Height) dell'albero:} Massima profondità tra i nodi (o altezza della radice).
 \end{itemize}
 
+\noindent
+Un albero è ordinato se esiste un ordine lineare significativo tra i figli di ciascun nodo.
+Ogni figlio può essere identificato come primo, secondo, terzo…
+La visualizzazione tipica è quella in cui i fratelli sono allineati da sinistra a destra.
+
 \subsection{ADT Tree}
 Un albero $T$ è un insieme di nodi e un insieme di relazioni padre-figlio che soddisfano le seguenti proprietà:
 \begin{itemize}
@@ -129,7 +169,6 @@ Questi algoritmi sono spesso implementati ricorsivamente.
 \end{equation}
 
 \section{Alberi Binari (Binary Trees)}
-
 Un albero binario è un albero ordinato in cui ogni nodo ha \textbf{al massimo due figli}, distinti in \textit{figlio sinistro} e \textit{figlio destro}.
 
 \subsection{ADT BinaryTree}
@@ -154,7 +193,6 @@ Si utilizza una classe annidata \texttt{\_Node} che contiene:
 Inoltre, si utilizza il concetto di \textbf{ADT Position} per incapsulare il nodo. L'utente manipola oggetti di tipo \textit{Position}, non direttamente i nodi, proteggendo la struttura interna.
 
 \subsection{Il Pattern Position}
-
 Per implementare collezioni di elementi, come gli alberi, in modo robusto e astratto, si utilizza il pattern (o ADT) **Position**.
 
 \subsubsection{Concetto e Scopo}
