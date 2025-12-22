@@ -375,3 +375,196 @@ Per gestire grafi con pesi negativi (purché privi di cicli negativi\footnote{
     Un \textbf{ciclo negativo} è un ciclo (una sequenza chiusa di nodi) il cui peso totale (la somma dei pesi degli archi che lo compongono) è negativo. In presenza di cicli negativi, il concetto di shortest path diventa indefinito, poiché si potrebbe continuare a percorrere il ciclo negativo per ridurre indefinitamente la lunghezza del percorso.
 }), è necessario ricorrere ad algoritmi alternativi come \textbf{l'algoritmo di Bellman-Ford}.
 
+\clearpage
+\section*{Gestione degli Archi Negativi: L'approccio di Bellman-Ford}
+Per risolvere il problema dei cammini minimi in presenza di archi negativi (assumendo per semplicità un grafo orientato), è necessario abbandonare la logica \emph{greedy} di selezione dei vertici in favore di un approccio basato sul rilassamento iterativo globale. Questo metodo si fonda sulle proprietà descritte \textbf{dal Teorema di Bellman}.
+
+\subsection*{Il Teorema di Bellman}
+Il principio fondamentale afferma che per ogni arco $(u, v)$ nel grafo, la distanza calcolata verso $v$ deve soddisfare la disuguaglianza:
+\[
+d(v) \le d(u) + w(u, v) 
+\]
+Specificamente, un arco $(u, v)$ appartiene all'albero dei cammini minimi (Shortest Path Tree, $T_s$) se e solo se la condizione di uguaglianza è soddisfatta:
+\[
+d(v) = d(u) + w(u, v)
+\]
+
+\subsection*{Funzionamento dell'Algoritmo}
+A differenza di Dijkstra, non consideriamo l'ordine in cui i vertici vengono aggiunti all'albero. L'algoritmo procede invece per iterazioni fisse:
+\begin{itemize}
+    \item \textbf{Strategia Globale:} Ad ogni iterazione, l'algoritmo tenta di rilassare \textbf{tutti} gli archi presenti nel grafo, cercando sistematicamente percorsi più brevi.
+    \item \textbf{Numero di Passi:} L'algoritmo esegue esattamente $n-1$ cicli (dove $n$ è il numero dei vertici).
+    \item \textbf{Significato del passo $k$:} Alla $k$-esima iterazione, l'algoritmo garantisce di aver trovato i cammini minimi che sono costituiti da esattamente (o al più) $k$ archi.
+\end{itemize}
+
+\noindent
+Poiché un cammino semplice (cioè senza cicli) in un grafo di $n$ nodi può contenere al massimo $n-1$ archi, dopo $n-1$ iterazioni siamo certi che tutte le distanze siano state propagate correttamente attraverso la rete, anche in presenza di pesi negativi.
+
+
+\vspace{1\baselineskip}
+Questo algoritmo è particolarmente interessante in quanto è alla base dei protocolli di routing distance-vector, essenziali per instradare i dati su Internet. Sfruttando la logica di Bellman-Ford, i router non hanno bisogno di conoscere l'intera mappa della rete: scambiandosi semplicemente le stime delle distanze con i vicini e applicando iterativamente il rilassamento, riescono a calcolare il percorso ottimale verso qualsiasi destinazione in modo distribuito e dinamico.
+
+
+\clearpage
+\subsection*{Pseudocodice dell'Algoritmo}
+\hrule 
+\vspace{1\baselineskip}
+\begin{verbatim}
+1.  Algorithm BellmanFord(G, s)
+2.      for all v in G.vertices() do
+3.          if v = s then
+4.              d(v) = 0
+5.          else
+6.              d(v) = infinity
+7.      for i = 1 to n - 1 do
+8.          for each e in G.edges() do
+9.              // relax edge e
+10.             u = G.origin(e)
+11.             v = G.opposite(u, e)
+12.             r = d(u) + weight(e)
+13.             if r < d(v) then
+14.                 d(v) = r
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{immagini/ShortestPath/ex_BF1.png}
+    \label{fig:ex_BF1}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{immagini/ShortestPath/ex_BF2.png}
+    \caption{Esempio di esecuzione dell'algoritmo di Bellman-Ford. }
+    \label{fig:ex_BF2}
+\end{figure}
+
+
+\clearpage
+\subsection*{Analisi della complessità}
+L'algoritmo di Bellman-Ford ha una complessità temporale di $O(n \cdot m)$, dove $n$ è il numero di vertici e $m$ è il numero di archi nel grafo. Questo deriva dal fatto che l'algoritmo esegue $n-1$ iterazioni e in ciascuna iterazione rilassa tutti gli $m$ archi del grafo. Pertanto, il tempo totale di esecuzione è proporzionale al prodotto del numero di vertici e del numero di archi, risultando in $O(n \cdot m)$. Questo rende l'algoritmo di Bellman-Ford meno efficiente rispetto all'algoritmo di Dijkstra per grafi con pesi non negativi, che può essere eseguito in tempo $O((n + m) \log n)$ utilizzando una coda di priorità basata su heap. Tuttavia, Bellman-Ford è l'unica alternativa quando si lavora con grafi che possono contenere archi con pesi negativi, purché non vi siano cicli negativi.
+
+
+\section{Shortest Paths in un DAG}
+Dopo aver analizzato l'algoritmo di Dijkstra (ottimo per grafi con pesi non negativi) e l'algoritmo di Bellman-Ford (necessario in presenza di pesi negativi), esaminiamo ora un caso particolare ma molto frequente: il calcolo dei cammini minimi in un \textbf{DAG} (\textit{Directed Acyclic Graph}).
+
+\subsubsection{Richiamo: Cos'è un DAG}
+Come definito in precedenza, un DAG è un grafo diretto che non contiene cicli. Questo significa che partendo da un qualsiasi nodo $u$ e seguendo gli archi orientati, è impossibile ritornare su $u$. Questa proprietà di "aciclicità" è fondamentale perché implica l'esistenza di un \textbf{ordinamento topologico} (Topological Sort).
+
+\subsubsection{Perché un approccio specifico?}
+Sebbene l'algoritmo di Bellman-Ford funzioni correttamente sui DAG (poiché non avendo cicli, non possono avere cicli negativi), esso ha una complessità di $O(n \cdot m)$. L'algoritmo di Dijkstra, d'altra parte, non supporta archi con peso negativo.
+
+L'algoritmo specifico per i DAG supera entrambi i limiti sfruttando la struttura topologica del grafo:
+\begin{itemize}
+    \item \textbf{Gestisce pesi negativi:} A differenza di Dijkstra, funziona perfettamente anche se gli archi hanno peso negativo. Essendo il grafo aciclico, non esiste il rischio di "cicli negativi" che porterebbero il costo a $-\infty$.
+    \item \textbf{Efficienza superiore:} È molto più veloce di Bellman-Ford e persino di Dijkstra, poiché non richiede strutture dati ausiliarie complesse (come le code di priorità) e visita ogni arco esattamente una volta.
+\end{itemize}
+
+\clearpage
+\subsubsection{L'Algoritmo: Rilassamento in Ordine Topologico}
+L'idea chiave è la seguente: se visitiamo i nodi in ordine topologico, quando arriviamo a elaborare un nodo $u$, abbiamo la garanzia che il cammino minimo per raggiungerlo, $D(u)$, sia già stato calcolato definitivamente. Non esistono archi che tornano "indietro" da nodi successivi che potrebbero aggiornare e migliorare $D(u)$.
+
+L'algoritmo procede in due fasi:
+\begin{enumerate}
+    \item \textbf{Ordinamento Topologico:} Si ordinano linearmente i vertici del grafo in modo che per ogni arco $(u, v)$, $u$ appaia prima di $v$ nella sequenza.
+    \item \textbf{Rilassamento Lineare:} Si inizializzano le distanze (0 per la sorgente $s$, $\infty$ per gli altri). Si scorrono i nodi $u$ secondo l'ordine topologico e, per ciascuno, si rilassano tutti gli archi uscenti.
+\end{enumerate}
+
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+1.  Algorithm DagDistances(G, s)
+2.      for all v in G.vertices() do
+3.          if v = s then
+4.              d(v) = 0
+5.          else
+6.              d(v) = infinity
+7.      // build a topological sort of the vertices
+8.      for u = 1 to n - 1 do // in topological sort
+9.          for each e in G.outEdges(u) do
+10.             // relax edge e
+11.             v = G.opposite(u, e)
+12.             r = d(u) + weight(e)
+13.             if r < d(v) then
+14.                 d(v) = r            
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
+
+
+\subsubsection{Analisi della Complessità}
+La complessità dell'algoritmo è determinata da due passaggi:
+\begin{itemize}
+    \item L'ordinamento topologico può essere eseguito in tempo $O(n+m)$.
+    \item Il ciclo di rilassamento visita ogni vertice una volta e ogni arco esattamente una volta, impiegando anch'esso $O(n + m)$.
+\end{itemize}
+
+\noindent
+Pertanto, la complessità temporale totale è:
+\[ O(n + m) \]
+Questo lo rende un algoritmo a tempo lineare, la soluzione asintoticamente ottima per questo problema.
+
+
+\clearpage
+\section{All-Pairs Shortest Paths}
+Fino ad ora ci siamo concentrati sul problema \textit{Single-Source Shortest Path}, ovvero trovare i cammini minimi da una singola sorgente verso tutti gli altri nodi.
+Come abbiamo già visto, esiste una generalizzazione del problema: il calcolo dei cammini minimi \textbf{tra ogni coppia di vertici} del grafo.
+Anche in questo caso, gli archi possono avere pesi negativi, purché non esistano cicli negativi. 
+
+
+\subsubsection{Approccio Ingenuo: Iterare SSSP}
+Una prima soluzione intuitiva consiste nell'eseguire un algoritmo \textit{Single-Source} per ogni vertice del grafo, considerandolo di volta in volta come sorgente.
+
+\begin{itemize}
+    \item Se usiamo \textbf{Dijkstra}: Funziona solo se i pesi sono non negativi. La complessità sarebbe $O(n \cdot (m + n \log n))$.
+    \item Se usiamo \textbf{Bellman-Ford}: Necessario se ci sono pesi negativi. La complessità sarebbe $O(n (n \cdot m)) = O(n^2 m)$.
+\end{itemize}
+Se il grafo è denso (dove $m \approx n^2$), la complessità dell'approccio ingenuo con Bellman-Ford diventa $O(n^4)$, che è spesso inaccettabile.
+
+\subsubsection{Soluzione Efficiente: Floyd-Warshall}
+Per migliorare l'efficienza, Floyd e Warshall hanno proposto un algoritmo basato sulla \textbf{Programmazione Dinamica}. L'idea è simile a quella usata per calcolare la chiusura transitiva di un grafo.
+
+Il calcolo si basa sulla seguente ricorrenza per $SP(i, j, k)$, che rappresenta il cammino minimo da $i$ a $j$ considerando solo i primi $k$ vertici come intermedi:
+
+\begin{enumerate}
+    \item \textbf{Caso Base ($k=0$):}
+    \[
+    SP(i, j, 0) = 
+    \begin{cases} 
+    w(i, j) & \text{se } (i, j) \in E \\
+    \infty & \text{altrimenti}
+    \end{cases}
+    \]
+    
+    \item \textbf{Passo Ricorsivo:}
+    La distanza minima considerando il $k$-esimo vertice è il minimo tra non usarlo (restare al passo $k-1$) e usarlo come ponte:
+    \[
+    SP(i, j, k) = \min \{ SP(i, j, k-1), \quad SP(i, k, k-1) + SP(k, j, k-1) \}
+    \]
+\end{enumerate}
+
+\noindent
+La complessità temporale di questo algoritmo è:
+\[ O(n^3) \]
+
+\section{Riepilogo Finale: Algoritmi di Shortest Path}
+Ecco una sintesi degli algoritmi trattati in questo capitolo per scegliere quello più adatto in base al contesto:
+
+\vspace{1\baselineskip}
+\begin{table}[h!]
+    \centering
+    \caption{Confronto delle complessità degli algoritmi di Shortest Path.} 
+    \label{tab:confronto_algoritmi}
+    \vspace{0.2cm} % Un po' di spazio tra il titolo e la tabella
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Algoritmo} & \textbf{Tipo} & \textbf{Vincoli} & \textbf{Complessità} \\ \hline
+        \textbf{BFS} & SSSP & Grafo non pesato & $O(n + m)$ \\ \hline
+        \textbf{Dijkstra} & SSSP & Pesi non negativi ($w \ge 0$) & $O(m + n \log n)$ \\ \hline
+        \textbf{Bellman-Ford} & SSSP & Pesi generici (no cicli neg.) & $O(n \cdot m)$ \\ \hline
+        \textbf{DAG-SP} & SSSP & DAG, Pesi generici (no cicli neg.) & $O(n + m)$ \\ \hline
+        \textbf{Floyd-Warshall} & All-Pairs & Pesi generici (no cicli neg.) & $O(n^3)$ \\ \hline
+    \end{tabular}
+\end{table}
