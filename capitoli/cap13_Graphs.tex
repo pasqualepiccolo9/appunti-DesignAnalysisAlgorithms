@@ -45,7 +45,7 @@ Con riferimento al grafo mostrato in Figura \ref{fig:term_digraph}:
     \item \textbf{Archi entranti in un vertice}: Gli archi entranti in un vertice sono gli archi che hanno quel vertice come destinazione. $b$, $e$, $h$ sono archi entranti in $x$.
     \item \textbf{Archi uscenti da un vertice}: Gli archi uscenti da un vertice sono gli archi che hanno quel vertice come sorgente. $g$, $i$, sono archi uscenti da $x$.
     \item \textbf{In-degree}: L'in-degree di un vertice è il numero di archi entranti in esso. $x$ ha in-degree 3.
-    \item \textbf{Out-degree}: L'out-degree di un vertice è il numero di archi uscenti da esso. $vx$ ha out-degree 3.
+    \item \textbf{Out-degree}: L'out-degree di un vertice è il numero di archi uscenti da esso. $x$ ha out-degree 2.
 \end{itemize}
 
 \begin{figure}[!ht]
@@ -328,11 +328,9 @@ Utilizziamo una variante della rappresentazione \textbf{adjacency map}. Per ogni
 \noindent
 Da notare che abbiamo i metodi \texttt{\_\_hash\_\_} per entrambe le classi \emph{Vertex} e \emph{Edge} in modo che tali istanze possano essere utilizzate come chiavi negli insiemi e nei dizionari basati su hash di Python. I grafi sono non orientati per impostazione predefinita, ma possono essere dichiarati come orientati con un parametro opzionale al costruttore.
 
-Internamente, gestiamo il caso orientato avendo due diverse istanze di dizionario di primo livello, \texttt{\_outgoing} e \texttt{\_incoming}, in modo tale che \texttt{outgoing[v]} mappi a un altro dizionario che rappresenta $I_{out}(v)$, e \texttt{incoming[v]} mappi a una rappresentazione di $I_{in}(v)$. Per unificare il nostro trattamento dei grafi orientati e non orientati, continuiamo a utilizzare gli identificatori \texttt{\_outgoing} e \texttt{\_incoming} nel caso non orientato, ma come alias dello stesso dizionario. Per comodità, definiamo un'utilità denominata \texttt{is\_directed} per consentirci di distinguere tra i due casi. 
+Internamente, gestiamo il caso orientato avendo due diverse istanze di dizionario di primo livello, \texttt{\_outgoing} e \texttt{\_incoming}, in modo tale che \texttt{\_outgoing[v]} mappi a un altro dizionario che rappresenta $I_{out}(v)$, e \texttt{\_incoming[v]} mappi a una rappresentazione di $I_{in}(v)$. Per unificare il nostro trattamento dei grafi orientati e non orientati, continuiamo a utilizzare gli identificatori \texttt{\_outgoing} e \texttt{\_incoming} nel caso non orientato, ma come alias dello stesso dizionario. Per comodità, definiamo un'utilità denominata \texttt{is\_directed} per consentirci di distinguere tra i due casi. 
 
-Per i metodi \texttt{degree} e \texttt{incident\_edges}, che accettano ciascuno un parametro opzionale per differenziare tra le orientazioni in uscita e in entrata, scegliamo la mappa appropriata prima di procedere. Per il metodo \texttt{insert\_vertex}, inizializziamo sempre \texttt{outgoing[v]} a un dizionario vuoto per il nuovo vertice $v$. Nel caso orientato, inizializziamo indipendentemente anche \texttt{incoming[v]}. Per il caso non orientato, tale passaggio non è necessario poiché \texttt{\_outgoing} e \texttt{\_incoming} sono alias.
-
-
+Per i metodi \texttt{degree} e \texttt{incident\_edges}, che accettano ciascuno un parametro opzionale per differenziare tra le orientazioni in uscita e in entrata, scegliamo la mappa appropriata prima di procedere. Per il metodo \texttt{insert\_vertex}, inizializziamo sempre \texttt{\_outgoing[v]} a un dizionario vuoto per il nuovo vertice $v$. Nel caso orientato, inizializziamo indipendentemente anche \texttt{\_incoming[v]}. Per il caso non orientato, tale passaggio non è necessario poiché \texttt{\_outgoing} e \texttt{\_incoming} sono alias.
 
 
 \clearpage
@@ -347,32 +345,42 @@ Per i metodi \texttt{degree} e \texttt{incident\_edges}, che accettano ciascuno 
 class Vertex:
     """Lightweight vertex structure for a graph."""
     __slots__ = '_element'
+
     def __init__(self, x):
         """Do not call constructor directly. Use Graph's insert_vertex(x)."""
         self._element = x
+
     def element(self):
         """Return element associated with this vertex."""
         return self._element
+
     def __hash__(self):    # will allow vertex to be a map/set key
         return hash(id(self))
+
+
 #------------------------- nested Edge class -------------------------
 class Edge:
     """Lightweight edge structure for a graph."""
     __slots__ = '_origin', '_destination', '_element'
+
     def __init__(self, u, v, x):
         """Do not call constructor directly. Use Graph's insert_edge(u,v,x)."""
         self._origin = u
         self._destination = v
         self._element = x
+
     def endpoints(self):
         """Return (u,v) tuple for vertices u and v."""
         return (self._origin, self._destination)
+
     def opposite(self, v):
         """Return the vertex that is opposite v on this edge."""
         return self._destination if v is self._origin else self._origin
+
     def element(self):
         """Return element associated with this edge."""
         return self._element
+
     def __hash__(self):    # will allow edge to be a map/set key
         return hash((self._origin, self._destination))
 \end{lstlisting}
@@ -489,6 +497,7 @@ def remove_vertex(self, v):
     del self._outgoing[v]
     if self.is_directed():
         del self._incoming[v]
+        
 def remove_edge(self, e):
     """Remove edge e from the graph."""
     u, v = e.endpoints()
