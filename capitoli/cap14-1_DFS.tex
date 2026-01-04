@@ -258,18 +258,19 @@ def construct_path(u, v, discovered):
 \end{lstlisting}
 
 \clearpage
-\subsubsection{Searching Cycle}
-Possiamo utilizzare DFS per cercare un ciclo semplice che contenga due vertici $v$ e $z$:
+\subsubsection{Searching Cycles}
+Possiamo utilizzare l'algoritmo DFS per verificare l'esistenza di un ciclo semplice all'interno della componente connessa del grafo a partire da un vertice $v$:
 \begin{itemize}[nosep]
-    \item Eseguiamo una DFS a partire da $v$;
-    \item Utilizziamo uno stack $S$ per tenere traccia del cammino dal vertice di partenza $v$ al vertice corrente (e quindi degli archi di discovery attraversati);
-    \item Non appena troviamo un arco di \emph{back} incidente su $z$, restituiamo tutti i vertici nello stack fino al vertice $v$.
+    \item Eseguiamo una DFS a partire dal vertice $v$;
+    \item Utilizziamo uno stack $S$ per tenere traccia del cammino attivo dal vertice di partenza al vertice corrente;
+    \item Se durante l'esplorazione incontriamo un arco che punta a un vertice $w$ già visitato (e presente nello stack), abbiamo individuato un arco all'indietro (\emph{back edge});
+    \item Questo implica l'esistenza di un ciclo, che può essere ricostruito estraendo gli elementi dallo stack fino a ritrovare $w$.
 \end{itemize}
 
 \vspace{1\baselineskip}
 \hrule
 \begin{verbatim}
-1.  Algorithm cycleDFS(G, v, z):
+1.  Algorithm cycleDFS(G, v):
 2.      setLabel(v, VISITED)    // Marca v come visitato
 3.      S.push(v)               // Aggiunge v al percorso corrente
 4.      for all e in G.incidentEdges(v)
@@ -278,7 +279,7 @@ Possiamo utilizzare DFS per cercare un ciclo semplice che contenga due vertici $
 7.              S.push(e)       // Aggiunge l'arco corrente allo stack
 8.              if getLabel(w) = UNEXPLORED
 9.                  setLabel(e, DISCOVERY)
-10.                 cycleDFS(G, w, z) // Chiamata ricorsiva
+10.                 cycleDFS(G, w) // Chiamata ricorsiva
 11.                 S.pop(e)    // Backtracking: nessun ciclo qui
 12.             else            // w è già visitato: CICLO TROVATO
 13.                 T = new empty stack
@@ -291,3 +292,5 @@ Possiamo utilizzare DFS per cercare un ciclo semplice che contenga due vertici $
 \end{verbatim}
 \hrule 
 \vspace{1\baselineskip}
+
+
