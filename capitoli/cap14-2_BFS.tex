@@ -98,7 +98,7 @@ Riportiamo alcune proprietà fondamentali dell'algoritmo BFS. Sia $G$ un grafo (
     \item La visita BFS(G, s) visita tutti gli archi e i vertici raggiungibili da $s$, ovvero tutti gli archi e i vertici della componente connessa di $s$, $G_s$.
     \item Gli archi di discovery della visita BFS(G, s) formano uno spanning tree $T_s$ di $G_s$, chiamato \textbf{BFS tree} (albero BFS) radicato in $s$.
     \item Per ogni vertice $v$ al livello $i$, il cammino nell'albero BFS $T_s$ tra $s$ e $v$ ha $i$ archi, e ogni altro cammino in $G$ da $s$ a $v$ ha almeno $i$ archi.
-    \item Se $(u,v)$ è un arco che non appartiene all'albero BFS, allora livello del vertice $v$ può essere al massimo $1$ maggiore del livello del vertice $u$.
+    \item Se $(u,v)$ è un arco che non appartiene all'albero BFS, allora il livello del vertice $v$ può essere, al massimo, di $1$ maggiore del livello del vertice $u$.
 \end{enumerate}
 
 
