@@ -5,7 +5,7 @@ Come abbiamo visto, gli attraversamenti dei grafi possono essere utilizzati per 
 
 In alcune applicazioni, potremmo voler rispondere a molte query di raggiungibilità in modo più efficiente, e dunque potrebbe valere la pena precomputare una rappresentazione più conveniente di un grafo. Ad esempio, il primo passo per un servizio che calcola le indicazioni stradali da un'origine a una destinazione potrebbe essere quello di valutare se la destinazione è raggiungibile. Allo stesso modo, in una rete elettrica, potremmo voler essere in grado di determinare rapidamente se la corrente fluisce da un particolare vertice a un altro. Motivati da tali applicazioni, introduciamo la seguente definizione. 
 
-\paragraph{Definizione:} La \textbf{chiusura transitiva} (transitive closure) di un \emph{grafo orientato} $\vec{G}=(V,E)$ è a sua volta un \emph{grafo orientato} $\vec{G}^*=(V^*,E^*)$ tale che:
+\paragraph{Definizione:} La \textbf{chiusura transitiva} (transitive closure) di un \textbf{grafo orientato} $\vec{G}=(V,E)$ è a sua volta un \emph{grafo orientato} $\vec{G}^*=(V^*,E^*)$ tale che:
 \begin{itemize}[nosep]
     \item $V^* = V$
     \item $(u,v) \in E^{*}$ se e solo se $v$ è raggiungibile da $u$ in $\vec{G}$.
@@ -149,7 +149,7 @@ Asintoticamente, il tempo di esecuzione $O(n^3)$ dell'algoritmo di Floyd-Warshal
 
 L'importanza dell'algoritmo di Floyd-Warshall risiede nel fatto che è molto più semplice da implementare rispetto alla DFS, e molto più veloce nella pratica perché ci sono relativamente poche operazioni di basso livello nascoste nella notazione asintotica. L'algoritmo è particolarmente adatto per l'uso di una Adjacency Matrix, poiché un singolo bit può essere utilizzato per designare la raggiungibilità modellata come un arco $(u,v)$ nella chiusura transitiva. 
 
-Tuttavia, si noti che chiamate ripetute a DFS portano a prestazioni asintotiche migliori quando il grafo è sparso e rappresentato utilizzando una Adjacency List o Adjacency Map. In tal caso, una singola DFS viene eseguita in tempo $O(n+m)$, e quindi la chiusura transitiva può essere calcolata in tempo $O(n^2 + nm)$, che è preferibile a $O(n^3)$.
+Tuttavia, si noti che chiamate ripetute a DFS portano a prestazioni asintotiche migliori quando il grafo è sparso e rappresentato utilizzando una Adjacency List o Adjacency Map. In tal caso, una singola DFS viene eseguita in tempo $O(n+m)$, e quindi la chiusura transitiva può essere calcolata in tempo $O(n(n+m)) = O(n^2 + nm)$, che è preferibile a $O(n^3)$.
 
 \clearpage
 \begin{figure}[!ht]
