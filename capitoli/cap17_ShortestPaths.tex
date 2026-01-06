@@ -1,10 +1,10 @@
 \chapter{Shortest Paths}
 \label{cap:ShortestPaths}
 
-Come abbiamo già visto, la ricerca in ampiezza (BFS) permette di trovare il cammino minimo in un grafo quando tutti gli archi sono considerati equivalenti. Tuttavia, in molte applicazioni reali questa condizione non è soddisfatta: per individuare il percorso più rapido tra due città o il tragitto più veloce per un pacchetto dati in rete, è necessario distinguere tra archi con caratteristiche diverse. Infatti, in questi contesti accade che alcune distanze tra le città saranno probabilmente molto più grandi di altre, e alcune connessioni in una rete di computer sono tipicamente molto più veloci di altre (ad esempio, alcune connessioni a bassa larghezza di banda contro connessioni ad alta velocità in fibra ottica). È quindi naturale considerare dei grafi pesatidove a ogni arco è associato un peso che ne rappresenta il costo o l'importanza.
+Come abbiamo già visto, la ricerca in ampiezza (BFS) permette di trovare il cammino minimo in un grafo quando tutti gli archi sono considerati equivalenti. Tuttavia, in molte applicazioni reali questa condizione non è soddisfatta: per individuare il percorso più rapido tra due città o il tragitto più veloce per un pacchetto dati in rete, è necessario distinguere tra archi con caratteristiche diverse. Infatti, in questi contesti accade che alcune distanze tra le città saranno probabilmente molto più grandi di altre, e alcune connessioni in una rete di computer sono tipicamente molto più veloci di altre (ad esempio, alcune connessioni a bassa larghezza di banda contro connessioni ad alta velocità in fibra ottica). È quindi naturale considerare dei grafi pesati dove a ogni arco è associato un peso che ne rappresenta il costo o l'importanza.
 
 \section{Weighted Graphs}
-Un \textbf{weighted graph} (grafo pesato) è un grafo che ha un'etichetta numerica $w(e)$ associata a ciascun arco $e$, chiamata il peso (weight) dell'arco $e$. Per $e = (u,v)$, indichiamo il suo peso con la notazione $w(e) = w(u,v)$. 
+Un \textbf{weighted graph} (grafo pesato) è un grafo che ha un'etichetta numerica $w(e)$ associata a ciascun arco $e$, chiamata il peso (weight) dell'arco $e$. Per un arco $e = (u,v)$, indichiamo il suo peso con la notazione $w(e) = w(u,v)$. 
 
 \begin{figure}[!ht]
     \centering
@@ -28,7 +28,7 @@ Se non esiste alcun percorso da $u$ a $v$, allora utilizziamo la convenzione $d(
 
 \paragraph{Proprietà di uno shortest path} 
 \begin{enumerate}
-    \item Un frammento di uno shortest path è anch'esso uno shortest path. Cioè, se $P$ è uno shortest path da $u$ a $v$ e $w$ è un vertice su $P$, allora il frammento di $P$ da $u$ a $w$ è uno shortest path da $u$ a $w$, e il frammento di $P$ da $w$ a $v$ è uno shortest path da $w$ a $v$.
+    \item Un frammento di uno shortest path è anch'esso uno shortest path. Cioè, se $P$ è uno shortest path da $a$ a $c$, e $b$ è un vertice su $P$, allora il frammento di $P$ da $a$ a $b$ è uno shortest path da $a$ a $b$, e il frammento di $P$ da $b$ a $c$ è uno shortest path da $b$ a $c$.
     \item Gli shortest path da un vertice sorgente $s$ a tutti gli altri vertici costituiscono uno \textbf{shortest path spanning tree} (o shortest path tree) radicato in $s$.
 \end{enumerate}
 
@@ -41,11 +41,11 @@ Se non esiste alcun percorso da $u$ a $v$, allora utilizziamo la convenzione $d(
 
 \paragraph{Problemi legati agli shortest path} 
 \begin{itemize}
-    \item $(u, v)$-shortest path\\
+    \item \textbf{(u, v)-shortest path}\\
     Dati due vertici $u$ e $v$, trovare lo shortest path tra $u$ e $v$.
-    \item Single source shortest path\\
+    \item \textbf{Single source shortest path}\\
     Dato un vertice $s$, trovare lo shortest path tree radicato in $s$ (ovvero, trova lo shortest path da $s$ a tutti gli altri vertici).
-    \item All-pairs shortest paths\\
+    \item \textbf{All-pairs shortest paths}\\
     Trovare gli shortest path per tutte le coppie di vertici nel grafo.
 \end{itemize}
 
@@ -133,8 +133,8 @@ Esiste sicuramente un percorso minimo reale da $s$ a $z$ (altrimenti la distanza
 Consideriamo il momento esatto in cui l'algoritmo sta per inserire $z$ in $C$. Analizziamo il percorso $P$ partendo da $s$:
 \begin{itemize}
     \item Il vertice sorgente $s$ appartiene già a $C$.
-    \item Il vertice $z$ non appartiene a $C$.
-    \item Di conseguenza, percorrendo il cammino $P$ da $s$ a $z$, deve necessariamente esistere un primo arco $(x, y)$ che attraversa il confine di $C$, tale che $x \in C$ (il vertice "dentro") e $y \notin C$ (il primo vertice "fuori").
+    \item Il vertice $z$ non appartiene ancora a $C$.
+    \item Di conseguenza, percorrendo il cammino $P$ da $s$ a $z$, deve necessariamente esistere un primo arco $(x, y)$ che attraversa il confine di $C$, cioè tale che $x \in C$ (il vertice "dentro") e $y \notin C$ (il primo vertice "fuori").
 \end{itemize}
 Dunque, sia $y$ il \textbf{primo vertice} di $P$ che non appartiene a $C$, e sia $x$ il predecessore di $y$ lungo il percorso $P$. 
 \begin{itemize}
@@ -223,7 +223,7 @@ Tuttavia, per completare l'analisi dell'algoritmo, dobbiamo considerare anche l'
 \end{itemize}
 
 \noindent
-Se $Q$ è una Adaptable Priority Queue implementata come heap, allora ciascuna delle operazioni sopra descritte viene eseguita in tempo $O(\log n)$, e quindi il tempo complessivo per l'algoritmo di Dijkstra è $O((n + m) \log n)$. Si noti che se si desidera esprimere il tempo di esecuzione come funzione di $n$ soltanto, allora nel caso peggiore è $O(n^2 \log n)$.
+Se $Q$ è una Adaptable Priority Queue implementata come heap, allora ciascuna delle operazioni sopra descritte viene eseguita in tempo $O(\log n)$, e quindi il tempo complessivo per l'algoritmo di Dijkstra è $O((n + m) \log n)$ (nel caso di un grafo connesso si ha $O(m \log n)$, dal momento che $m \geq n - 1$). Si noti che se si desidera esprimere il tempo di esecuzione come funzione di $n$ soltanto, allora nel caso peggiore è $O(n^2 \log n)$.
 
 \vspace{1\baselineskip}
 \noindent
@@ -237,7 +237,7 @@ In generale, si preferisce l'implementazione basata su heap quando il grafo è s
 
 \begin{table}[h]
     \centering
-    \renewcommand{\arraystretch}{1.2} 
+    \renewcommand{\arraystretch}{1} 
     
     % Definizione colonne:
     % | l | -> Prima colonna: larghezza minima necessaria (adatta al contenuto)
@@ -315,7 +315,7 @@ def shortest_path_lengths(g, src):
 Il codice visto finora per l'algoritmo di Dijkstra calcola correttamente le distanze minime da una sorgente $s$ a tutti i vertici raggiungibili in un grafo pesato. Tuttavia, in molte applicazioni pratiche, è altrettanto importante poter ricostruire i percorsi effettivi che costituiscono gli shortest path, non solo le loro lunghezze. 
 
 La collezione di tutti gli shortest path che partono dalla sorgente $s$ può essere rappresentata in modo compatto da quella che è nota come \textbf{shortest-path tree}. I percorsi formano un albero radicato perché se uno shortest path da $s$ a $v$ passa attraverso un vertice intermedio $u$, deve necessariamente iniziare con uno shortest path da $s$ a $u$.
-In questa sezione, dimostriamo che lo shortest-path tree radicato in $s$ può essere ricostruito in tempo $O(n+m)$, dato l'insieme dei valori $d[v]$ prodotti dall'algoritmo di Dijkstra utilizzando $s$ come sorgente. Come abbiamo fatto quando abbiamo rappresentato gli alberi DFS e BFS, mapperemo ogni vertice $v \neq s$ a un genitore $u$ (eventualmente può essere $u = s$), tale che $u$ è il vertice immediatamente prima di $v$ su uno shortest path da $s$ a $v$. Se $u$ è il vertice subito prima di $v$ sullo shortest path da $s$ a $v$, deve essere che:
+In questa sezione, dimostriamo che lo shortest-path tree radicato in $s$ può essere ricostruito in tempo $O(n+m)$, dato l'insieme dei valori $d[v]$ prodotti dall'algoritmo di Dijkstra utilizzando $s$ come sorgente. Come abbiamo fatto quando abbiamo rappresentato gli alberi DFS e BFS, mapperemo ogni vertice $v \neq s$ a un genitore $u$ (eventualmente può essere $u = s$), tale che $u$ è il vertice immediatamente precedente di $v$ su uno shortest path da $s$ a $v$. Se $u$ è il vertice immediatamente precedente di $v$ sullo shortest path da $s$ a $v$, deve essere che:
 
 $$ d[u] + w(u,v) = d[v] $$
 
@@ -351,7 +351,7 @@ def shortes_path_tree(g, s, d):
 
 \clearpage
 \section{Algoritmo di Bellman-Ford}
-L'algoritmo di Dijkstra non garantisce la correttezza della soluzione in presenza di archi con peso negativo all'interno del grafo. Questa limitazione deriva dalla natura \emph{greedy} dell'algoritmo, il quale costruisce l'insieme dei cammini minimi selezionando iterativamente i vertici in ordine non decrescente di distanza.
+L'algoritmo di Dijkstra non garantisce la correttezza della soluzione in presenza di archi con peso negativo all'interno del grafo. Questa limitazione deriva dalla natura \emph{greedy} dell'algoritmo, il quale costruisce l'insieme dei cammini minimi selezionando iterativamente i vertici in ordine crescente di distanza.
 
 Il fondamento logico di Dijkstra risiede nell'assunzione che, estendendo un percorso, la distanza totale non possa mai diminuire. Quando un vertice $u$ viene estratto dalla coda di priorità e aggiunto all'insieme dei nodi visitati (soluzione parziale), la sua distanza $D[u]$ è considerata \textbf{definitiva}. Se tutti i pesi sono non negativi ($w \ge 0$), questa assunzione è corretta poiché qualsiasi percorso alternativo che passi per nodi non ancora visitati avrà necessariamente una lunghezza maggiore o uguale a quella attuale.
 
@@ -402,6 +402,7 @@ Poiché un cammino semplice (cioè senza cicli) in un grafo di $n$ nodi può con
 
 
 \vspace{1\baselineskip}
+\noindent
 Questo algoritmo è particolarmente interessante in quanto è alla base dei protocolli di routing distance-vector, essenziali per instradare i dati su Internet. Sfruttando la logica di Bellman-Ford, i router non hanno bisogno di conoscere l'intera mappa della rete: scambiandosi semplicemente le stime delle distanze con i vicini e applicando iterativamente il rilassamento, riescono a calcolare il percorso ottimale verso qualsiasi destinazione in modo distribuito e dinamico.
 
 
@@ -482,7 +483,7 @@ L'algoritmo procede in due fasi:
 5.          else
 6.              d(v) = infinity
 7.      // build a topological sort of the vertices
-8.      for u = 1 to n - 1 do // in topological sort
+8.      for u = 1 to n - 1 do // in topological order
 9.          for each e in G.outEdges(u) do
 10.             // relax edge e
 11.             v = G.opposite(u, e)
@@ -497,7 +498,7 @@ L'algoritmo procede in due fasi:
 \subsubsection{Analisi della Complessità}
 La complessità dell'algoritmo è determinata da due passaggi:
 \begin{itemize}
-    \item L'ordinamento topologico può essere eseguito in tempo $O(n+m)$.
+    \item L'ordinamento topologico può essere eseguito in tempo $O(n + m)$.
     \item Il ciclo di rilassamento visita ogni vertice una volta e ogni arco esattamente una volta, impiegando anch'esso $O(n + m)$.
 \end{itemize}
 
@@ -518,7 +519,7 @@ Anche in questo caso, gli archi possono avere pesi negativi, purché non esistan
 Una prima soluzione intuitiva consiste nell'eseguire un algoritmo \textit{Single-Source} per ogni vertice del grafo, considerandolo di volta in volta come sorgente.
 
 \begin{itemize}
-    \item Se usiamo \textbf{Dijkstra}: Funziona solo se i pesi sono non negativi. La complessità sarebbe $O(n \cdot (m + n \log n))$.
+    \item Se usiamo \textbf{Dijkstra}: Funziona solo se i pesi sono non negativi. La complessità sarebbe $O(n \cdot (m + n \log n)) = O(nm + n^2 \log n)$.
     \item Se usiamo \textbf{Bellman-Ford}: Necessario se ci sono pesi negativi. La complessità sarebbe $O(n (n \cdot m)) = O(n^2 m)$.
 \end{itemize}
 Se il grafo è denso (dove $m \approx n^2$), la complessità dell'approccio ingenuo con Bellman-Ford diventa $O(n^4)$, che è spesso inaccettabile.
