@@ -356,7 +356,43 @@ Da notare, infine, che l'algoritmo di Kruskal e l'algoritmo di Prim-Jarník, pur
 
 \clearpage
 \section{Reverse-Delete Algorithm}
+Un altro algoritmo greedy per il calcolo di un Minimum Spanning Tree è il \textbf{Reverse-Delete Algorithm}. Questo algoritmo inizia con l'intero grafo e rimuove iterativamente gli archi, partendo da quelli di peso massimo, purché la rimozione non causi la disconnessione del grafo. L'idea è che, rimuovendo gli archi più pesanti che non sono necessari per mantenere la connettività, si ottiene un Minimum Spanning Tree.
 
+Si tratta di un approccio "al contrario" rispetto agli algoritmi di Prim e Kruskal, che costruiscono il MST aggiungendo archi. Invece, il Reverse-Delete Algorithm parte da un grafo completo e rimuove archi fino a ottenere uno spanning tree. Anche in questo caso, come per l'algoritmo Prim, il grafo deve essere connesso affinché l'algoritmo funzioni correttamente.
+
+\subsection*{Pseudocodice}
+L'algoritmo Reverse-Delete è descritto nel seguente pseudocodice:
+
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+Input: A simple connected weighted graph G with n vertices and m edges
+Output: A minimum spanning tree T for G
+1.  Algorithm ReverseDelete(G):
+2.      T = set of all edges in G
+3.      Initialize a priority queue Q to contain all edges in G, using 
+            the weights as keys. {Q is a Max-Priority Queue}
+4.      while Q is not empty do
+5.          (u,v) = value returned by Q.remove_max()
+6.          Remove edge (u,v) from T
+7.          if there is no path between u and v in the graph (V, T) then
+8.              Add edge (u,v) back to T  {(u,v) is a bridge}
+9.      return tree T
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
+
+\subsection*{Analisi della complessità}
+A differenza degli algoritmi di Prim e Kruskal, l'algoritmo Reverse-Delete è generalmente meno efficiente a causa del costo elevato per la verifica della connettività.
+
+\begin{itemize}[nosep]
+    \item \textbf{Costruzione della Priority Queue:} L'inizializzazione della coda con tutti gli $m$ archi richiede tempo $O(m)$.
+    \item \textbf{Estrazione degli archi:} Il ciclo \texttt{while} itera $m$ volte. In ogni iterazione, l'operazione \texttt{remove\_max} impiega $O(\log m)$, portando il costo totale di questa fase a $O(m \log m)$.
+    \item \textbf{Verifica della connettività:} Per ogni arco estratto, la verifica dell'esistenza di un cammino tramite una visita (BFS o DFS) impiega $O(n+m)$.
+\end{itemize}
+
+\noindent
+Nonostante l'efficienza nella gestione della coda, il costo computazionale è dominato dalla verifica della connettività ripetuta per ogni arco. Pertanto, la complessità globale è $O(m \cdot (n+m))$, ovvero $O(m^2)$ nel caso di grafi densi.
 
 
 
