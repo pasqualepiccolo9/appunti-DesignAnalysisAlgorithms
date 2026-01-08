@@ -33,7 +33,7 @@ Supponiamo, ad esempio, di dover connettere tutti i computer di un nuovo edifici
 
 \paragraph{MST vs Shortest Paths:} è importante non confondere il problema del Minimum Spanning Tree con il problema degli Shortest Paths. Gli spanning tree calcolati dagli algoritmi di Shortest Paths (come Dijkstra o Bellman-Ford) dipendono dal vertice sorgente scelto, mentre il Minimum Spanning Tree è unico (a meno di casi particolari di pesi uguali) e non dipende da alcun vertice sorgente. Inoltre, gli Shortest Paths mirano a minimizzare la distanza da un singolo vertice sorgente a tutti gli altri vertici, mentre il Minimum Spanning Tree mira a minimizzare la somma totale dei pesi degli archi che connettono tutti i vertici del grafo.
 
-\section{Proprietà di un MST - Cycle Property}
+\section*{Proprietà di un MST - Cycle Property}
 Sia $T$ un Minimum Spanning Tree di un grafo non orientato e pesato $G$, e sia $e$ un arco di $G$ non appartenente a $T$. Chiamiamo $C$ il ciclo ottenuto aggiungendo l'arco $e$ a $T$. Allora, l'arco $e$ è il più pesante tra tutti gli archi del ciclo $C$, ovvero $w(f) \leq w(e)$ per ogni arco $f \in C$.
 
 \paragraph{Dimostrazione:} 
@@ -48,8 +48,8 @@ Supponiamo, per assurdo, che esista un arco $f \in C$ tale che $w(f) > w(e)$. Ri
 
 
 \clearpage
-\section{Proprietà di un MST - Partitioning Property}
-Sia $G$ un grafo non orientato, pesato e connesso. Sia $V_1$ e $V_2$ una partizione dei vertici di $G$ in due insiemi disgiunti e non vuoti. Inoltre, sia $e$ un arco in $G$ con peso minimo tra quelli che hanno un estremo in $V_1$ e l'altro in $V_2$ (cioè tra quelli che fanno da "ponte" tra le due partizioni). Allora, esiste un\footnote
+\section*{Proprietà di un MST - Partitioning Property}
+Sia $G$ un grafo connesso, non orientato e pesato. Sia $V_1$ e $V_2$ una partizione dei vertici di $G$ in due insiemi disgiunti e non vuoti. Inoltre, sia $e$ un arco in $G$ con peso minimo tra quelli che hanno un estremo in $V_1$ e l'altro in $V_2$ (cioè tra quelli che fanno da "ponte" tra le due partizioni). Allora, esiste un\footnote
 {
     Si dice \emph{un} Minimum Spanning Tree poiché, in presenza di archi con lo stesso peso, il MST non è necessariamente unico: l'arco $e$ di peso minimo che attraversa la partizione appartiene ad almeno un MST, ma non è detto che appartenga a tutti. Se tutti gli archi hanno pesi distinti, allora il MST è unico e l'arco $e$ appartiene necessariamente a questo unico MST.
 }
@@ -91,24 +91,122 @@ Pertanto, esiste un Minimum Spanning Tree di $G$ che contiene l'arco $e$.
 
 
 \clearpage
+\section*{L'approccio greedy per il calcolo di un MST}
+L'idea più immediata per calcolare un Minimum Spanning Tree sarebbe quella di calcolare tutti i possibili spanning tree di un grafo e scegliere quello con peso minimo. Tuttavia, questo approccio è computazionalmente inefficiente, poiché il numero di spanning tree cresce esponenzialmente con il numero di vertici del grafo, per cui per un grafo con $n$ vertici il numero di spanning tree possibili è dell'ordine di $O(n^{n-2})$.
+
+Ricordando che uno spanning tree con $n$ vertici contiene esattamente $n-1$ archi, possiamo considerare un approccio più efficiente basato sulla selezione iterativa degli archi da includere nello spanning tree. In particolare, possiamo adottare un approccio greedy, che consiste nel costruire la soluzione passo dopo passo, a partire dalla soluzione vuota, selezionando ad ogni passo l'arco (o il vertice) da aggiungere alla soluzione in base a una scelta che minimizza una certa funzione di costo. 
+
+L'idea generale è quella di scegliere, ad ogni step, l'arco di peso minimo che preservi la proprietà di \textbf{aciclicità}.
+
+\vspace{1\baselineskip}
+\noindent
+Di seguito presentiamo tre possibili algoritmi greedy per il calcolo di un Minimum Spanning Tree: l'algoritmo di \textbf{Prim-Jarník}, l'algoritmo di \textbf{Kruskal} e il \textbf{Reverse-Delete Algorithm}.
 
 
+\section{L'algoritmo di Prim-Jarník}
+L'algoritmo di Prim-Jarník (spesso abbreviato in Prim) è un algoritmo greedy per il calcolo di un Minimum Spanning Tree di un grafo connesso, non orientato e pesato.
 
+L'algoritmo consiste nel costruire un minimum spanning tree partendo da un singolo cluster partendo da un vertice "radice" $s$. L'idea principale è simile a quella dell'algoritmo di Dijkstra. Iniziamo con un vertice $s$ che definisce la "nuvola" (simile a Dijkstra) iniziale di vertici $C$. Poi, ad ogni iterazione, scegliamo un arco di peso minimo $e = (u,v)$ che collega un vertice $u$ nella nuvola $C$ a un vertice $v$ al di fuori di $C$. Il vertice $v$ viene quindi aggiunto alla nuvola $C$ e il processo viene ripetuto fino a formare uno spanning tree. Ancora una volta, entra in gioco il fatto cruciale riguardante i minimum spanning tree: scegliendo sempre l'arco di peso minimo che collega un vertice all'interno di $C$ a uno all'esterno di $C$, siamo sicuri di aggiungere sempre un arco valido al MST.
 
+Per implementare in modo efficiente questo approccio, possiamo prendere ancora una volta spunto dall'algoritmo di Dijkstra. Manteniamo un'etichetta $D[v]$ per ogni vertice $v$ al di fuori della nuvola $C$, in modo che $D[v]$ memorizzi il peso dell'arco minimo osservato per collegare $v$ alla nuvola $C$. (Nell'algoritmo di Dijkstra, questa etichetta misurava la lunghezza totale del percorso dal vertice di partenza $s$ a $v$, incluso un arco $(u,v)$.) Queste etichette servono come chiavi in una coda di priorità utilizzata per decidere quale vertice è il prossimo ad unirsi alla nuvola.
 
+\clearpage
+\subsection*{Pseudocodice}
+L'algoritmo Prim è descritto nel seguente pseudocodice:
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+Input: An undirected, weighted, connected graph G with n vertices 
+        and m edges
+Output: A minimum spanning tree T for G
+1.  Algorithm PrimJarnik(G):
+2.      Pick any vertex s of G
+3.      D[s] = 0
+4.      for each vertex v != s do
+5.          D[v] = +infinity
+6.      Initialize T = empty set
+7.      Initialize a priority queue Q with an entry (D[v], (v,None))  
+            for each vertex v, where D[v] is the key in the priority  
+            queue, and (v,None) is the associated value.
+8.      while Q is not empty do
+9.          (u,e) = value returned by Q.remove min()
+10.         Connect vertex u to T using edge e.
+11.         for each edge e' = (u,v) such that v is in Q do
+12.             # check if edge (u,v) better connects v to T
+13.             if w(u,v) < D[v] then
+14.                 D[v] = w(u,v)
+15.                 Change the key of vertex v in Q to D[v].
+16.                 Change the value of vertex v in Q to (v,e').
+17.     return the tree T     
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
 
-
-
-
-
-
-
-
+\subsection*{Analisi della complessità}
+I tempi di esecuzione dell'implementazione dell'algoritmo Prim sono gli stessi di quelli dell'algoritmo di Dijkstra, poichè entrambi dipendono dalle operazioni eseguite su una Adaptable Priority Queue $Q$. Inizialmente vengono eseguiti $n$ inserimenti in $Q$, e successivamente vengono eseguite $n$ operazioni di \texttt{remove\_min()}, e possono essere aggiornate un totale di $m$ priorità come parte dell'algoritmo. Questi passaggi sono i principali contributi al tempo di esecuzione complessivo. Con una coda di priorità basata su heap, ogni operazione viene eseguita in tempo $O(\log n)$, e il tempo complessivo per l'algoritmo è $O((n+m) \log n)$, che è $O(m \log n)$ per un grafo connesso. In alternativa, possiamo ottenere un tempo di esecuzione di $O(n^2)$ utilizzando una lista non ordinata (unsorted list) come coda di priorità.
 
 
 \clearpage
+\subsection*{Implementazione Python}
+\vspace{2\baselineskip}
+\begin{lstlisting}[
+    language=Python,
+    caption={Implementazione Python dell'algoritmo Prim. L'MST viene restituito come una lista non ordinata di archi.},
+    captionpos=b,
+    label={lst:Prim},
+]
+def MST_PrimJarnik(g):
+    """Compute a minimum spanning tree of weighted graph g.
+
+    Return a list of edges that comprise the MST (in arbitrary order).
+    """
+    d = { }                  # d[v] is bound on distance to tree
+    tree = [ ]               # list of edges in spanning tree
+    pq = AdaptableHeapPriorityQueue( )  # d[v] maps to value (v, e=(u,v))
+    pqlocator = { }          # map from vertex to its pq locator
+
+    # for each vertex v, add an entry to the priority queue, with
+    # the source having distance 0 and all others having infinite distance
+    for v in g.vertices( ):
+        if len(d) == 0:      # this is the first node
+            d[v] = 0         # make it the root
+        else:
+            d[v] = float('inf')  # positive infinity
+        pqlocator[v] = pq.add(d[v], (v,None))
+
+    while not pq.is_empty( ):
+        key,value = pq.remove_min()
+        u,edge = value         # unpack tuple from pq
+        del pqlocator[u]       # u is no longer in pq
+        if edge is not None:
+            tree.append(edge)  # add edge to tree
+        for link in g.incident_edges(u):
+            v = link.opposite(u)
+            if v in pqlocator:  # thus v not yet in tree
+                # see if edge (u,v) better connects v to the growing tree
+                wgt = link.element( )
+                if wgt < d[v]:   # better edge to v?
+                    d[v] = wgt   # update the distance
+                    pq.update(pqlocator[v], d[v], (v, link))  # update the pq entry
+    return tree
+\end{lstlisting}
 
 
-% parallelismo tra cliente e azienda: il cliente vuole che il prodotto arrivi nel minor tempo possibile (shortest path), l'azienda vuole minimizzare i costi di produzione e distribuzione (minimum spanning tree).
+\clearpage
+\subsection*{Esempio di esecuzione}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/MST/prim1.png}
+\end{figure}
 
-% Prim: simile a dijkstra, cambia il modo in cui eseguiamo il rilassamento degli archi.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/MST/prim2.png}
+    \caption{Esempio di esecuzione dell'algoritmo Prim su un grafo connesso, non orientato e pesato.}
+    \label{fig:prim_ex}
+\end{figure}
+
+
+
+
+
