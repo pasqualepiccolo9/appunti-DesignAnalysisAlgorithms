@@ -191,7 +191,6 @@ def MST_PrimJarnik(g):
     return tree
 \end{lstlisting}
 
-
 \clearpage
 \subsection*{Esempio di esecuzione}
 \begin{figure}[!ht]
@@ -205,6 +204,158 @@ def MST_PrimJarnik(g):
     \caption{Esempio di esecuzione dell'algoritmo Prim su un grafo connesso, non orientato e pesato.}
     \label{fig:prim_ex}
 \end{figure}
+
+
+\clearpage
+\section{L'algoritmo di Kruskal}
+L'algoritmo di Kruskal è un altro algoritmo greedy per la risoluzione del problema del Minimum Spanning Tree. A differenza dell'algoritmo di Prim-Jarník, che costruisce l'albero facendo crescere un unico cluster (o "nuvola") di vertici connessi, l'algoritmo di Kruskal mantiene una \textbf{foresta di alberi disgiunti} (cluster) che vengono progressivamente fusi insieme.
+
+Inizialmente, ogni vertice del grafo è considerato un albero separato (un cluster elementare). L'algoritmo esamina gli archi del grafo in ordine crescente di peso. Per ogni arco considerato, se questo connette due vertici che appartengono a cluster diversi, l'arco viene aggiunto alla soluzione e i due cluster vengono fusi in un unico insieme. Se invece l'arco connette due vertici che appartengono già allo stesso cluster, l'arco viene scartato, poiché la sua aggiunta creerebbe un ciclo (violando la proprietà fondamentale di aciclicità degli alberi).
+
+L'algoritmo termina quando tutti i vertici appartengono allo stesso cluster (ovvero quando la foresta si riduce a un singolo albero che copre tutti i nodi) o quando non ci sono più archi da esaminare (se il grafo iniziale è non connesso, il risultato sarà una foresta di alberi minimi, ovvero un Minimum Spanning Forest, MSF).
+
+\paragraph{Strutture Dati:}
+Per implementare efficientemente questo approccio, sono necessarie due strutture dati principali:
+\begin{enumerate}[nosep]
+    \item Una \textbf{Priority Queue} per gestire gli archi ed estrarli in ordine di peso minimo.
+    \item Una struttura dati per la gestione di \textbf{insiemi disgiunti} (Disjoint Sets), spesso chiamata \textbf{ADT Partition}.
+\end{enumerate}
+
+\noindent
+L'ADT Partition deve supportare le seguenti operazioni:
+\begin{itemize}[nosep]
+    \item \texttt{makeSet(u)}: crea un nuovo insieme contenente solo il vertice $u$.
+    \item \texttt{find(u)}: restituisce l'identificativo dell'insieme a cui appartiene $u$.
+    \item \texttt{union(A, B)}: unisce i due insiemi $A$ e $B$ in un unico insieme, aggiornando i riferimenti.
+\end{itemize}
+
+\noindent
+Una implementazione efficiente dell'ADT Partition (basata su liste con puntatori al set di appartenenza e euristica "weighted union" che sposta sempre l'insieme più piccolo in quello più grande) permette di eseguire le operazioni di unione in modo molto rapido.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.93\textwidth]{immagini/MST/partition.png}
+    \caption{L'ADT Partition può essere rappresentato con un insieme di liste; ogni insieme è rappresentato da una lista distinta e ogni elemento nella lista ha un riferimento all'insieme a cui appartiene.}    
+    \label{fig:partition}
+\end{figure}
+
+
+\clearpage
+\subsection*{Pseudocodice}
+L'algoritmo Kruskal è descritto nel seguente pseudocodice:
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+Input: A simple connected weighted graph G with n vertices and m edges
+Output: A minimum spanning tree T for G
+1.  Algorithm Kruskal(G):
+2.      for each vertex v in G do
+3.          Define an elementary cluster C(v) = {v}.
+4.      Initialize a priority queue Q to contain all edges in G, using 
+            the weights as keys.
+5.      T = empty set  {T will ultimately contain the edges of the MST}
+6.      while T has fewer than n - 1 edges do
+7.          (u,v) = value returned by Q.remove_min()
+8.          Let C(u) be the cluster containing u
+9.          Let C(v) be the cluster containing v
+10.         if C(u) != C(v) then
+11.             Add edge (u,v) to T.
+12.             Merge C(u) and C(v) into one cluster.
+13.     return tree T
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
+
+\subsection*{Analisi della complessità}
+La complessità temporale dell'algoritmo di Kruskal dipende dall'implementazione della coda di priorità e della struttura Partition.
+\begin{itemize}
+    \item \textbf{Operazioni sulla Priority Queue:} La costruzione della coda richiede $O(m)$. L'estrazione degli archi richiede $O(\log m) = O(\log n)$ per operazione. Nel caso peggiore, estraiamo tutti gli archi, portando il costo globale delle operazioni sulla coda a $O(m \log m)$ o equivalentemente $O(m \log n)$.
+    \item \textbf{Operazioni sui Cluster (Partition):} Vengono eseguite $2m$ operazioni di \texttt{find} che impiegano $O(m)$ e $n-1$ operazioni di \texttt{union} che impiegano $O(n \log n)$. Utilizzando un'implementazione efficiente basata su liste in cui si unisce sempre l'insieme più piccolo a quello più grande, il costo ammortizzato totale è $O(m + n \log n)$.
+    \begin{itemize}
+        \item La complessità temporale dell'algoritmo di Kruskal è quindi $O((n + m) \log n)$ se il grafo è rappresentato tramite liste di adiacenza/mappe, oppure $O(m \log n)$ se il grafo è connesso.
+    \end{itemize}
+\end{itemize}
+
+\noindent
+Complessivamente, il tempo di esecuzione è dominato dall'ordinamento degli archi (gestione della Priority Queue), risultando in una complessità di $O(m \log n)$ per un grafo connesso (dove $m \geq n-1$).
+
+\clearpage
+\subsection*{Implementazione Python}
+Di seguito viene mostrata un'implementazione in Python che utilizza una classe \texttt{Partition} (non mostrata nel dettaglio, ma conforme all'ADT descritto) e una \texttt{HeapPriorityQueue}.
+
+\vspace{2\baselineskip}
+\begin{lstlisting}[
+    language=Python,
+    caption={Implementazione Python dell'algoritmo di Kruskal.},
+    captionpos=b,
+    label={lst:Kruskal},
+]
+def MST_Kruskal(g):
+    """Compute a minimum spanning tree of a graph using Kruskal s algorithm.
+
+    Return a list of edges that comprise the MST.
+    
+    The elements of the graph s edges are assumed to be weights.
+    """
+    
+    tree = []                   # list of the edges in the MST
+    pq = HeapPriorityQueue()    # keys are weights, elements are edges
+    forest = Partition()        # forest of MST
+    position = {}               # associates each vertex to its entry
+
+    # Initialize partition: each vertex is a separate group
+    for v in g.vertices():
+        position[v] = forest.make_group(v)
+
+    # Insert all edges in pq
+    for e in g.edges():
+        pq.add(e.element(), e)
+
+    size = g.vertex_count()
+    # Loop until tree has n-1 edges or pq is empty
+    while len(tree) != size - 1 and not pq.is_empty():
+        weight, edge = pq.remove_min()  # extract edge with min weight
+        u, v = edge.endpoints()
+        
+        # find the sets that u and v belong to
+        a = forest.find(position[u])
+        b = forest.find(position[v])
+        
+        if a != b:                      # if the two sets are different
+            tree.append(edge)           # add edge in tree
+            forest.union(a, b)          # merge the two sets
+
+    return tree
+\end{lstlisting}
+
+
+\clearpage
+\subsection*{Esempio di esecuzione}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.77\textwidth]{immagini/MST/kruskal1.png}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.77\textwidth]{immagini/MST/kruskal2.png}
+    \caption{Esempio di esecuzione dell'algoritmo di Kruskal. Gli archi solidi rossi rappresentano la soluzione parziale (foresta), i verdi rappresentano gli archi che si stanno considerando in quel momento, gli archi tratteggiati sono quelli esaminati ma scartati.}
+    \label{fig:kruskal_ex}
+\end{figure}
+
+
+\noindent
+Da notare, infine, che l'algoritmo di Kruskal e l'algoritmo di Prim-Jarník, pur risolvendo lo stesso problema, presentano alcune differenze chiave:
+\begin{itemize}[nosep]
+    \item \textbf{Approccio:} Prim costruisce un singolo albero espandendo un cluster di vertici connessi, mentre Kruskal costruisce una foresta di alberi disgiunti che vengono fusi insieme.
+    \item \textbf{Strutture Dati:} Prim utilizza una coda di priorità per gestire i vertici, mentre Kruskal utilizza una coda di priorità per gli archi e una struttura per insiemi disgiunti (Partition) per gestire i cluster.
+    \item \textbf{Applicabilità:} Prim richiede che il grafo sia connesso, mentre Kruskal può essere applicato anche a grafi non connessi, restituendo un Minimum Spanning Forest. D'altra parte , Prim è più semplice da implementare e occupa meno spazio in memoria.
+\end{itemize}
+
+
+\clearpage
+\section{Reverse-Delete Algorithm}
 
 
 
