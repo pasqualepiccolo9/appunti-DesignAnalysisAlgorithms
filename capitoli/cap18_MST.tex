@@ -1,3 +1,114 @@
-\chapter{Minimum Spanning Trees}
+\chapter{Minimum Spanning Trees (MST)}
 \label{cap:MST}
 
+È utile cominciare richiamando alcune definizioni già viste nel capitolo sui grafi (capitolo \ref{cap:Graphs}).
+\begin{itemize}[nosep]
+    \item Una \textbf{forest} è un grafo non orientato e aciclico (ovvero privo di cicli). 
+    \item Un \textbf{tree} è una forest connessa. In altre parole, un tree è un grafo non orientato, aciclico e connesso.
+    \item Un \textbf{sottografo} $H$ di un grafo $G = (V,E)$ è un grafo $H = (V', E')$ tale che $V' \subseteq V$ e $E' \subseteq E$. In altre parole, un sottografo è ottenuto rimuovendo vertici e/o archi da $G$. Uno \textbf{spanning subgraph} (la traduzione corretta è "sottografo ricoprente") di un grafo $G = (V,E)$ è un sottografo $H = (V', E')$ tale che $V' = V$. In altre parole, uno spanning subgraph contiene tutti i vertici di $G$, ma potrebbe non contenere tutti gli archi di $G$. 
+    \item Uno \textbf{spanning tree} di un grafo è uno spanning subgraph che è anche un tree (tree = grafo non orientato, aciclico e connesso). Si noti come uno spanning tree di un grafo con $n$ vertici \textbf{contenga esattamente} $n-1$ archi.
+\end{itemize}
+
+\vspace{1\baselineskip}
+\noindent
+Dato un grafo non orientato e pesato $G$, siamo interessati a trovare un tree $T$ che contenga tutti i vertici di $G$ e minimizzi la somma dei pesi degli archi in $T$. 
+
+$$ w(T) = \sum_{(u,v) \in T} w(u,v) $$
+
+\noindent
+Un tale tree $T$ è chiamato \textbf{minimum spanning tree} (MST) di $G$.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{immagini/MST/mst_ex.png}
+    \caption{Esempio di grafo non orientato e pesato (a sinistra) e del suo Minimum Spanning Tree (a destra).}
+    \label{fig:mst_ex}
+\end{figure}
+
+\clearpage
+\noindent
+Si tratta di un problema di ottimizzazione combinatoria molto importante, con numerose applicazioni pratiche, ad esempio nella progettazione di reti (telefoniche, elettriche, idriche, ecc.). 
+
+Supponiamo, ad esempio, di dover connettere tutti i computer di un nuovo edificio per uffici utilizzando la minor quantità di cavo possibile. Possiamo modellare questo problema utilizzando un grafo non orientato e pesato $G$ i cui vertici rappresentano i computer, e i cui archi rappresentano tutte le possibili coppie $(u,v)$ di computer, dove il peso $w(u,v)$ dell'arco $(u,v)$ è pari alla quantità di cavo necessaria per connettere il computer $u$ al computer $v$. Piuttosto che calcolare un albero dei cammini minimi a partire da un particolare vertice $v$, siamo invece interessati a trovare un albero $T$ che contenga tutti i vertici di $G$ e che abbia il peso totale minimo tra tutti gli alberi di questo tipo. 
+
+\paragraph{MST vs Shortest Paths:} è importante non confondere il problema del Minimum Spanning Tree con il problema degli Shortest Paths. Gli spanning tree calcolati dagli algoritmi di Shortest Paths (come Dijkstra o Bellman-Ford) dipendono dal vertice sorgente scelto, mentre il Minimum Spanning Tree è unico (a meno di casi particolari di pesi uguali) e non dipende da alcun vertice sorgente. Inoltre, gli Shortest Paths mirano a minimizzare la distanza da un singolo vertice sorgente a tutti gli altri vertici, mentre il Minimum Spanning Tree mira a minimizzare la somma totale dei pesi degli archi che connettono tutti i vertici del grafo.
+
+\section{Proprietà di un MST - Cycle Property}
+Sia $T$ un Minimum Spanning Tree di un grafo non orientato e pesato $G$, e sia $e$ un arco di $G$ non appartenente a $T$. Chiamiamo $C$ il ciclo ottenuto aggiungendo l'arco $e$ a $T$. Allora, l'arco $e$ è il più pesante tra tutti gli archi del ciclo $C$, ovvero $w(f) \leq w(e)$ per ogni arco $f \in C$.
+
+\paragraph{Dimostrazione:} 
+Supponiamo, per assurdo, che esista un arco $f \in C$ tale che $w(f) > w(e)$. Rimuovendo l'arco $f$ da $T$ e aggiungendo l'arco $e$, otteniamo un nuovo albero $T' = T - \{f\} + \{e\}$. Poiché $w(e) < w(f)$, il peso totale di $T'$ è minore di quello di $T$, ovvero $w(T') < w(T)$. Questo contraddice l'ipotesi che $T$ sia un Minimum Spanning Tree. Pertanto, l'arco $e$ deve essere il più pesante tra tutti gli archi del ciclo $C$.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/MST/cycle_property.png}
+    \caption{Dimostrazione della Cycle Property.}
+    \label{fig:cycle_property}
+\end{figure}
+
+
+\clearpage
+\section{Proprietà di un MST - Partitioning Property}
+Sia $G$ un grafo non orientato, pesato e connesso. Sia $V_1$ e $V_2$ una partizione dei vertici di $G$ in due insiemi disgiunti e non vuoti. Inoltre, sia $e$ un arco in $G$ con peso minimo tra quelli che hanno un estremo in $V_1$ e l'altro in $V_2$ (cioè tra quelli che fanno da "ponte" tra le due partizioni). Allora, esiste un\footnote
+{
+    Si dice \emph{un} Minimum Spanning Tree poiché, in presenza di archi con lo stesso peso, il MST non è necessariamente unico: l'arco $e$ di peso minimo che attraversa la partizione appartiene ad almeno un MST, ma non è detto che appartenga a tutti. Se tutti gli archi hanno pesi distinti, allora il MST è unico e l'arco $e$ appartiene necessariamente a questo unico MST.
+}
+Minimum Spanning Tree $T$ che ha $e$ come uno dei suoi archi.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/MST/partitioning_property.png}
+    \caption{Dimostrazione della Partitioning Property.}
+    \label{fig:partitioning_property}
+\end{figure}
+
+\paragraph{Dimostrazione:}
+Sia $T$ un Minimum Spanning Tree di $G$. Se $e \in T$, la tesi è verificata.
+Supponiamo quindi che $e \notin T$. Poiché $T$ è uno spanning tree, esiste un unico cammino in $T$ che collega gli estremi dell'arco $e$. L'aggiunta di $e$ a $T$ genera dunque un ciclo $C$.
+
+Poiché l'arco $e$ ha un estremo in $V_1$ e l'altro in $V_2$, nel ciclo $C$ deve esistere almeno un arco $f \neq e$ appartenente a $T$ che ha un estremo in $V_1$ e l'altro in $V_2$. Per la definizione di $e$, si ha
+\[
+w(e) \leq w(f).
+\]
+
+\noindent
+Consideriamo ora il grafo $T'$ ottenuto rimpiazzando l'arco $f$ con l'arco $e$ in $T$:
+\[
+T' = (T \cup \{e\}) - \{f\}.
+\]
+
+\noindent
+Il grafo $T'$ è connesso, aciclico e copre tutti i vertici di $G$, quindi è uno spanning tree. 
+Inoltre:
+\[
+w(T') = w(T) + w(e) - w(f) \leq w(T).
+\]
+
+\noindent
+Poiché $T$ è un Minimum Spanning Tree, segue che $w(T') = w(T)$ e quindi anche $T'$ è un Minimum Spanning Tree. Per costruzione, $T'$ contiene l'arco $e$.
+
+Pertanto, esiste un Minimum Spanning Tree di $G$ che contiene l'arco $e$.
+
+
+\clearpage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+
+
+% parallelismo tra cliente e azienda: il cliente vuole che il prodotto arrivi nel minor tempo possibile (shortest path), l'azienda vuole minimizzare i costi di produzione e distribuzione (minimum spanning tree).
+
+% Prim: simile a dijkstra, cambia il modo in cui eseguiamo il rilassamento degli archi.
