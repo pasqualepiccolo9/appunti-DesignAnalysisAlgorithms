@@ -5,7 +5,8 @@
 \begin{itemize}[nosep]
     \item Una \textbf{forest} è un grafo non orientato e aciclico (ovvero privo di cicli). 
     \item Un \textbf{tree} è una forest connessa. In altre parole, un tree è un grafo non orientato, aciclico e connesso.
-    \item Un \textbf{sottografo} $H$ di un grafo $G = (V,E)$ è un grafo $H = (V', E')$ tale che $V' \subseteq V$ e $E' \subseteq E$. In altre parole, un sottografo è ottenuto rimuovendo vertici e/o archi da $G$. Uno \textbf{spanning subgraph} (la traduzione corretta è "sottografo ricoprente") di un grafo $G = (V,E)$ è un sottografo $H = (V', E')$ tale che $V' = V$. In altre parole, uno spanning subgraph contiene tutti i vertici di $G$, ma potrebbe non contenere tutti gli archi di $G$. 
+    \item Un \textbf{sottografo} $H$ di un grafo $G = (V,E)$ è un grafo $H = (V', E')$ tale che $V' \subseteq V$ e $E' \subseteq E$. In altre parole, un sottografo è ottenuto rimuovendo vertici e/o archi da $G$. 
+    \item Uno \textbf{spanning subgraph} (la traduzione corretta è "sottografo ricoprente") di un grafo $G = (V,E)$ è un sottografo $H = (V', E')$ tale che $V' = V$. In altre parole, uno spanning subgraph contiene tutti i vertici di $G$, ma potrebbe non contenere tutti gli archi di $G$. 
     \item Uno \textbf{spanning tree} di un grafo è uno spanning subgraph che è anche un tree (tree = grafo non orientato, aciclico e connesso). Si noti come uno spanning tree di un grafo con $n$ vertici \textbf{contenga esattamente} $n-1$ archi.
 \end{itemize}
 
@@ -55,13 +56,6 @@ Sia $G$ un grafo connesso, non orientato e pesato. Sia $V_1$ e $V_2$ una partizi
 }
 Minimum Spanning Tree $T$ che ha $e$ come uno dei suoi archi.
 
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=1\textwidth]{immagini/MST/partitioning_property.png}
-    \caption{Dimostrazione della Partitioning Property.}
-    \label{fig:partitioning_property}
-\end{figure}
-
 \paragraph{Dimostrazione:}
 Sia $T$ un Minimum Spanning Tree di $G$. Se $e \in T$, la tesi è verificata.
 Supponiamo quindi che $e \notin T$. Poiché $T$ è uno spanning tree, esiste un unico cammino in $T$ che collega gli estremi dell'arco $e$. L'aggiunta di $e$ a $T$ genera dunque un ciclo $C$.
@@ -89,6 +83,12 @@ Poiché $T$ è un Minimum Spanning Tree, segue che $w(T') = w(T)$ e quindi anche
 
 Pertanto, esiste un Minimum Spanning Tree di $G$ che contiene l'arco $e$.
 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/MST/partitioning_property.png}
+    \caption{Dimostrazione della Partitioning Property.}
+    \label{fig:partitioning_property}
+\end{figure}
 
 \clearpage
 \section*{L'approccio greedy per il calcolo di un MST}
@@ -106,7 +106,7 @@ Di seguito presentiamo tre possibili algoritmi greedy per il calcolo di un Minim
 \section{L'algoritmo di Prim-Jarník}
 L'algoritmo di Prim-Jarník (spesso abbreviato in Prim) è un algoritmo greedy per il calcolo di un Minimum Spanning Tree di un grafo connesso, non orientato e pesato.
 
-L'algoritmo consiste nel costruire un minimum spanning tree partendo da un singolo cluster partendo da un vertice "radice" $s$. L'idea principale è simile a quella dell'algoritmo di Dijkstra. Iniziamo con un vertice $s$ che definisce la "nuvola" (simile a Dijkstra) iniziale di vertici $C$. Poi, ad ogni iterazione, scegliamo un arco di peso minimo $e = (u,v)$ che collega un vertice $u$ nella nuvola $C$ a un vertice $v$ al di fuori di $C$. Il vertice $v$ viene quindi aggiunto alla nuvola $C$ e il processo viene ripetuto fino a formare uno spanning tree. Ancora una volta, entra in gioco il fatto cruciale riguardante i minimum spanning tree: scegliendo sempre l'arco di peso minimo che collega un vertice all'interno di $C$ a uno all'esterno di $C$, siamo sicuri di aggiungere sempre un arco valido al MST.
+L'algoritmo costruisce un minimum spanning tree operando su un singolo cluster che ha origine in un vertice 'radice' (qualsiasi) $s$. L'idea principale è simile a quella dell'algoritmo di Dijkstra. Iniziamo con un vertice $s$ che definisce la "nuvola" (simile a Dijkstra) iniziale di vertici $C$. Poi, ad ogni iterazione, scegliamo un arco di peso minimo $e = (u,v)$ che collega un vertice $u$ nella nuvola $C$ a un vertice $v$ al di fuori di $C$. Il vertice $v$ viene quindi aggiunto alla nuvola $C$ e il processo viene ripetuto fino a formare uno spanning tree. Ancora una volta, entra in gioco il fatto cruciale riguardante i minimum spanning tree: scegliendo sempre l'arco di peso minimo che collega un vertice all'interno di $C$ a uno all'esterno di $C$, siamo sicuri di aggiungere sempre un arco valido al MST.
 
 Per implementare in modo efficiente questo approccio, possiamo prendere ancora una volta spunto dall'algoritmo di Dijkstra. Manteniamo un'etichetta $D[v]$ per ogni vertice $v$ al di fuori della nuvola $C$, in modo che $D[v]$ memorizzi il peso dell'arco minimo osservato per collegare $v$ alla nuvola $C$. (Nell'algoritmo di Dijkstra, questa etichetta misurava la lunghezza totale del percorso dal vertice di partenza $s$ a $v$, incluso un arco $(u,v)$.) Queste etichette servono come chiavi in una coda di priorità utilizzata per decidere quale vertice è il prossimo ad unirsi alla nuvola.
 
