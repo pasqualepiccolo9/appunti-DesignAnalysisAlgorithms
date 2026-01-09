@@ -178,7 +178,7 @@ def MST_PrimJarnik(g):
         key,value = pq.remove_min()
         u,edge = value         # unpack tuple from pq
         del pqlocator[u]       # u is no longer in pq
-        if edge is not None:
+        if edge is not None:   # if it's not the first node
             tree.append(edge)  # add edge to tree
         for link in g.incident_edges(u):
             v = link.opposite(u)
@@ -215,7 +215,7 @@ Inizialmente, ogni vertice del grafo è considerato un albero separato (un clust
 L'algoritmo termina quando tutti i vertici appartengono allo stesso cluster (ovvero quando la foresta si riduce a un singolo albero che copre tutti i nodi) o quando non ci sono più archi da esaminare (se il grafo iniziale è non connesso, il risultato sarà una foresta di alberi minimi, ovvero un Minimum Spanning Forest, MSF).
 
 \paragraph{Strutture Dati:}
-Per implementare efficientemente questo approccio, sono necessarie due strutture dati principali:
+Per implementare efficientemente questo approccio, sono necessarie:
 \begin{enumerate}[nosep]
     \item Una \textbf{Priority Queue} per gestire gli archi ed estrarli in ordine di peso minimo.
     \item Una struttura dati per la gestione di \textbf{insiemi disgiunti} (Disjoint Sets), spesso chiamata \textbf{ADT Partition}.
@@ -224,9 +224,9 @@ Per implementare efficientemente questo approccio, sono necessarie due strutture
 \noindent
 L'ADT Partition deve supportare le seguenti operazioni:
 \begin{itemize}[nosep]
-    \item \texttt{makeSet(u)}: crea un nuovo insieme contenente solo il vertice $u$.
-    \item \texttt{find(u)}: restituisce l'identificativo dell'insieme a cui appartiene $u$.
-    \item \texttt{union(A, B)}: unisce i due insiemi $A$ e $B$ in un unico insieme, aggiornando i riferimenti.
+    \item \texttt{makeSet(u)}: crea un nuovo insieme contenente solo il vertice $u$. $(O(1))$
+    \item \texttt{find(u)}: restituisce l'identificativo dell'insieme a cui appartiene $u$. $(O(1))$
+    \item \texttt{union(A, B)}: unisce i due insiemi $A$ e $B$ in un unico insieme, aggiornando i riferimenti. \\ $O(min (|A|, |B|))$
 \end{itemize}
 
 \noindent
@@ -286,7 +286,7 @@ Di seguito viene mostrata un'implementazione in Python che utilizza una classe \
 \vspace{2\baselineskip}
 \begin{lstlisting}[
     language=Python,
-    caption={Implementazione Python dell'algoritmo di Kruskal.},
+    caption={Implementazione Python dell'algoritmo di Kruskal. Da notare che questa implementazione restituisce la variabile tree la quale conterrà esattamente $V - k$ archi, dove $V$ è il numero di vertici e $k$ è il numero di componenti connesse. Nel caso di un grafo connesso, $k=1$ e quindi la lista conterrà $V-1$ archi, come previsto per un MST.},
     captionpos=b,
     label={lst:Kruskal},
 ]
@@ -349,8 +349,8 @@ def MST_Kruskal(g):
 Da notare, infine, che l'algoritmo di Kruskal e l'algoritmo di Prim-Jarník, pur risolvendo lo stesso problema, presentano alcune differenze chiave:
 \begin{itemize}[nosep]
     \item \textbf{Approccio:} Prim costruisce un singolo albero espandendo un cluster di vertici connessi, mentre Kruskal costruisce una foresta di alberi disgiunti che vengono fusi insieme.
-    \item \textbf{Strutture Dati:} Prim utilizza una coda di priorità per gestire i vertici, mentre Kruskal utilizza una coda di priorità per gli archi e una struttura per insiemi disgiunti (Partition) per gestire i cluster.
-    \item \textbf{Applicabilità:} Prim richiede che il grafo sia connesso, mentre Kruskal può essere applicato anche a grafi non connessi, restituendo un Minimum Spanning Forest. D'altra parte , Prim è più semplice da implementare e occupa meno spazio in memoria.
+    \item \textbf{Strutture Dati:} Prim utilizza una coda di priorità per gestire i vertici, mentre Kruskal utilizza una coda di priorità per gli archi e una struttura per insiemi disgiunti (Partition) per gestire i cluster di vertici.
+    \item \textbf{Applicabilità:} Prim richiede che il grafo sia connesso, mentre Kruskal può essere applicato anche a grafi non connessi, restituendo un Minimum Spanning Forest. D'altra parte, Prim è più semplice da implementare e occupa meno spazio in memoria.
 \end{itemize}
 
 
