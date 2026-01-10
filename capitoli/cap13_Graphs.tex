@@ -478,37 +478,39 @@ class Graph:
 \begin{lstlisting}[
     language=Python,
     caption={Metodi di cancellazione per la classe Graph.},
-    captionpos=b,
+    captionpos=t,
     label={lst:Graph_delete},
+    firstnumber=76
 ]
-def remove_vertex(self, v):
-    """Remove vertex v and all its incident edges from the graph."""
-    # Phase 1: Remove references to v from the adjacency maps of its neighbors.
-    
-    # For every neighbor w connected by an outgoing edge (v -> w),
-    # remove the link back to v from w's incoming map.
-    for w in list(self._outgoing[v]):
-        del self._incoming[w][v]
-        
-    # If the graph is directed, we also need to handle incoming edges (u -> v).
-    # We must remove the link to v from u's outgoing map.
-    # (In an undirected graph, _incoming is _outgoing, so the loop above covered this).
-    if self.is_directed():
-        for u in list(self._incoming[v]):
-            del self._outgoing[u][v]
-    
-    # Phase 2: Remove v from the graph's internal dictionaries.
-    del self._outgoing[v]
-    if self.is_directed():
-        del self._incoming[v]
-        
-def remove_edge(self, e):
-    """Remove edge e from the graph."""
-    u, v = e.endpoints()
-    
-    # Remove the edge from u's outgoing map
-    del self._outgoing[u][v]
-    
-    # Remove the edge from v's incoming map
-    del self._incoming[v][u]
+
+    def remove_vertex(self, v):
+        """Remove vertex v and all its incident edges from the graph."""
+        # Phase 1: Remove references to v from the adjacency maps of its neighbors.
+
+        # For every neighbor w connected by an outgoing edge (v -> w),
+        # remove the link back to v from w's incoming map.
+        for w in list(self._outgoing[v]):
+            del self._incoming[w][v]
+
+        # If the graph is directed, we also need to handle incoming edges (u -> v).
+        # We must remove the link to v from u's outgoing map.
+        # (In an undirected graph, _incoming is _outgoing, so the loop above covered this).
+        if self.is_directed():
+            for u in list(self._incoming[v]):
+                del self._outgoing[u][v]
+
+        # Phase 2: Remove v from the graph's internal dictionaries.
+        del self._outgoing[v]
+        if self.is_directed():
+            del self._incoming[v]
+
+    def remove_edge(self, e):
+        """Remove edge e from the graph."""
+        u, v = e.endpoints()
+
+        # Remove the edge from u's outgoing map
+        del self._outgoing[u][v]
+
+        # Remove the edge from v's incoming map
+        del self._incoming[v][u]
 \end{lstlisting}
