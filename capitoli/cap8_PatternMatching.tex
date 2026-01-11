@@ -9,20 +9,33 @@ Introduciamo di seguito la terminologia di base:
     \item \(|\Sigma|\) : la dimensione dell'alfabeto.
     \item Stringa \( S \) : una sequenza finita di caratteri appartenenti all'alfabeto \(\Sigma\), di lunghezza \( m \).
     \item \(S[i]\) : il carattere alla posizione \( i \) della stringa \( S \).
+        \begin{itemize}[nosep]
+            \item In Python: $S$[i] 
+        \end{itemize}
     \item \(S[i..j]\) : la sottostringa di \( S \) che va dall'indice \( i \) all'indice \( j \).
-        \begin{itemize}
+        \begin{itemize}[nosep]
             \item In Python: $S$[i:j+1] 
         \end{itemize}
     \item \(S[0..k]\) : prefisso di lunghezza \( k+1 \) della stringa \( S \).
-        \begin{itemize}
+        \begin{itemize}[nosep]
             \item In Python: $S$[:k+1]
         \end{itemize}
     \item \(S[j..m-1]\) : suffisso di lunghezza \( m-j \) della stringa \( S \). 
-        \begin{itemize}
+        \begin{itemize}[nosep]
             \item In Python: $S$[j:]
         \end{itemize}
 \end{itemize}
 
+\noindent
+Convenzioni Python: 
+\begin{itemize}[nosep]
+    \item La sottostringa $S$[j:j+m] ha lunghezza $m$.
+    \item La sottostringa $S$[j:j] è la stringa nulla, di lunghezza 0.
+    \item La sottostringa $S$[j:k] è la stringa nulla quando $k < j$.
+\end{itemize}
+
+
+\vspace{1\baselineskip}
 \noindent
 Nel classico problema di pattern matching, ci viene data una stringa di testo $T$ di lunghezza $n$ e una stringa di pattern $P$ di lunghezza $m$, e vogliamo scoprire se $P$ è una sottostringa di $T$. In tal caso, potremmo voler trovare l'indice più basso $j$ all'interno di $T$ in cui inizia $P$, in modo che $T[j..j+m-1]$ sia uguale a $P$, o forse trovare tutti gli indici di $T$ in cui inizia il pattern $P$.
 
@@ -77,7 +90,7 @@ L'idea principale dell'algoritmo di \emph{Boyer-Moore} è di migliorare l'effici
     
     Supponiamo che $T[i] \neq P[k]$ e $T[i] = c$.
         \begin{itemize}
-            \item Se $c$ non appare in $p$, $p$ può essere "spostato" completamente oltre $T[i]$ ($P[0]$ viene allineato con $T[i+1]$).
+            \item Se $c$ non appare in $P$, $P$ può essere "spostato" completamente oltre $T[i]$ ($P[0]$ viene allineato con $T[i+1]$).
             \item Altrimenti, $T[i]$ viene allineato con l'ultima occorrenza di $c$ in $P$.
         \end{itemize}
 \end{itemize}
@@ -102,7 +115,7 @@ Per formalizzare l'algoritmo di \emph{Boyer-Moore} possiamo generalizzare il fun
 
 \begin{itemize}
     \item Quando viene trovata una corrispondenza (a partire dall'ultimo carattere del pattern), l'algoritmo continua cercando di estendere la corrispondenza con il penultimo carattere del pattern nel suo allineamento corrente. Questo processo continua fino a quando tutti i caratteri del pattern sono stati confrontati con esito positivo o fino a quando si verifica un mismatch.
-    \item Quando si verifica un mismsatch, e il carattere del testo che ha causato il mismatch non è presente nel pattern, il pattern viene spostato completamente oltre quel carattere del testo. Se il carattere del testo è presente da qualche altra parte nel pattern, dobbiamo considerare due diversi casi a seconda che la sua ultima occorrenza sia $(a)$ precedente o $(b)$ successiva al carattere del pattern che era allineato con il carattere del testo che ha causato il mismatch.
+    \item Quando si verifica un mismsatch, e il carattere del testo che ha causato il mismatch non è presente nel pattern, il pattern viene spostato completamente oltre quel carattere del testo. Se il carattere del testo è presente da qualche altra parte nel pattern, dobbiamo considerare due diversi casi a seconda che la sua ultima occorrenza (nel pattern) sia $(a)$ precedente o $(b)$ successiva al carattere del pattern che era allineato con il carattere del testo che ha causato il mismatch.
 \end{itemize}
 
 Questi due casi sono rappresentati in figura \ref{fig:BM_mismatch_cases} e approfonfiti di seguito:
@@ -166,34 +179,45 @@ def last_occurrence(p, sigma):
 \clearpage
 \begin{lstlisting}
 def find_boyer_moore(T, P):
-    """Return the lowest index of T at which substring P begins (or else -1)."""
-    n, m = len(T), len(P)   # introduce convenient notations
+    """Restituisce l'indice più basso in T dove inizia P (altrimenti -1)."""
+    n, m = len(T), len(P)   # Notazioni comode per le lunghezze
     if m == 0:
-        return 0            # trivial search of empty pattern
+        return 0            # Ricerca banale per pattern vuoto
     
     # last occurrence function
-    last = {}               # build the last-occurrence map
+    last = {}               # Costruisce la mappa delle ultime occorrenze
     for k in range(m):
-        last[P[k]] = k      # later occurrence overwrites
+        last[P[k]] = k      # Le occorrenze successive sovrascrivono le precedenti
 
-    # align end of pattern at index m-1 of text
-    i = m-1               #an index into T
-    k = m-1                 #an index into P
+    # Allinea la fine del pattern all'indice m-1 del testo
+    i = m-1                 # Indice corrente nel Testo (T)
+    k = m-1                 # Indice corrente nel Pattern (P)
+    
     while i < n:
-        if T[i] == P[k]:    # a matching character
+        if T[i] == P[k]:    # Carattere corrispondente trovato
             if k == 0:      
-                return i    # pattern begins at index i of text
+                return i    # Trovato! Il pattern inizia all'indice i del testo
             else:
-                i -= 1      # examine previous character
-                k -= 1      # of both T and P
+                i -= 1      # Estendi la corrispondenza a sinistra
+                k -= 1      # Sposta entrambi gli indici
         else:
-            j = last.get(T[i], -1)  # last(T[i]) is -1 if not found
-            i += m-min(k, j+1)      # case analysis for jump step
-            k = m-1                 # restart at end of pattern
-    return -1   
+            # Mismatch: gestione del salto
+            j = last.get(T[i], -1)  # Indice dell'ultima occorrenza di T[i] nel pattern
+            
+            # Calcolo del salto (shift) combinando i casi:
+            # min(k, j+1) gestisce la logica dei Casi A e B:
+            # - Se j < k (Caso A): allinea l'occorrenza j con il testo.
+            # - Se j > k (Caso B): evita shift negativo, sposta il pattern di 1 posizione.
+            i += m - min(k, j+1)    
+            
+            k = m-1         # Riavvia il confronto dalla fine del pattern
+            
+    return -1    
 \end{lstlisting}
 \vspace{1\baselineskip}
 
+
+\clearpage
 \subsection*{Performance}
 La versione semplificata dell'algoritmo di Boyer-Moore presentata qui ha un tempo di esecuzione di $O(n \cdot m + |\Sigma|)$, in quanto la last-occurrence function richiede $O(m + |\Sigma|)$ tempo per essere costruita e la ricerca del pattern richiede $O(n \cdot m)$. 
 
@@ -203,7 +227,7 @@ In questo caso, l'algoritmo di Boyer-Moore si comporta come l'algoritmo Brute Fo
 
 Tuttavia, l'algoritmo originale di Boyer-Moore utilizza euristiche più avanzate ed efficienti che consentono di ottenere un tempo di esecuzione medio di $O(n + m + |\Sigma|)$.
 
-\clearpage
+
 \subsection*{Esempio}
 Supponiamo di avere un testo 
 $$ T = \text{"abacaabadcabacabaabb"} $$
@@ -218,11 +242,13 @@ $$ P = \text{"abacab"} $$
 \end{figure}
 
 
-\clearpage
+
+
+
 \section{L'algoritmo di Knuth-Morris-Pratt}
 Analizzando le prestazioni nel caso peggiore degli algoritmi di pattern-matching \emph{brute-force} e \emph{Boyer-Moore} su istanze specifiche del problema possiamo notare una notevole inefficienza. Per un certo allineamento del pattern, se troviamo diversi caratteri corrispondenti ma poi rileviamo un mismatch, ignoriamo tutte le informazioni ottenute dai confronti andati a buon fine.
 
-L'algoritmo di \emph{Knuth-Morris-Pratt} (o “KMP”) evita questo spreco di informazioni e, facendo così, raggiunge un tempo di esecuzione di $O(n+m)$, $O(m)$ per il pre-processing del pattern, e $O(n)$ per i confronti tra testo e pattern. Nel caso peggiore qualsiasi algoritmo di pattern-matching dovrà esaminare tutti i caratteri del testo e tutti i caratteri del pattern almeno una volta. L'idea principale dell'algoritmo KMP è quella di pre-calcolare le sovrapposizioni del pattern su se stesso. In questo modo, quando si verifica un mismatch in una certa posizione, sappiamo immediatamente qual è lo spostamento massimo che possiamo applicare al pattern prima di continuare la ricerca.
+L'algoritmo di \emph{Knuth-Morris-Pratt} (o “KMP”) evita questo spreco di informazioni e, facendo così, raggiunge un tempo di esecuzione di $O(n+m)$: $O(m)$ per il pre-processing del pattern, e $O(n)$ per i confronti tra testo e pattern. Nel caso peggiore qualsiasi algoritmo di pattern-matching dovrà esaminare tutti i caratteri del testo e tutti i caratteri del pattern almeno una volta. L'idea principale dell'algoritmo KMP è quella di pre-calcolare le sovrapposizioni del pattern su se stesso. In questo modo, quando si verifica un mismatch in una certa posizione, sappiamo immediatamente qual è lo spostamento massimo che possiamo applicare al pattern prima di continuare la ricerca.
 
 \begin{figure}[!ht]
     \centering
