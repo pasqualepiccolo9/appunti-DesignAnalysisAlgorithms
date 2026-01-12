@@ -1,0 +1,110 @@
+\chapter{Network Flow}
+\label{cap:NetworkFlow}
+
+I problemi di \textbf{Network Flow} sono una classe fondamentale di problemi che si presentano
+nell'ambito del traffico in movimento in una una rete di trasporto.
+
+Concettualmente, questa tipologia di problemi nasce nel contesto della gestione del traffico all'interno di una rete di trasporto fisica. L'intuizione di base è modellare lo spostamento di entità materiali (come veicoli, merci, pacchetti di rete) attraverso un sistema interconnesso soggetto a vincoli fisici. In questa analogia con le reti di trasporto:
+
+\begin{itemize}
+    \item \textbf{Gli archi (Edges):} rappresentano i canali di comunicazione o le strade che trasportano il traffico. Ogni arco possiede una capacità intrinseca che limita la quantità di flusso che può attraversarlo.
+    \item \textbf{I nodi (Nodes):} fungono da giunzioni tra gli archi e operano come scambi (switches). Il loro compito è ricevere il flusso in entrata e ridistribuirlo sugli archi in uscita, rispettando solitamente un principio di conservazione (tutto ciò che entra deve uscire, salvo che per nodi speciali).
+    \item \textbf{Il flusso (Flow):} è la quantità che deve essere spostata da specifici nodi di origine, detti \emph{sorgenti} (sources), verso nodi di destinazione, detti \emph{pozzi} (sinks).
+\end{itemize}
+
+\noindent
+Sebbene l'origine intuitiva risieda nella logistica e nei trasporti, l'astrazione matematica fornita dalla teoria dei grafi permette di applicare i problemi di Network Flow a una vasta gamma di campi totalmente distinti.
+
+\begin{itemize}
+    \item \textbf{Reti di calcolatori:} instradamento dei pacchetti dati attraverso Internet massimizzando la banda passante.
+    \item \textbf{Visione artificiale:} segmentazione delle immagini.
+    \item \textbf{Scheduling e allocazione risorse:} assegnazione ottimale di compiti a macchine o persone.
+    \item \textbf{Matching in grafi bipartiti:} accoppiamento massimo in contesti sociali o economici.
+\end{itemize}
+
+
+\clearpage
+\section{Flow Networks}
+Una \textbf{Flow Network}\footnote{
+    Con \emph{Flow Network} (tradotto come \textbf{Rete di flusso}) si indica l'oggetto combinatorio statico, ovvero il grafo $G$ dotato di capacità; con \emph{Network Flow} (tradotto come \textbf{Flusso} o \textbf{Flusso su rete}) si intende invece la classe di problemi di ottimizzazione associata.
+} 
+(\emph{rete di flusso}) è un grafo orientato $G = (V, E)$ che rispetta dei vincoli specifici:
+\begin{itemize}
+    \item Ogni arco $e \in E$ è associato con un peso non negativo che rappresenta la \textbf{capacità} $c_e$ dell'arco. La capacità indica la quantità massima di flusso che può attraversare l'arco.
+    \item Esiste un nodo sorgente (\textbf{source}) $s \in V$ da cui il flusso ha origine.
+    \item Esiste un nodo destinazione (o pozzo) (\textbf{sink}) $t \in V$ dove il flusso termina.
+    \item Tutti gli altri nodi sono detti \textbf{nodi interni}. Tutto il flusso in entrata in un nodo interno deve essere uguale al flusso in uscita da quel nodo.
+\end{itemize}
+
+\vspace{1\baselineskip}
+\noindent
+Per il resto del capitolo, ci basiamo su delle assunzioni che ci aiuteranno a rendere più semplice la trattazione dei problemi di Network Flow, senza perdere di generalità.
+\begin{itemize}
+    \item La capacità $c_e$ di ogni arco $e$ è un numero intero (non negativo).
+    \item Il nodo sorgente $s$ non ha archi entranti.
+    \item Il nodo destinazione $t$ non ha archi uscenti.
+    \item Ciascun nodo interno ha almeno un arco incidente.
+\end{itemize}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.4\textwidth]{immagini/NetworkFlow/flow_network_ex.png}
+    \caption{Esempio di Flow Network, con sorgente $s$ e destinazione $t$, e capacità associate agli archi.}
+    \label{fig:flow_network_ex}
+\end{figure}
+
+\clearpage
+\paragraph{Definizione di Flusso} 
+Un \textbf{s-t Flow} in una Flow Network $G = (V, E)$ è una funzione
+$ f: E \rightarrow R_{\geq 0} $ tale che:
+\begin{itemize}
+    \item \textbf{Capacity conditions:} Per ogni arco $e \in E$, $f(e)$ rappresenta la quantità di traffico trasportata dall'arco, e deve rispettare la condizione di capacità:
+    \[
+        0 \leq f(e) \leq c_e 
+    \]
+    \item \textbf{Conservation conditions:} Per ogni nodo interno $v$ (quindi, esclusi $s$ e $t$), si ha:
+    \[
+        \sum_{e \text{ into } v} f(e) = \sum _{e \text{ out of } v} f(e)
+    \]
+\end{itemize}
+
+\noindent
+Dove $\sum_{e \text{ into } v} f(e)$ somma il valore di flusso $f(e)$ su tutti gli archi che entrano nel nodo $v$, mentre $\sum _{e \text{ out of } v} f(e)$ è la somma dei valori di flusso su tutti gli archi che escono dal nodo $v$.
+
+Dunque il flusso su un arco non può superare la capacità dell'arco stesso. Per ogni nodo diverso dalla sorgente e dalla destinazione, la quantità di flusso in entrata deve essere uguale alla quantità di flusso in uscita. La sorgente non ha archi in entrata (per la nostra assunzione), ma è permesso che abbia flusso in uscita; in altre parole, la sorgente può generare flusso. Simmetricamente, per la destinazione è permesso avere flusso in entrata, anche se non ha archi in uscita. 
+
+Il valore di un flusso $f$, denotato $v(f)$, è definito come la quantità di flusso generata alla sorgente, ovvero la somma di tutti i flussi uscenti dalla sorgente:
+\[
+    v(f) = \sum_{e \text{ out of } s} f(e).
+\]
+
+
+\vspace{1\baselineskip}
+\noindent
+Per rendere la notazione più compatta, definiamo per ogni nodo $v \in V$ le seguenti quantità:
+\[
+    f^{in}(v) = \sum_{e \text{ into } v} f(e)
+    \quad \text{e} \quad
+    f^{out}(v) = \sum_{e \text{ out of } v} f(e)
+\] 
+
+\noindent
+È possibile estendere questa definizione a insiemi di vertici: se $S \subseteq V$ è un insieme di nodi, definiamo: 
+\[
+    f^{in}(S) = \sum_{e \text{ into } S} f(e) 
+    \quad \text{e} \quad 
+    f^{out}(S) = \sum_{e \text{ out of } S} f(e).
+\]
+
+\noindent
+In questa terminologia, la condizione di conservazione per i nodi $v \neq s, t$ diventa $f^{in}(v) = f^{out}(v)$; e possiamo scrivere $v(f) = f^{out}(s)$.
+
+Si noti che la sorgente $s$ è l'unico nodo per cui $0 = f^{in}(s) < f^{out}(s)$, mentre la destinazione $t$ è l'unico nodo per cui $f^{in}(t) > f^{out}(t) = 0$.
+
+
+\clearpage
+\section{Maximum Flow Problem}
+
+
+
+
