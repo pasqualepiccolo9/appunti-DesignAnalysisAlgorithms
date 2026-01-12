@@ -24,7 +24,7 @@ Sebbene l'origine intuitiva risieda nella logistica e nei trasporti, l'astrazion
 
 
 \clearpage
-\section{Flow Networks}
+\section{Flow Network - Rete di flusso}
 Una \textbf{Flow Network}\footnote{
     Con \emph{Flow Network} (tradotto come \textbf{Rete di flusso}) si indica l'oggetto combinatorio statico, ovvero il grafo $G$ dotato di capacità; con \emph{Network Flow} (tradotto come \textbf{Flusso} o \textbf{Flusso su rete}) si intende invece la classe di problemi di ottimizzazione associata.
 } 
@@ -58,11 +58,11 @@ Per il resto del capitolo, ci basiamo su delle assunzioni che ci aiuteranno a re
 Un \textbf{s-t Flow} in una Flow Network $G = (V, E)$ è una funzione
 $ f: E \rightarrow R_{\geq 0} $ tale che:
 \begin{itemize}
-    \item \textbf{Capacity conditions:} Per ogni arco $e \in E$, $f(e)$ rappresenta la quantità di traffico trasportata dall'arco, e deve rispettare la condizione di capacità:
+    \item \textbf{Capacity condition:} Per ogni arco $e \in E$, $f(e)$ rappresenta la quantità di traffico trasportata dall'arco, e deve rispettare la condizione di capacità:
     \[
         0 \leq f(e) \leq c_e 
     \]
-    \item \textbf{Conservation conditions:} Per ogni nodo interno $v$ (quindi, esclusi $s$ e $t$), si ha:
+    \item \textbf{Conservation condition:} Per ogni nodo interno $v$ (quindi, esclusi $s$ e $t$), si ha:
     \[
         \sum_{e \text{ into } v} f(e) = \sum _{e \text{ out of } v} f(e)
     \]
@@ -104,6 +104,48 @@ Si noti che la sorgente $s$ è l'unico nodo per cui $0 = f^{in}(s) < f^{out}(s)$
 
 \clearpage
 \section{Maximum Flow Problem}
+Data una rete di flusso $G = (V, E)$ con sorgente $s$ e destinazione $t$, un obiettivo naturale è determinare la massima capacità trasmissiva del sistema. Non ci limitiamo a cercare un instradamento qualsiasi, ma vogliamo sfruttare al massimo le capacità degli archi disponibili.
+
+Il problema del \textbf{Maximum Flow} (Flusso Massimo) consiste nel trovare un flusso $f$ che massimizzi il valore totale del flusso in uscita dalla sorgente $v(f) = f^{out}(s)$.
+
+
+\vspace{1\baselineskip}
+\noindent
+Supponiamo di voler trovare un flusso massimo in una rete. Scartata la programmazione dinamica, per la quale non esistono algoritmi noti in questo contesto, esploriamo un approccio greedy.
+
+Partiamo da una situazione di flusso nullo: $f(e) = 0$ per ogni arco $e$. Sebbene questa configurazione rispetti i vincoli di capacità e conservazione, il valore del flusso è $0$. Proviamo quindi ad aumentare il valore di $f$ "spingendo" flusso lungo un cammino dalla sorgente $s$ alla destinazione $t$, fino ai limiti imposti dalle capacità degli archi.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.9\textwidth]{immagini/NetworkFlow/greedy_flow_ex.png}
+    \caption{(a) La rete della Figura \ref{fig:flow_network_ex}. (b) Un flusso valido di valore 20 che non permette ulteriori aumenti diretti. (c) L'aumento del flusso a 30 richiede di ridirigere il flusso esistente (linee tratteggiate).}
+    \label{fig:greedy_flow_ex}
+\end{figure}
+
+\noindent
+Facendo riferimento alla Figura~\ref{fig:greedy_flow_ex}, potremmo scegliere il cammino composto dagli archi $\{(s, u), (u, v), (v, t)\}$, portando il flusso su ciascuno di essi a $20$ e lasciando a $0$ gli altri.
+Non siamo però all'ottimo (pari a $30$), pur trovandoci in uno stallo: non esistono altri cammini $s-t$ con capacità disponibile per un aumento diretto.
+
+\noindent
+Per sbloccare la situazione è necessario ridirigere il flusso esistente, come in Figura~\ref{fig:greedy_flow_ex}(c):
+
+\begin{enumerate}
+    \item Spingiamo $10$ unità di flusso lungo $(s, v)$; questo crea un eccesso di flusso entrante in $v$.
+    \item Per compensare, "annulliamo" $10$ unità di flusso sull'arco $(u, v)$. Questo ripristina la conservazione in $v$, ma lascia troppo poco flusso in uscita da $u$.
+    \item Infine, spingiamo $10$ unità lungo $(u, t)$, ripristinando la conservazione in $u$.
+\end{enumerate}
+
+\noindent
+Questa operazione porta il flusso totale a $30$. L'intuizione fondamentale è che un algoritmo generale deve poter spingere flusso non solo in avanti (sfruttando la capacità residua), ma anche \textbf{indietro} (sugli archi già utilizzati). Tale meccanismo viene formalizzato introducendo il \textbf{Grafo Residuo}.
+
+
+\clearpage
+\subsection{Residual Graph}
+
+
+
+
+
 
 
 
