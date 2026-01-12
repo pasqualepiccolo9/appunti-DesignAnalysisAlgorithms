@@ -141,12 +141,52 @@ Questa operazione porta il flusso totale a $30$. L'intuizione fondamentale è ch
 
 \clearpage
 \subsection{Residual Graph}
+Data una rete di flusso $G = (V, E)$, e un flusso $f$ su $G$. Definiamo il \textbf{grafo residuo} $G_f$ di $G$ rispetto a $f$ come segue.
+\begin{itemize}
+    \item L'insieme dei nodi di $G_f$ è lo stesso di quello di $G$.
+    \item Per ogni arco $e = (u, v)$ di $G$ per cui $f(e) < c_e$, esistono $c_e - f(e)$ unità di capacità "residua" su cui possiamo provare a spingere flusso in avanti. Quindi includiamo l'arco $e = (u, v)$ in $G_f$, con una capacità di $c_e - f(e)$. Chiameremo questi archi \textbf{archi in avanti} (\emph{forward edges}).
+    \item Per ogni arco $e = (u, v)$ di $G$ per cui $f(e) > 0$, esistono $f(e)$ unità di flusso che possiamo eventualmente "annullare" spingendo flusso all'indietro. Quindi includiamo l'arco $e' = (v, u)$ in $G_f$, con una capacità di $f(e)$. Si noti che $e'$ ha gli stessi estremi di $e$, ma la sua direzione è invertita; chiameremo questi archi \textbf{archi all'indietro} (\emph{backward edges}). 
+\end{itemize}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/NetworkFlow/residual_graph_ex.png}
+    \caption{(a) Il grafo $G$ con il cammino $s, u, v, t$ usato per spingere le prime 20 unità di flusso.
+    (b) Il grafo residuo del flusso risultante $f$, con la capacità residua accanto a ogni arco. La linea tratteggiata è il nuovo cammino aumentante (augmenting path). (c) Il grafo residuo dopo aver spinto ulteriori 10 unità di flusso lungo il nuovo cammino aumentante $s, v, u, t$.}
+    \label{fig:residual_graph_ex}
+\end{figure}
+
+\noindent
+Da notare che ciascun arco $e$ in $G$ può generare uno o due archi in $G_f$. Se $0 < f(e) < c_e$ risulta che sia un arco in avanti sia uno all'indietro sono inclusi in $G_f$. Questo comporta quindi che $G_f$ ha al più il doppio degli archi di $G$. 
+
+A volte ci riferiremo alla capacità di un arco nel grafo residuo come \textbf{capacità residua}, per distinguere dalla capacità dell'arco corrispondente nella rete di flusso originale $G$.
 
 
+\clearpage
+\subsection{Augmenting Path}
+Sia $P$ un cammino semplice da $s$ a $t$ in $G_f$ (cioè, $P$ non visita alcun nodo più di una volta). Definiamo \texttt{bottleneck(P, f)} come la \textbf{capacità residua minima} di qualsiasi arco su $P$, rispetto al flusso $f$.
+Di seguito definiamo l'operazione \texttt{augment(f, P)}, che produce un nuovo flusso $f'$ in $G$.
 
+\vspace{1\baselineskip}
+\hrule
+\begin{verbatim}
+Input: P è un cammino semplice s-t in G_f
+       f è un flusso in G
+Output: f' è un flusso in G ottenuto aumentando f lungo P
+1.  let b = bottleneck(P, f)
+2.  for each edge e = (u, v) in P do    # P è composto da archi di G_f
+3.      if e is a forward edge then
+4.          f'(e) = f(e) + b
+5.      else
+6.          f'(e) = f(e) - b
+7.  return f'  
+\end{verbatim}
+\hrule 
+\vspace{1\baselineskip}
 
+\noindent
+È stato proprio per poter eseguire questa operazione che abbiamo definito il grafo residuo; per riflettere l'importanza di \texttt{augment}, si indica spesso come \textbf{cammino aumentante} (\emph{augmenting path}) qualsiasi cammino $s-t$ nel grafo residuo.
+Il risultato di \texttt{augment(f , P)} è un nuovo flusso $f'$ in $G$, ottenuto aumentando e diminuendo i valori di flusso sugli archi di $P$. 
 
-
-
-
+Verifichiamo innanzitutto che $f'$ sia effettivamente un flusso.
 
