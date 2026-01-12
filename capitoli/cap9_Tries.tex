@@ -34,7 +34,7 @@ Un trie $T$ per un insieme $S$ di stringhe permette di implementare una mappa in
 Il tempo di esecuzione per cercare una stringa di lunghezza $m$ è limitato superiormente da $O(m \cdot |\Sigma|)$, in quanto possiamo visitare al più $m+1$ nodi di $T$ e spendiamo $O(|\Sigma|)$ tempo in ogni nodo per determinare il figlio che ha come etichetta il carattere successivo. Tuttavia, possiamo migliorare il tempo speso in un nodo a $O(\log |\Sigma|)$ o atteso $O(1)$, mappando i caratteri ai figli utilizzando una tabella hash in ogni nodo, oppure utilizzando una lookup table diretta di dimensione $|\Sigma|$ in ogni nodo, se $|\Sigma|$ è sufficientemente piccolo (come nel caso delle stringhe di DNA). Per questi motivi, ci aspettiamo tipicamente che una ricerca per una stringa di lunghezza $m$ venga eseguita in tempo $O(m)$.
 
 \subsection*{Word Matching}
-Grazie a queste caratteristiche, il trie è adatto per il \textbf{word matching} esatto e per le query sui prefissi (per via dell'operazione di ricerca appena descritta), ma non per il pattern matching di sottostringhe arbitrarie. Il \emph{word matching} è un caso particolare di pattern matching in cui vogliamo determinare se un dato pattern corrisponde esattamente a una delle parole del testo. Il word matching si differenzia dal pattern matching standard analizzato nel capitolo \ref{cap:PatternMatching} perché in questo caso il pattern non può corrispondere a una sottostringa arbitraria del testo, ma solo a una delle sue parole.
+Grazie a queste caratteristiche, il trie è adatto per il \textbf{word matching esatto} e per le query sui prefissi (per via dell'operazione di ricerca appena descritta), ma non per il pattern matching di sottostringhe arbitrarie. Il \emph{word matching} è un caso particolare di pattern matching in cui vogliamo determinare se un dato pattern corrisponde esattamente a una delle parole del testo. Il word matching si differenzia dal pattern matching standard analizzato nel capitolo \ref{cap:PatternMatching} perché in questo caso il pattern non può corrispondere a una sottostringa arbitraria del testo, ma solo a una delle sue parole.
 
 \subsection*{Costruzione di uno Standard Trie}
 Per costruire uno standard trie per un insieme $S$ di stringhe, possiamo utilizzare un algoritmo incrementale che inserisce le stringhe una alla volta. Ricordiamo l'assunzione che nessuna stringa di $S$ sia prefisso di un'altra stringa. Per inserire una nuova stringa $X$ nel trie, seguiamo il percorso dei suoi caratteri finché esistono nodi corrispondenti. Nel punto in cui il percorso esistente si interrompe (ovvero non troviamo il carattere successivo), creiamo una nuova sequenza di nodi per tutti i caratteri restanti di $X$. Il tempo di esecuzione per inserire $X$ di lunghezza $m$ è simile a una ricerca, con prestazioni nel caso peggiore di $O(m \cdot |\Sigma|)$, o attese $O(m)$ se si utilizzano tabelle hash secondarie in ogni nodo. Pertanto, la costruzione dell'intero trie per l'insieme $S$ richiede un tempo atteso di $O(n)$, dove $n$ è la lunghezza totale delle stringhe di $S$.
@@ -59,7 +59,7 @@ Sia $T$ un trie standard. Diciamo che un nodo interno $v$ di $T$ è \textbf{rido
 $$ (v_0, v_1)(v_1, v_2) \cdots (v_{k-1}, v_k) $$
 è \textbf{ridondante} se:
 \begin{itemize}[nosep]
-    \item $v_i$ è ridondante per $i = 1, \ldots, k-1$.
+    \item $v_i$ è ridondante per ogni $i = 1, \ldots, k-1$.
     \item $v_0$ e $v_k$ non sono ridondanti.
 \end{itemize}
 
@@ -73,6 +73,7 @@ Si può trasformare $T$ in un \emph{Compressed Trie} sostituendo ogni catena rid
     \label{fig:compressed_tries_ex}
 \end{figure}
 
+\noindent
 I nodi di un compressed trie sono etichettati con delle stringhe, che sono sottostringhe delle stringhe nella collezione, piuttosto che con singoli caratteri. Il vantaggio di un compressed trie rispetto a uno standard trie è che il numero di nodi del compressed trie è proporzionale al numero di stringhe e non alla loro lunghezza totale.
 
 \vspace{1\baselineskip}
