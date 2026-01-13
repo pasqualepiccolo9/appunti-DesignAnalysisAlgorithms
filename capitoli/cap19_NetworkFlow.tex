@@ -173,13 +173,14 @@ Di seguito definiamo l'operazione \texttt{augment(f, P)}, che produce un nuovo f
 Input: P è un cammino semplice s-t in G_f
        f è un flusso in G
 Output: f' è un flusso in G ottenuto aumentando f lungo P
-1.  let b = bottleneck(P, f)
-2.  for each edge e = (u, v) in P do    # P è composto da archi di G_f
-3.      if e is a forward edge then
-4.          f'(e) = f(e) + b
-5.      else
-6.          f'(e) = f(e) - b
-7.  return f'  
+1.  Algorithm augment(P, f):
+2.      let b = bottleneck(P, f)
+3.      for each edge e = (u, v) in P do  # P composto da archi di G_f
+4.          if e is a forward edge then
+5.              f'(e) = f(e) + b
+6.          else
+7.              f'(e) = f(e) - b
+8.      return f'  
 \end{verbatim}
 \hrule 
 \vspace{1\baselineskip}
@@ -188,5 +189,140 @@ Output: f' è un flusso in G ottenuto aumentando f lungo P
 È stato proprio per poter eseguire questa operazione che abbiamo definito il grafo residuo; per riflettere l'importanza di \texttt{augment}, si indica spesso come \textbf{cammino aumentante} (\emph{augmenting path}) qualsiasi cammino $s-t$ nel grafo residuo.
 Il risultato di \texttt{augment(f , P)} è un nuovo flusso $f'$ in $G$, ottenuto aumentando e diminuendo i valori di flusso sugli archi di $P$. 
 
-Verifichiamo innanzitutto che $f'$ sia effettivamente un flusso.
+\paragraph{Proposizione}
+Sia $G = (V, E)$ una rete di flusso, e sia $f$ un flusso in $G$. Sia $P$ un cammino semplice $s-t$ in $G_f$. Allora l'output $f'$ di \texttt{augment(f , P)} è un flusso in $G$.
+
+\paragraph{Dimostrazione}
+Per dimostrare che $f'$ sia effettivamente un flusso, dobbiamo verificare che $f'$ soddisfi le capacity conditions e conservation conditions.
+
+Iniziamo con la capacity condition.
+\begin{itemize}
+    \item \textbf{Arco in avanti:} Se $(u, v)$ è un arco in avanti in $G_f$, esso corrisponde all'arco $e = (u, v) \in E$, con capacità residua $c_f(e) = c_e - f(e)$.
+    Il nuovo flusso sarà $f'(e) = f(e) + b$. Poiché $b \leq c_e - f(e)$, otteniamo:
+    \[
+        0 \leq f(e) \leq f'(e) = f(e) + b \leq f(e) + (c_e - f(e)) = c_e
+    \]
+    La capacity condition è verificata.
+
+    \item \textbf{Arco all'indietro:} Se $(u, v)$ è un arco all'indietro in $G_f$, esso deriva dall'arco fisico $e = (v, u) \in E$, con capacità residua $c_f(e) = f(e)$.
+    Poiché stiamo diminuendo il flusso sull'arco originale di $b$, abbiamo:
+    \[
+        c_e \geq f(e) \geq f'(e) = f(e) - b \geq f(e) - f(e) = 0
+    \]
+    La capacity condition è verificata anche in questo caso.
+\end{itemize}
+\noindent
+In entrambi i casi, il nuovo flusso rispetta i limiti imposti dalle capacità $c_e$ e la non negatività.
+
+Passiamo alla conservation condition.
+Dobbiamo verificare che per ogni nodo interno $v$ appartenente al cammino $P$, la variazione della quantità di flusso in entrata in $v$ è la stessa della variazione della quantità di flusso in uscita da $v$.\footnote{
+    Sulle slide del corso, il continuo di questa seconda parte della dimostrazione non è presente; le slide si limitano a enunciare che \texttt{augment} preserva la conservazione del flusso, senza fornire ulteriori dettagli.
+} Siano $u$ il nodo precedente e $w$ il nodo successivo a $v$ lungo il cammino $P$ in $G_f$ (ovvero $u \to v \to w$).
+Poiché $f$ soddisfa la conservazione, è sufficiente mostrare che la variazione di flusso apportata da \texttt{augment} preserva l'equilibrio tra flusso entrante e uscente. Distinguiamo i quattro casi possibili in base alla tipologia degli archi $(u, v)$ e $(v, w)$ nel grafo residuo:
+
+\begin{itemize}
+    \item \textbf{Forward $\to$ Forward:} Entrambi gli archi sono in avanti.
+    In $G$ esistono gli archi fisici $e_1 = (u, v)$ ed $e_2 = (v, w)$.
+    L'operazione aumenta il flusso su entrambi di $b$. Di conseguenza, il flusso entrante in $v$ aumenta di $b$ (da $e_1$) e quello uscente aumenta di $b$ (su $e_2$). L'equilibrio è mantenuto.
+
+    \item \textbf{Backward $\to$ Backward:} Entrambi gli archi sono all'indietro.
+    In $G$ esistono gli archi fisici $e_1 = (v, u)$ ed $e_2 = (w, v)$.
+    L'operazione diminuisce il flusso su entrambi di $b$.
+    Diminuendo il flusso su $e_1$ (uscente da $v$), riduciamo l'uscita totale di $b$. Diminuendo il flusso su $e_2$ (entrante in $v$), riduciamo l'entrata totale di $b$.
+    Poiché entrata e uscita diminuiscono della stessa quantità, l'equilibrio è mantenuto.
+
+    \item \textbf{Forward $\to$ Backward:} L'arco entrante è in avanti, quello uscente è all'indietro.
+    In $G$ esistono gli archi fisici $e_1 = (u, v)$ ed $e_2 = (w, v)$.
+    Aumentiamo il flusso su $e_1$ di $b$ (aumento dell'entrata).
+    Diminuiamo il flusso su $e_2$ di $b$ (diminuzione dell'entrata).
+    La variazione netta del flusso entrante è $+b - b = 0$, mentre il flusso uscente resta invariato. L'equilibrio è mantenuto.
+
+    \item \textbf{Backward $\to$ Forward:} L'arco entrante è all'indietro, quello uscente è in avanti.
+    In $G$ esistono gli archi fisici $e_1 = (v, u)$ ed $e_2 = (v, w)$.
+    Diminuiamo il flusso su $e_1$ di $b$ (diminuzione dell'uscita).
+    Aumentiamo il flusso su $e_2$ di $b$ (aumento dell'uscita).
+    La variazione netta del flusso uscente è $-b + b = 0$, mentre il flusso entrante resta invariato. L'equilibrio è mantenuto.
+\end{itemize}
+\noindent
+In tutti i casi, la proprietà di conservazione del flusso continua a valere per $f'$.
+
+\clearpage
+\subsection{MaxFlow Algorithm}
+Questa operazioni di \emph{augmentation} ci permette di modificare un flusso esistente spingendo ulteriore flusso lungo cammini aumentanti nel grafo residuo.
+Ripetendo questa procedura, possiamo incrementare il valore del flusso fino a quando non esistono più cammini aumentanti nel grafo residuo. A questo punto, il flusso ottenuto è massimo.
+
+Di seguito è riportato lo pseudocodice dell'algoritmo \textbf{MaxFlow}, o algoritmo di Ford-Fulkerson.
+
+\vspace{1\baselineskip}
+\hrule
+\begin{alltt}
+1. \textbf{Algorithm} Max-Flow(\(G\)):
+2.     Initialize \(f(e) = 0\) for all edges \(e\) in \(G\)
+3.     Construct the residual graph \(G\sb{f}\)
+4.     \textbf{while} there is an \(s\)-\(t\) path in \(G\sb{f}\) \textbf{do}
+5.         Let \(P\) be a simple \(s\)-\(t\) path in \(G\sb{f}\)
+6.         \(f' = \text{Augment}(P, f)\)
+7.         \(f = f'\)
+8.         \(G\sb{f} = G\sb{f'}\)
+9.     \textbf{return} \(f\)
+\end{alltt}
+\hrule 
+\vspace{1\baselineskip}
+
+\noindent
+L'algoritmo MaxFlow risulta piuttosto intuitivo. Ciò che può sembrare meno ovvio è capire se il ciclo \texttt{While} termina, e se il flusso restituito sia effettivamente massimo.
+
+Per analizzare la correttezza e la terminazione dell'algoritmo, è necessario richiamare un'assunzione già fatta sulla natura delle capacità, che ora ripetiamo: assumiamo inizialmente che tutte le capacità degli archi $c(e)$ siano numeri interi.
+
+Sotto questa ipotesi, dimostriamo inizialmente che l'algoritmo Max-Flow termina, e ne analizziamo la complessità; solo in un secondo momento dimostreremo che tale algoritmo produce un flusso massimo. La dimostrazione si basa su due proprietà fondamentali che valgono a ogni iterazione del ciclo \texttt{while}.
+
+\paragraph{Proprietà 1: Flussi e capacità residue come numeri interi}
+Possiamo facilmente osservare che in ogni fase intermedia dell'algoritmo i valori del flusso $f(e)$ e le capacità residue in $G_f$ rimangono interi.
+\begin{itemize}
+    \item Prima del ciclo \texttt{while}, il flusso è inizializzato a $0$ ovunque, e le capacità residue coincidono con le capacità originali (che sono intere per ipotesi).
+    \item Ad ogni step, quando troviamo un cammino aumentante $P$, calcoliamo il valore $b = \texttt{bottleneck}(P, f)$. Essendo $b$ il minimo tra le capacità residue degli archi di $P$ (che sono intere), anche $b$ sarà un intero. Di conseguenza, anche le nuove capacità residue nel passo successivo rimarranno intere.
+\end{itemize}
+
+\paragraph{Proprietà 2: Il valore del flusso cresce strettamente}
+Dimostriamo che ad ogni iterazione il valore del flusso aumenta di almeno 1 unità: $v(f') \geq v(f) + 1$.
+Consideriamo il primo arco $e$ del cammino aumentante $P$. Poiché $P$ inizia da $s$, $e$ deve essere un arco uscente dalla sorgente in direzione del grafo residuo. Per definizione di grafo residuo, un arco esiste in $P$ solo se la sua capacità residua è strettamente positiva: $c_f(e) > 0$.
+Poiché le capacità sono intere e $P$ è un cammino valido in $G_f$, la capacità residua minima $b$ deve essere almeno $1$ ($b \geq 1$).
+L'operazione \texttt{Augment} aumenta il flusso su questo arco di $b$, incrementando di conseguenza il flusso totale uscente da $s$. Pertanto:
+\[
+    v(f') = f'^{out}(s) = f^{out}(s) + b \geq f^{out}(s) + 1 = v(f) + 1 
+\]
+
+\paragraph{Terminazione}
+Per provare che l'algoritmo termina, definiamo $C$ come la somma totale delle capacità degli archi uscenti dalla sorgente $s$:
+\[ C = \sum_{e \text{ out of s }} c(e) \]
+Il valore di un qualsiasi flusso ammissibile non può mai superare la capacità fisica totale degli archi che lasciano la sorgente, quindi $v(f) \leq C$.
+Poiché partiamo da un flusso nullo ($v(f)=0$) e ad ogni iterazione il valore aumenta di almeno un intero ($v(f_{i+1}) \geq v(f_i) + 1$), l'algoritmo non può eseguire più di $C$ iterazioni. Questo garantisce la terminazione.
+
+\paragraph{Analisi della Complessità}
+Valutiamo ora il costo computazionale. Il tempo totale è dato dal numero di iterazioni moltiplicato per il costo di una singola iterazione.
+
+\begin{enumerate}
+    \item \textbf{Costo per iterazione:} In ogni passo dobbiamo trovare un cammino $s-t$ nel grafo residuo $G_f$ e aggiornare i flussi.
+    \begin{itemize}[nosep]
+        \item La ricerca del cammino può essere effettuata con una visita in ampiezza (BFS) o profondità (DFS).\footnote{
+            In pratica si preferisce la BFS perché, trovando sempre il cammino più breve in termini di numero di archi, evita i casi patologici in cui il flusso viene incrementato di quantità minime, garantendo così una convergenza molto più rapida (polinomiale) rispetto a una scelta arbitraria o basata su DFS.
+        } Questo richiede tempo $O(m + n)$.
+        \item L'aggiornamento delle capacità e dei flussi lungo il cammino richiede tempo proporzionale alla lunghezza del cammino stesso, che è al più $O(n)$.
+    \end{itemize}
+    Pertanto, ogni iterazione costa $O(m)$ se si assume che il grafo sia connesso ($m \geq n - 1$).
+
+    \item \textbf{Numero di iterazioni:} Come dimostrato, il numero massimo di aumenti è limitato da $C$.
+\end{enumerate}
+\noindent
+Combinando questi fattori, la complessità temporale dell'algoritmo\footnote{ 
+    È importante notare che la complessità $O(m C)$ non è polinomiale in senso stretto, ma \emph{pseudo-polinomiale}. La complessità non dipende solo dalla dimensione dell'input (numero di nodi e archi), ma anche dal valore numerico $C$. Se $C$ è grande rispetto alla dimensione del grafo, l'algoritmo può diventare inefficiente.
+} Max-Flow è:
+\[ O(m \cdot C) \]
+
+
+
+
+
+
+
 
