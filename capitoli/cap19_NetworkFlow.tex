@@ -58,48 +58,47 @@ Per il resto del capitolo, ci basiamo su delle assunzioni che ci aiuteranno a re
 Un \textbf{s-t Flow} in una Flow Network $G = (V, E)$ è una funzione
 $ f: E \rightarrow R_{\geq 0} $ tale che:
 \begin{itemize}
-    \item \textbf{Capacity condition:} Per ogni arco $e \in E$, $f(e)$ rappresenta la quantità di traffico trasportata dall'arco, e deve rispettare la condizione di capacità:
+    \item \textbf{Capacity condition:} Per ogni arco $e \in E$, il flusso $f(e)$ non può superare la capacità $c_e$:
     \[
         0 \leq f(e) \leq c_e 
     \]
-    \item \textbf{Conservation condition:} Per ogni nodo interno $v$ (quindi, esclusi $s$ e $t$), si ha:
+    \item \textbf{Conservation condition:} Per ogni nodo interno $v$ (quindi, esclusi $s$ e $t$), la somma del flusso in entrata deve essere uguale alla somma del flusso in uscita:
     \[
         \sum_{e \text{ into } v} f(e) = \sum _{e \text{ out of } v} f(e)
     \]
 \end{itemize}
 
 \noindent
-Dove $\sum_{e \text{ into } v} f(e)$ somma il valore di flusso $f(e)$ su tutti gli archi che entrano nel nodo $v$, mentre $\sum _{e \text{ out of } v} f(e)$ è la somma dei valori di flusso su tutti gli archi che escono dal nodo $v$.
+Dove $\sum_{e \text{ into } v} f(e)$ somma il valore di flusso $f(e)$ su tutti gli archi che entrano nel nodo $v$, mentre $\sum _{e \text{ out of } v} f(e)$ è la somma dei valori di flusso su tutti gli archi che escono dal nodo $v$. 
 
-Dunque il flusso su un arco non può superare la capacità dell'arco stesso. Per ogni nodo diverso dalla sorgente e dalla destinazione, la quantità di flusso in entrata deve essere uguale alla quantità di flusso in uscita. La sorgente non ha archi in entrata (per la nostra assunzione), ma è permesso che abbia flusso in uscita; in altre parole, la sorgente può generare flusso. Simmetricamente, per la destinazione è permesso avere flusso in entrata, anche se non ha archi in uscita. 
-
-Il valore di un flusso $f$, denotato $v(f)$, è definito come la quantità di flusso generata alla sorgente, ovvero la somma di tutti i flussi uscenti dalla sorgente:
-\[
-    v(f) = \sum_{e \text{ out of } s} f(e).
-\]
-
+La sorgente non ha archi in entrata, ma è permesso che abbia flusso in uscita; in altre parole, la sorgente può generare flusso. Simmetricamente, per la destinazione è permesso avere flusso in entrata, anche se non ha archi in uscita. 
 
 \vspace{1\baselineskip}
 \noindent
-Per rendere la notazione più compatta, definiamo per ogni nodo $v \in V$ le seguenti quantità:
+Il valore di un flusso $f$, denotato $v(f)$, è definito come la quantità di flusso generata dalla sorgente, ovvero la somma di tutti i flussi uscenti dalla sorgente:
+\[
+    v(f) = \sum_{e \text{ out of } s} f(e).
+\]
+Per compattezza, definiamo per ogni nodo $v \in V$ il flusso totale in entrata e in uscita come:
 \[
     f^{in}(v) = \sum_{e \text{ into } v} f(e)
     \quad \text{e} \quad
     f^{out}(v) = \sum_{e \text{ out of } v} f(e)
 \] 
+Con questa terminologia, la \emph{conservation condition} per un nodo interno $v$ si riscrive semplicemente come $f^{in}(v) = f^{out}(v)$. Il valore del flusso diventa $v(f) = f^{out}(s)$. 
 
-\noindent
-È possibile estendere questa definizione a insiemi di vertici: se $S \subseteq V$ è un insieme di nodi, definiamo: 
+È utile estendere queste definizioni a un generico sottoinsieme di vertici $S \subseteq V$:
 \[
-    f^{in}(S) = \sum_{e \text{ into } S} f(e) 
+    f^{in}(S) = \sum_{v \in S} f^{in}(v) 
     \quad \text{e} \quad 
-    f^{out}(S) = \sum_{e \text{ out of } S} f(e).
+    f^{out}(S) = \sum_{v \in S} f^{out}(v).
 \]
+Una proprietà fondamentale derivante dalla conservazione puntuale è che la conservazione vale anche per gli insiemi. Se $S$ è un insieme costituito interamente da nodi interni (cioè $s, t \notin S$), allora il flusso totale che entra nell'insieme deve essere uguale al flusso totale che ne esce:
+\[
+    f^{in}(S) = f^{out}(S)
+\]
+Questa proprietà ci assicura che il flusso non può accumularsi né disperdersi in nessuna sottoregione della rete che non contenga la sorgente o la destinazione.
 
-\noindent
-In questa terminologia, la condizione di conservazione per i nodi $v \neq s, t$ diventa $f^{in}(v) = f^{out}(v)$; e possiamo scrivere $v(f) = f^{out}(s)$.
-
-Si noti che la sorgente $s$ è l'unico nodo per cui $0 = f^{in}(s) < f^{out}(s)$, mentre la destinazione $t$ è l'unico nodo per cui $f^{in}(t) > f^{out}(t) = 0$.
 
 
 \clearpage
@@ -320,9 +319,187 @@ Combinando questi fattori, la complessità temporale dell'algoritmo\footnote{
 \[ O(m \cdot C) \]
 
 
+\clearpage
+\subsection{s-t Cuts}
+Finora abbiamo dimostrato che l'algoritmo Max-Flow termina e produce un flusso valido. Rimane da dimostrare che il flusso restituito sia effettivamente massimo.
+
+Per fare ciò, introduciamo il concetto di \textbf{s-t Cut} (taglio s-t) in una rete di flusso.
+
+\paragraph{Definizione:} 
+Un \textbf{s-t Cut} in una rete di flusso $G = (V, E)$ è una partizione dei nodi $V$ in due insiemi disgiunti $A$ e $B$ tali che $s \in A$ e $t \in B$. 
+Indichiamo gli archi che attraversano il taglio, ovvero quelli che vanno da un nodo in $A$ a un nodo in $B$, come:
+\[
+    cut(A, B) = \{(u, v) \in E | u \in A, v \in B\}
+\]
+La \textbf{capacità di un taglio} $(A, B)$, che indichiamo con $c(A, B)$, è definita come la somma delle capacità degli archi che vanno da $A$ a $B$:
+\[
+    c(A, B) = \sum_{e \text{ out of } A} c(e)
+\]
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.6\textwidth]{immagini/NetworkFlow/st_cut.png}
+    \caption{Esempio di s-t Cut in una rete di flusso.}
+    \label{fig:st_cut}
+\end{figure}
+
+\vspace{2\baselineskip}
+\noindent
+In precedenza abbiamo visto come $C = \sum_{e \text{ out of } s} c(e)$ fornisca già un limite superiore al valore di qualsiasi flusso, e si ha $v(f) \leq C$. Tuttavia, $C$ potrebbe essere una sovrastima enorme del valore massimo di un flusso in G, per cui a volte questo limite è utile, ma altre volte si rivela molto debole.
+
+Fortunatamente, il concetto di s-t Cuts ci permette di ottenere un limite superiore più stretto e significativo per il valore di qualsiasi flusso in $G$.
+
+\clearpage
+\paragraph{Proposizione}
+Sia $f$ un qualsiasi flusso in una rete di flusso $G = (V, E)$, e sia $(A, B)$ un qualsiasi s-t Cut in $G$. Allora: $v(f) = f^{out}(A) - f^{in}(A)$.
+
+\paragraph{Dimostrazione}
+Per definizione, il valore del flusso è $v(f) = f^{out}(s)$. Dalle nostre assunzioni inoltre sappiamo che $f^{in}(s) = 0$, poiché la sorgente $s$ non ha archi entranti e possiamo quindi scrivere: $v(f) = f^{out}(s) - f^{in}(s)$. Dal momento che ogni nodo $v$ in $A$ diverso da $s$ è un nodo interno, sappiamo che $f^{out}(v) - f^{in}(v) = 0$ per tutti questi nodi. Quindi:
+\[
+    v(f) = \sum_{v \in A} (f^{out}(v) - f^{in}(v)),
+\]
+dovuto al fatto che l'unico termine in questa somma che è diverso da zero è quello in cui $v$ è uguale a $s$.
+Cerchiamo di riscrivere la somma a destra in un altro modo. Se un arco $e$ ha entrambe le estremità in $A$, allora $f(e)$ appare una volta nella somma con un segno "+" e una volta con un segno "-", e quindi questi due termini si cancellano a vicenda. Se $e$ ha solo la coda in $A$, allora $f(e)$ appare una sola volta nella somma, con un segno "+". Se $e$ ha solo la testa in $A$, allora $f(e)$ appare anche una sola volta nella somma, con un segno "-". Infine, se $e$ non ha nessuna delle due estremità in $A$, allora $f(e)$ non appare affatto nella somma. In vista di ciò, abbiamo:
+\[
+    \sum_{v \in A} (f^{out}(v) - f^{in}(v)) =
+    \sum_{e \text{ out of } A} f(e) -
+    \sum_{e \text{ into } A} f(e) = f^{out}(A) - f^{in}(A).
+\]
+Mettendo insieme queste due equazioni, otteniamo: $v(f) = f^{out}(A) - f^{in}(A)$.
+
+\vspace{1\baselineskip}
+\noindent
+Utilizzando questa proposizione, possiamo ora dimostrare che il valore di qualsiasi flusso $f$ è limitato superiormente dalla capacità di qualsiasi s-t Cut $(A, B)$ in $G$. $\quad \blacksquare$
+
+\paragraph{Proposizione}
+Sia $f$ un qualsiasi flusso in una rete di flusso $G = (V, E)$, e sia $(A, B)$ un qualsiasi s-t Cut in $G$. Allora: $v(f) \leq c(A, B)$.
+
+\paragraph{Dimostrazione}
+\[
+    v(f) = f^{out}(A) - f^{in}(A) 
+        \leq f^{out}(A) 
+        = \sum_{e \text{ out of } A} f(e) 
+        \leq \sum_{e \text{ out of } A} c(e) 
+        = c(A, B)
+\]
+La prima uguaglianza è data dalla proposizione precedente. Passiamo dalla prima alla seconda disuguaglianza poiché $f^{in}(A) \geq 0$, e passiamo dalla terza alla quarta applicando le condizioni di capacità a ciascun termine della somma. $\quad \blacksquare$
+
+\vspace{1\baselineskip}
+\noindent
+In sostanza, questa proposizione afferma che tutto il flusso che va dalla sorgente $s$ alla destinazione $t$ deve attraversare gli archi che compongono il taglio $cut(A, B)$ per passare da $A$ a $B$, e che al massimo $c(A, B)$ unità di flusso possono attraversare questi archi, dato che $c(A, B)$ è proprio la somma delle capacità di quegli archi.
+
+\clearpage
+\noindent
+Abbiamo quindi stabilito un limite superiore: il valore di un qualsiasi flusso non può mai superare la capacità di un qualsiasi taglio.
+Tuttavia, il nostro obiettivo è dimostrare che l'algoritmo Max-Flow restituisce effettivamente un flusso massimo. Per fare ciò, dobbiamo mostrare che esiste un taglio specifico la cui capacità è esattamente uguale al valore del flusso trovato dall'algoritmo.
+
+\paragraph{Analisi alla terminazione dell'algoritmo}
+Consideriamo lo stato dell'algoritmo Max-Flow nel momento in cui termina. La condizione di terminazione del ciclo \texttt{while} è che \textbf{non esistono più cammini aumentanti} (percorsi da $s$ a $t$) nel grafo residuo $G_f$.
+
+Basandoci su questa proprietà, possiamo costruire una specifica partizione dei nodi $(A^*, B^*)$ definita come segue:
+\begin{itemize}
+    \item $A^* = \{v \in V \mid \exists \text{ un cammino da } s \text{ a } v \text{ in } G_f\}$ (l'insieme dei nodi raggiungibili dalla sorgente nel grafo residuo).
+    \item $B^* = V \setminus A^*$ (l'insieme di tutti gli altri nodi, non raggiungibili da $s$ in $G_f$).
+\end{itemize}
+
+\noindent
+Verifichiamo che $(A^*, B^*)$ sia effettivamente un \textbf{s-t Cut}:
+\begin{enumerate}
+    \item La sorgente $s$ è certamente in $A^*$.
+    \item La destinazione $t$ deve trovarsi in $B^*$. Se $t$ fosse in $A^*$, significherebbe che esiste un cammino da $s$ a $t$ in $G_f$, ma questo contraddice la condizione di terminazione dell'algoritmo.
+\end{enumerate}
+Dunque, $(A^*, B^*)$ è un taglio valido.
+
+\paragraph{Caratteristiche degli archi attraverso il taglio $(A^*, B^*)$}
+Esaminiamo ora il flusso $f$ (quello calcolato dall'algoritmo al momento dell'arresto) sugli archi che attraversano questo specifico taglio.
+Consideriamo un arco fisico $e = (u, v)$ nel grafo originale $G$:
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/NetworkFlow/min_cut_dem.png}
+    \caption{Il taglio $(A^*, B^*)$ utilizzato nella dimostrazione.}
+    \label{fig:min_cut_dem}
+\end{figure}
 
 
+\clearpage
+\begin{enumerate}
+    \item \textbf{Archi in avanti (da $A^*$ a $B^*$):}
+    Sia $e = (u, v)$ un arco in $G$ per cui $u \in A^*$ e $v \in B^*$, come mostrato in Figura~\ref{fig:min_cut_dem}.
+    Se l'arco non fosse saturo (cioè se $f(e) < c_e$), allora nel grafo residuo $G_f$ esisterebbe un arco in avanti $(u, v)$ con capacità residua positiva.
+    Ma se esiste l'arco $(u, v)$ in $G_f$ e $u$ è raggiungibile da $s$ (poiché $u \in A^*$), allora anche $v$ sarebbe raggiungibile da $s$. Questo implicherebbe $v \in A^*$, contraddicendo l'ipotesi $v \in B^*$.\\
+    \textbf{Conclusione:} Tutti gli archi che vanno da $A^*$ a $B^*$ devono essere saturi.
+    \[ \forall e \text{ out of } A^* \implies f(e) = c_e \] 
+
+    \item \textbf{Archi all'indietro (da $B^*$ a $A^*$):}
+    Sia $e'$ = (u', v') un arco in $G$ per cui $u' \in B^*$ e $v' \in A^*$, come mostrato in Figura~\ref{fig:min_cut_dem}. Vogliamo ottenere che $f(e') = 0$. Se così non fosse, l'arco $e'$ genererebbe un arco all'indietro $e'' = (v', u')$ nel grafo residuo $G_f$.
+    Poiché $v' \in A^*$, esiste un cammino da $s$ a $v'$ in $G_f$; aggiungendo l'arco all'indietro $e''$ a questo cammino, otterremmo un cammino da $s$ a $u'$ in $G_f$, il che contraddice l'ipotesi che $u' \in B^*$.\\
+    \textbf{Conclusione:} Tutti gli archi che vanno da $B^*$ a $A^*$ devono avere flusso nullo.
+    \[ \forall e \text{ into } A^* \implies f(e) = 0 \]
+\end{enumerate}
 
 
+\paragraph{Teorema Max-Flow Min-Cut}
+Utilizzando le proprietà appena derivate, possiamo calcolare il valore del flusso $f$ attraverso il taglio $(A^*, B^*)$ usando il lemma precedente ($v(f) = f^{out}(A) - f^{in}(A)$):
+\[
+    v(f) = f^{out}(A^*) - f^{in}(A^*) = \sum_{e \text{ out of } A^*} f(e) - \sum_{e \text{ into } A^*} f(e)
+\]
+Sostituendo i valori trovati ($f(e) = c_e$ per gli archi uscenti e $f(e) = 0$ per gli archi entranti):
+\[
+    v(f) = \sum_{e \text{ out of } A^*} c_e - \sum_{e \text{ into } A^*} 0
+\]
 
+\[
+    v(f) = \sum_{e \text{ out of } A^*} c_e = c(A^*, B^*)
+\]
+Abbiamo quindi trovato uno specifico taglio $(A^*, B^*)$ la cui capacità è esattamente uguale al valore del flusso $f$ calcolato dall'algoritmo.
+Ricordando la disuguaglianza generale dimostrata in precedenza, secondo cui per \emph{qualsiasi} flusso $f'$ e \emph{qualsiasi} taglio $(A, B)$ vale sempre $v(f') \leq c(A, B)$, l'aver trovato un caso di uguaglianza ha due conseguenze immediate:
+
+\begin{itemize}
+    \item \textbf{$f$ è un flusso di valore massimo.} 
+    Poiché il valore di nessun flusso può mai superare la capacità del taglio $(A^*, B^*)$, e il nostro flusso $f$ raggiunge esattamente tale capacità, è impossibile che esista un flusso con valore maggiore.
+    
+    \item \textbf{$(A^*, B^*)$ è un taglio di capacità minima.} 
+    Poiché la capacità di nessun taglio può mai scendere al di sotto del valore del flusso $f$, e il nostro taglio $(A^*, B^*)$ ha capacità esattamente pari a $v(f)$, è impossibile che esista un taglio con capacità minore.
+\end{itemize}
+
+
+\clearpage
+\noindent
+Dal momento che l'algoritmo di Ford-Fulkerson termina quando non esistono più cammini aumentanti nel grafo residuo, e che abbiamo dimostrato che in questo caso il flusso calcolato è massimo, possiamo concludere l'algoritmo di Ford-Fulkerson restituisce la soluzione ottima.
+
+Questo risultato ci porta al seguente teorema fondamentale nella teoria dei flussi di rete:
+
+\vspace{1\baselineskip}
+\noindent
+\fbox{
+    \parbox{\textwidth}{
+        \centering
+        \textbf{Max-Flow Min-Cut Theorem} \\
+        In ogni rete di flusso, il valore del flusso massimo è uguale alla capacità del taglio minimo.
+    }
+}
+\vspace{0.5\baselineskip}
+
+\paragraph{Calcolo del Min-Cut}
+Oltre a dimostrare l'ottimalità del flusso, questa costruzione ci fornisce un algoritmo efficiente per trovare il taglio minimo in una rete.
+Dato un flusso massimo $f$ (calcolato ad esempio con l'algoritmo Max-Flow), possiamo trovare il taglio di capacità minima $(A^*, B^*)$ in tempo $O(m)$:
+\begin{enumerate}
+    \item Costruiamo il grafo residuo $G_f$.
+    \item Eseguiamo una visita (BFS o DFS) partendo da $s$ in $G_f$ per identificare l'insieme $A^*$ di tutti i nodi raggiungibili.
+    \item Poniamo $B^* = V \setminus A^*$.
+    \item Il taglio $(A^*, B^*)$ è il taglio minimo cercato.
+\end{enumerate}
+
+\noindent
+Possiamo vedere il problema del flusso massimo e quello del taglio minimo come due facce della stessa medaglia: il primo rappresenta il problema \textbf{primale}, mentre il secondo è il suo \textbf{duale}.
+La forza di questo legame sta nel fatto che non abbiamo bisogno di due procedure separate. Nel momento esatto in cui risolviamo il problema primale (trovando il flusso massimo), otteniamo \textit{automaticamente} e a costo zero la soluzione per il problema duale. Questo è un grande vantaggio pratico, perché cercare direttamente il taglio minimo "da zero" sarebbe molto più complicato e meno intuitivo rispetto al calcolo del flusso.
+
+
+\paragraph{L'algoritmo Max-Flow in presenza di capacità reali}
+Per provare la correttezza dell'algoritmo Max-Flow, abbiamo fatto un'importante assunzione, e cioè che tutte le capacità degli archi siano numeri interi.
+Questa ipotesi è cruciale per garantire la terminazione dell'algoritmo, poiché ci ha permesso di dimostrare che ad ogni iterazione il valore del bottleneck fosse almeno $1$, ovvero che il flusso aumenta di almeno $1$ unità, limitando così il numero totale di iterazioni a $C$ (la somma delle capacità uscenti da $s$).
+
+In presenza di capacità reali, questa garanzia non vale più.
+La nostra analisi funziona addirittura nel caso di numeri razionali, ma se ad esempio le capacità fossero numeri irrazionali l'algoritmo potrebbe incrementare il flusso di quantità sempre più piccole, avvicinandosi asintoticamente al valore massimo senza mai raggiungerlo esattamente, e quindi non terminerebbe mai. In questo caso, è comunque possibile dimostrare che l'algoritmo Max-Flow produce un flusso di valore massimo, ma la dimostrazione richiede tecniche più avanzate e non è trattata in questo corso.
 
