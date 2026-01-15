@@ -271,7 +271,7 @@ Di seguito è riportato lo pseudocodice dell'algoritmo \textbf{MaxFlow}, o algor
 \noindent
 L'algoritmo MaxFlow risulta piuttosto intuitivo. Ciò che può sembrare meno ovvio è capire se il ciclo \texttt{While} termina, e se il flusso restituito sia effettivamente massimo.
 
-Per analizzare la correttezza e la terminazione dell'algoritmo, è necessario richiamare un'assunzione già fatta sulla natura delle capacità, che ora ripetiamo: assumiamo inizialmente che tutte le capacità degli archi $c(e)$ siano numeri interi.
+Per analizzare la correttezza e la terminazione dell'algoritmo, è necessario richiamare un'assunzione già fatta sulla natura delle capacità, che ora ripetiamo: assumiamo inizialmente che tutte le capacità degli archi $c_e$ siano numeri interi.
 
 Sotto questa ipotesi, dimostriamo inizialmente che l'algoritmo Max-Flow termina, e ne analizziamo la complessità; solo in un secondo momento dimostreremo che tale algoritmo produce un flusso massimo. La dimostrazione si basa su due proprietà fondamentali che valgono a ogni iterazione del ciclo \texttt{while}.
 
@@ -293,7 +293,7 @@ L'operazione \texttt{Augment} aumenta il flusso su questo arco di $b$, increment
 
 \paragraph{Terminazione}
 Per provare che l'algoritmo termina, definiamo $C$ come la somma totale delle capacità degli archi uscenti dalla sorgente $s$:
-\[ C = \sum_{e \text{ out of s }} c(e) \]
+\[ C = \sum_{e \text{ out of s }} c_e \]
 Il valore di un qualsiasi flusso ammissibile non può mai superare la capacità fisica totale degli archi che lasciano la sorgente, quindi $v(f) \leq C$.
 Poiché partiamo da un flusso nullo ($v(f)=0$) e ad ogni iterazione il valore aumenta di almeno un intero ($v(f_{i+1}) \geq v(f_i) + 1$), l'algoritmo non può eseguire più di $C$ iterazioni. Questo garantisce la terminazione.
 
@@ -333,7 +333,7 @@ Indichiamo gli archi che attraversano il taglio, ovvero quelli che vanno da un n
 \]
 La \textbf{capacità di un taglio} $(A, B)$, che indichiamo con $c(A, B)$, è definita come la somma delle capacità degli archi che vanno da $A$ a $B$:
 \[
-    c(A, B) = \sum_{e \text{ out of } A} c(e)
+    c(A, B) = \sum_{e \text{ out of } A} c_e
 \]
 
 \begin{figure}[!ht]
@@ -345,7 +345,7 @@ La \textbf{capacità di un taglio} $(A, B)$, che indichiamo con $c(A, B)$, è de
 
 \vspace{2\baselineskip}
 \noindent
-In precedenza abbiamo visto come $C = \sum_{e \text{ out of } s} c(e)$ fornisca già un limite superiore al valore di qualsiasi flusso, e si ha $v(f) \leq C$. Tuttavia, $C$ potrebbe essere una sovrastima enorme del valore massimo di un flusso in G, per cui a volte questo limite è utile, ma altre volte si rivela molto debole.
+In precedenza abbiamo visto come $C = \sum_{e \text{ out of } s} c_e$ fornisca già un limite superiore al valore di qualsiasi flusso, e si ha $v(f) \leq C$. Tuttavia, $C$ potrebbe essere una sovrastima enorme del valore massimo di un flusso in G, per cui a volte questo limite è utile, ma altre volte si rivela molto debole.
 
 Fortunatamente, il concetto di s-t Cuts ci permette di ottenere un limite superiore più stretto e significativo per il valore di qualsiasi flusso in $G$.
 
@@ -379,7 +379,7 @@ Sia $f$ un qualsiasi flusso in una rete di flusso $G = (V, E)$, e sia $(A, B)$ u
     v(f) = f^{out}(A) - f^{in}(A) 
         \leq f^{out}(A) 
         = \sum_{e \text{ out of } A} f(e) 
-        \leq \sum_{e \text{ out of } A} c(e) 
+        \leq \sum_{e \text{ out of } A} c_e 
         = c(A, B)
 \]
 La prima uguaglianza è data dalla proposizione precedente. Passiamo dalla prima alla seconda disuguaglianza poiché $f^{in}(A) \geq 0$, e passiamo dalla terza alla quarta applicando le condizioni di capacità a ciascun termine della somma. $\quad \blacksquare$
@@ -506,3 +506,80 @@ La nostra analisi funziona addirittura nel caso di numeri razionali, ma se ad es
 
 \clearpage
 \section{Il problema del Bipartite Matching}
+Una delle applicazioni più importanti del problema del Maximum-Flow è la risoluzione del problema del Bipartite Matching (accoppiamento bipartito).
+
+\paragraph{Definizione:} 
+Un \textbf{grafo bipartito} $G = (V, E)$ è un grafo non orientato i cui nodi possono essere divisi in due insiemi disgiunti $X$ e $Y$, e si ha $V = X \cup Y$ e $X \cap Y = \emptyset$, con la proprietà che ogni arco $e \in E$ abbia un'estremità in $X$ e l'altra in $Y$. 
+
+Un \textbf{matching} $M$ in $G$ è un sottoinsieme degli archi $M \subseteq E$ tale che ogni nodo appare in al più un arco in $M$.
+
+Il \textbf{Bipartite Matching Problem} è quello di trovare un matching in $G$ di dimensione massima possibile.
+
+\vspace{1\baselineskip}
+\noindent
+Esempi di applicazioni del Bipartite Matching includono l'assegnazione di compiti a lavoratori, la corrispondenza tra studenti e progetti, o l'abbinamento tra offerte e richieste in un mercato.
+
+\paragraph{Algoritmo di Bipartite Matching}
+Un algoritmo molto semplice per risolvere il Bipartite Matching Problem sfrutta l'algoritmo Max-Flow.
+L'idea è di trasformare il grafo bipartito $G = (X \cup Y, E)$ in una rete di flusso $G' = (V', E')$ come segue:
+\begin{enumerate}
+    \item Orientiamo gli archi di $G$ da $X$ verso $Y$.
+    \item Aggiungiamo una sorgente $s$ e colleghiamola a tutti i nodi in $X$.
+    \item Aggiungiamo una destinazione $t$ e colleghiamo tutti i nodi in $Y$ a $t$.
+    \item Assegniamo capacità $c_e = 1$ a tutti gli archi in $E'$.
+    \item Calcoliamo un flusso massimo $f$ in $G'$ utilizzando l'algoritmo Max-Flow.
+\end{enumerate}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/NetworkFlow/bipartite.png}
+    \caption{Esempio di trasformazione di un grafo bipartito in una rete di flusso per risolvere il Bipartite Matching Problem.}
+    \label{fig:bipartite_matching}
+\end{figure}
+
+\clearpage
+\noindent
+Per dimostrare che l'algoritmo basato sul flusso massimo risolve correttamente il problema del Bipartite Matching, dobbiamo stabilire una precisa equivalenza tra le soluzioni dei due problemi.
+Nello specifico, vale il seguente lemma: 
+\paragraph{Lemma}
+La dimensione del matching massimo in $G$ è uguale al valore del flusso massimo nella rete trasformata $G'$.
+Inoltre, gli archi che fanno parte del matching in $G$ corrispondono esattamente agli archi che trasportano flusso positivo (flusso pari a 1) da $X$ a $Y$ in $G'$.
+
+\paragraph{Dimostrazione}
+Dimostriamo questa equivalenza analizzando le due direzioni:
+
+\begin{enumerate}
+    \item \textbf{Da Matching a Flusso ($M \to f$):}
+    Supponiamo che il grafo $G$ possieda un matching $M = \{(x_1, y_1), (x_2, y_2), \dots, (x_k, y_k)\}$ di dimensione $k$.
+    Possiamo costruire un flusso $f$ in $G'$ inviando $1$ unità di flusso lungo ogni cammino della forma $s \to x_i \to y_i \to t$ per ogni coppia $(x_i, y_i) \in M$.
+    Poiché $M$ è un matching, ogni nodo $x_i$ e $y_i$ appare al più una volta, quindi i cammini sono disgiunti rispetto ai nodi interni e rispettano le capacità unitarie degli archi.
+    La somma totale del flusso sarà quindi pari a $k$, dimostrando che esiste un flusso di valore almeno pari alla dimensione del matching.
+
+    \item \textbf{Da Flusso a Matching ($f \to M$):}
+    Supponiamo di aver calcolato un flusso $f$ in $G'$ di valore $k$.
+    Poiché tutte le capacità in $G'$ sono intere (nello specifico, pari a 1), per la proprietà di integrità dei flussi, il flusso su ogni arco sarà intero, ovvero $0$ oppure $1$.
+    Definiamo $M$ come l'insieme degli archi $(x_i, y_i)$ tali che il flusso tra $x_i$ e $y_i$ sia pari a 1. Poiché il valore totale del flusso è $k$, e il taglio $(X, Y)$ separa $s$ da $t$, ci devono essere esattamente $k$ archi tra $X$ e $Y$ che trasportano 1 unità di flusso. Quindi $|M| = k$.
+    
+    Resta da dimostrare che $M$ è un matching valido. Dobbiamo verificare che nessun nodo sia incidente a più di un arco in $M$:
+    \begin{itemize}
+        \item \textbf{Per i nodi in $X$:} Ogni nodo $x \in X$ riceve flusso solo dalla sorgente $s$ tramite l'arco $(s, x)$, che ha capacità 1. Pertanto, il flusso entrante in $x$ è al massimo 1. Per la conservazione del flusso, il flusso uscente da $x$ verso i nodi in $Y$ non può superare 1. Se $x$ fosse adiacente a due o più archi in $M$, uscirebbero 2 o più unità di flusso, il che è impossibile.
+        \item \textbf{Per i nodi in $Y$:} Simmetricamente, ogni nodo $y \in Y$ invia flusso solo alla destinazione $t$ tramite l'arco $(y, t)$, che ha capacità 1. Il flusso uscente da $y$ è al massimo 1. Di conseguenza, il flusso entrante in $y$ dai nodi di $X$ non può superare 1. Se $y$ fosse adiacente a due o più archi in $M$, riceverebbe 2 o più unità di flusso, violando il vincolo di capacità sull'arco verso la destinazione.
+    \end{itemize}
+    Concludiamo che ogni nodo partecipa a un solo arco con flusso positivo, rendendo $M$ un matching valido.
+\end{enumerate}
+
+\clearpage
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{immagini/NetworkFlow/matching.png}
+    \caption{Esempio di corrispondenza tra flusso massimo e matching massimo in un grafo bipartito.}
+    \label{fig:matching}
+\end{figure}
+
+\paragraph{Complessità Computazionale}
+La complessità temporale dell'algoritmo è $O(nm)$.
+Questo deriva dal fatto che il valore massimo del flusso (e quindi la dimensione massima del matching) non può superare $n/2$ (poiché ogni nodo può essere abbinato una sola volta). Utilizzando un algoritmo di calcolo del flusso come Ford-Fulkerson su una rete con capacità unitarie, ogni aumento di flusso richiede una visita del grafo ($O(m)$), e il numero totale di aumenti è limitato dal valore del flusso massimo ($O(n)$).
+
+
+
+
