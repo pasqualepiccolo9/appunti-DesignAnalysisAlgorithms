@@ -315,7 +315,11 @@ Valutiamo ora il costo computazionale. Il tempo totale è dato dal numero di ite
 \noindent
 Combinando questi fattori, la complessità temporale dell'algoritmo\footnote{ 
     È importante notare che la complessità $O(m C)$ non è polinomiale in senso stretto, ma \emph{pseudo-polinomiale}. La complessità non dipende solo dalla dimensione dell'input (numero di nodi e archi), ma anche dal valore numerico $C$. Se $C$ è grande rispetto alla dimensione del grafo, l'algoritmo può diventare inefficiente.
-} Max-Flow è:
+}
+\footnote{
+    Utilizzando tecniche più sofisticate per selezionare i cammini aumentanti, è possibile progettare algoritmi con complessità temporale $O(n^3)$, quindi con complessità polinomiale.
+} 
+Max-Flow è:
 \[ O(m \cdot C) \]
 
 
