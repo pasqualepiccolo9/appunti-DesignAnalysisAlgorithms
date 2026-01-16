@@ -265,7 +265,7 @@ Output: Amount xi of i that maximizes the total benefit without
 4.          bi = vi/wi          // the benefit of item i
 5.      p = P       // remaining capacity in knapsack (initially p = P)
 6.      while p > 0 do
-7.          remove from S an item of maximal benefit    // greedy choice
+7.          remove from S an item of amaximal benefit    // greedy choice
 8.          xi = min(pi,  p)    // can't carry more than p
 9.          p -= xi             // update remaining capacity
 
@@ -299,7 +299,7 @@ Questa soluzione si basa sul calcolo della frequenza $f_c$ di ogni carattere $c$
 
 \begin{itemize}[nosep]
     \item Una \textbf{code map} (mappa di codifica) associa ad ogni carattere un corrispondente codice binario, detto \emph{code-word}.
-    \item Un \textbf{prefix code} (codice prefisso) è un sistema di codifica binario in cui nessuna parola di codice è il prefisso di un'altra parola di codice. Questo garantisce che la decodifica sia univoca e non ambigua.
+    \item Un \textbf{prefix code} (codice prefisso) è un sistema di codifica binario in cui nessuna code-word è il prefisso di un'altra code-word. Questo garantisce che la decodifica sia univoca e non ambigua.
     \item Un codice prefisso può essere rappresentato da un \textbf{encoding tree} (albero di codifica).
     \item Un \emph{encoding tree} è un albero binario in cui:
     \begin{itemize}[nosep]
@@ -324,8 +324,10 @@ Data una stringa $X$, vogliamo cercare un codice prefisso (e quindi un encoding 
 \subsection*{Soluzione Greedy: l'algoritmo di Huffman}
 L'algoritmo di codifica di Huffman inizia con ciascuno dei $d$ caratteri distinti della stringa $X$ da codificare ponendoli come nodo radice di un albero binario a nodo singolo. L'algoritmo procede in una serie di passaggi. In ogni passaggio, l'algoritmo prende i due alberi binari con le frequenze più piccole e li unisce in un unico albero binario. Ripete questo processo fino a quando non rimane un solo albero. 
 
-Ogni iterazione del ciclo while nell'algoritmo di Huffman può essere implementata in tempo $O(\log d)$ utilizzando una \emph{coda di priorità rappresentata con un heap}. Inoltre, ogni iterazione estrae due nodi da $Q$ e ne aggiunge uno, un processo che verrà ripetuto $d - 1$ volte prima che rimanga esattamente un nodo in $Q$. Pertanto, questo algoritmo funziona in tempo $O(n + d \log d)$. 
+\vspace{1\baselineskip}
+Ogni iterazione del ciclo while nell'algoritmo di Huffman può essere implementata in tempo $O(\log d)$ utilizzando una \emph{coda di priorità Q rappresentata con un heap}. Inoltre, ogni iterazione estrae due nodi da $Q$ e ne aggiunge uno, un processo che verrà ripetuto $d - 1$ volte prima che rimanga esattamente un nodo in $Q$. Pertanto, questo algoritmo funziona in tempo $O(n + d \log d)$, dove $n$ è la lunghezza della stringa $X$ e $d$ è il numero di caratteri distinti in $X$, e considerando che il calcolo delle frequenze richiede $O(n)$ tempo. 
 
+\vspace{1\baselineskip}
 Sebbene una giustificazione completa della correttezza di questo algoritmo sia al di fuori del nostro ambito qui, notiamo che la sua intuizione deriva da una semplice idea: qualsiasi codice ottimale può essere convertito in un codice ottimale in cui le code-word per i due caratteri a frequenza più bassa, $a$ e $b$, differiscono solo nel loro ultimo bit. Reiterando il ragionamento per una sequenza in cui $a$ e $b$ sono sostituiti da un unico carattere $c$, si ottiene quanto segue:
 
 \vspace{1\baselineskip}
