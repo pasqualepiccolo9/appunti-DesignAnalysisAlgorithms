@@ -234,9 +234,13 @@ Supponiamo di avere $K$ stringhe la cui lunghezza totale è $m$. Per ogni $k$ co
 \paragraph{Esempio:} Sia $S$ = \{ \emph{sandollar, sandlot, handler, grand, pantry} \}. In questo caso, $l(2) = 4$ (la sottostringa comune più lunga tra almeno due stringhe è \emph{sand}), $l(3) = 3$ (la sottostringa comune più lunga tra almeno tre stringhe è \emph{and}), $l(4) = 3$ (è ancora \emph{and}) e $l(5) = 2$ (\emph{an}).
 
 
-\subsection*{Soluzione}
+\subsection*{Soluzione}\footnote{
+    La soluzione proposta viene eseguita in tempo $O(K \cdot m)$, ma esiste una soluzione più avanzata in grado di raggiungere tempo lineare $O(n)$.
+}
 \begin{itemize}
-    \item Costruiamo un \textbf{Suffix Tree generalizzato}\footnote{Un \emph{Suffix Tree generalizzato} rappresenta tutti i suffissi di un insieme di stringhe, anziché di una singola stringa; Nota: è stato utilizzato nelle soluzioni dei paragrafi precedenti ai problemi proposti} $T$ per le $K$ stringhe.
+    \item Costruiamo un \textbf{Suffix Tree generalizzato}\footnote{
+        Un \emph{Suffix Tree generalizzato} rappresenta tutti i suffissi di un insieme di stringhe, anziché di una singola stringa; Nota: è stato utilizzato nelle soluzioni dei paragrafi precedenti ai problemi proposti.
+        } $T$ per le $K$ stringhe.
     \begin{itemize}
         \item Ogni nodo foglia di $T$ rappresenta un suffisso di una delle $K$ stringhe e viene etichettato con l'indice della stringa a cui appartiene.
         \begin{itemize}
@@ -253,11 +257,8 @@ Supponiamo di avere $K$ stringhe la cui lunghezza totale è $m$. Per ogni $k$ co
     \begin{itemize}
         \item Durante questa visita, costruiamo un vettore $V$ in cui, per ogni valore di $k$ da $2$ a $K$, la cella $V(k)$ memorizza la massima string-depth trovata tra i nodi che hanno $C(v) = k$ (cioè i nodi condivisi da esattamente $k$ stringhe).
         \item Infine, calcoliamo i valori finali partendo da $k = K$ e andando a ritroso: impostiamo $l(k)$ uguale a $V(k)$ se questo è maggiore del valore successivo, altrimenti $l(k)$ eredita il valore di $l(k+1)$ (questo serve a propagare la soluzione: se una stringa è condivisa da $K$ elementi, vale anche come stringa condivisa da $K-1$).
-        $$l(k) = 
-        \begin{cases} 
-            V(k) & \text{se } V(k) > l(k+1) \\ 
-            l(k+1) & \text{altrimenti}
-        \end{cases}
+        $$
+            l(k) = \max(V(k), l(k+1))
         $$
     \end{itemize}
 \end{itemize}
