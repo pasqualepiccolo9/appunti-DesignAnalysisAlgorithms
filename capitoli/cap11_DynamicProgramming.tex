@@ -23,6 +23,7 @@ Quando si progetta un algoritmo di programmazione dinamica è importante seguire
 
 
 \clearpage
+\noindent
 La programmazione dinamica è per alcuni aspetti simile alla tecnica \emph{divide-et-impera}. Sebbene entrambe le tecniche suddividano il problema originale in porzioni più piccole, la differenza sostanziale risiede nella relazione tra questi sotto-problemi.
 Nel paradigma \emph{divide-et-impera}, i sotto-problemi sono \textbf{indipendenti} (o disgiunti): la soluzione di un ramo non influenza né è necessaria per la risoluzione degli altri. 
 Al contrario, la \emph{programmazione dinamica} è applicabile quando i sotto-problemi sono \textbf{sovrapposti} (\emph{overlapping subproblems}), ovvero quando condividono a loro volta dei sotto-problemi comuni.
@@ -43,7 +44,7 @@ def fibonacci(n):
     # Gestione caso base immediato
     if n <= 1:
         return n
-    # Creazione della tabella (array) per memorizzare irisultati
+    # Creazione della tabella (array) per memorizzare i risultati
     # Inizializzata a 0, dimensione n+1 per ospitarel'indice n
     table = [0] * (n + 1)
     # Impostazione dei casi base noti
@@ -61,7 +62,8 @@ def fibonacci(n):
 Una \emph{sottosequenza} di una stringa $x_0x_1x_2 \ldots x_{n-1}$ è una stringa $x_{i_0}x_{i_1} \ldots x_{i_k}$, dove $i_j < i_{j+1}$. In altre parole, una sottosequenza si ottiene eliminando alcuni caratteri dalla stringa originale senza cambiare l'ordine dei caratteri rimanenti.
 
 Da notare che è diverso dal concetto di \emph{sottostringa}: una sottostringa è una sequenza contigua di caratteri all'interno della stringa originale, mentre una sottosequenza può essere formata da caratteri non contigui. Per cui, una sottostringa è sempre una sottosequenza, ma non viceversa.
-\textbf{Esempio}: Data la stringa "AGGTAB", alcune delle sue sottosequenze sono "GTA", "ATAB", "GAB", mentre alcune delle sue sottostringhe sono "AGG", "GGTA", "TAB".
+
+\paragraph{Esempio}: Data la stringa "AGGTAB", alcune delle sue sottosequenze sono "GTA", "ATAB", "GAB", mentre alcune delle sue sottostringhe sono "AGG", "GGTA", "TAB".
 
 \vspace{1\baselineskip}
 \noindent
@@ -140,10 +142,11 @@ L'algoritmo che si occupa di calcolare la tabella $L$ impiega due cicli annidati
 \subsubsection*{Estrazione della soluzione}
 Come già detto, la tabella $L$ contiene le lunghezze delle LCS per tutti i sotto-problemi, ma non restituisce direttamente la LCS stessa. Tuttavia, è possibile ricostruire la LCS a partire dalla tabella $L$. La soluzione può essere ricavata, a partire dalla cella $L[n][m]$ nel modo seguente:
 
+\clearpage
 \begin{itemize}[nosep]
     \item Considerando una generica cella $L[j][k]$:
     \begin{itemize}[nosep]
-        \item Se $x_{j-1} = y_{k-1}$, significa che questo carattere comune ha contribuito alla lunghezza della sottosequenza basandosi sul valore precedente $L_{j-1,k-1}$. Possiamo quindi registrare $x_{j-1}$ come parte della soluzione e proseguire l'analisi dalla cella $L_{j-1,k-1}$.
+        \item Se $c = x_{j-1} = y_{k-1}$, significa che questo carattere comune $c$ ha contribuito alla lunghezza della sottosequenza basandosi sul valore precedente $L_{j-1,k-1}$. Possiamo quindi registrare $x_{j-1}$ come parte della soluzione e proseguire l'analisi dalla cella $L_{j-1,k-1}$.
         \item Se $x_{j-1} \neq y_{k-1}$, allora la lunghezza della LCS dipende dal massimo tra $L[j][k-1]$ e $L[j-1][k]$. In questo caso, dobbiamo spostarci nella direzione del massimo valore per continuare la ricerca della LCS.
         \item Continuiamo questo processo fino a raggiungere una cella $L[j][k] = 0$.
     \end{itemize}
@@ -174,7 +177,7 @@ L'algoritmo per ricostruire la LCS ha una complessità temporale di $O(n + m)$, 
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=1\textwidth]{immagini/Dynamic/lcs_table.png}
+    \includegraphics[width=0.9\textwidth]{immagini/Dynamic/lcs_table.png}
     \caption{Illustrazione dell'algoritmo per la costruzione di una longest common subsequence a partire dall'array L. Un passo diagonale da $L_{j,k}$ a $L_{j-1,k-1}$ sul percorso evidenziato rappresenta l'uso di un carattere comune, ovvero il carattere $c = x_{j-1} = y_{k-1}$.}
     \label{fig:lcs_table}
 \end{figure}
@@ -192,7 +195,7 @@ L'\emph{Edit Transcript} di due stringhe $A$ e $B$ è una stringa $T$ sull'alfab
 Se in $T$ sostituiamo tutte le $I$ con $D$, e tutte le $D$ con $I$, otteniamo l'edit transcript $T'$ che trasforma $B$ in $A$.
 
 \subsection*{Soluzione Dynamic Programming}
-Sia $D_{n,m}$ la distanza di edit tra le stringhe $A = a_0 a_1 \ldots a_{n-1}$ e $B = b_0 b_1 \ldots b_{m-1}$. $D_{n,m}$ rappresenta quindi la soluzione ottimale del problema.
+Sia $D(n,m)$ la distanza di edit tra le stringhe $A = a_0 a_1 \ldots a_{n-1}$ e $B = b_0 b_1 \ldots b_{m-1}$. $D_{n,m}$ rappresenta quindi la soluzione ottimale del problema.
 
 \subsubsection*{Scomposizione in sotto-problemi}
 Sia $D(i,j)$ la distanza di edit tra i prefissi $a_0 a_1 \ldots a_{i-1}$ e $b_0 b_1 \ldots b_{j-1}$, con $0 \leq i \leq n$ e $0 \leq j \leq m$. $D(i,j)$ rappresenta quindi la soluzione ottimale al sotto-problema che considera solo i primi $i$ caratteri di $A$ e i primi $j$ caratteri di $B$.
@@ -264,6 +267,7 @@ EditDistance(A, B)
 \hrule 
 
 \clearpage
+\noindent
 L'algoritmo che si occupa di calcolare la tabella $D$ impiega due cicli annidati (oltre ai cicli di inizializzazione), iterando rispettivamente su $i$ e $j$. All'interno del ciclo più interno, viene eseguita una semplice operazione di confronto, una selezione condizionale e un'assegnazione, tutte con complessità $O(1)$, quindi la complessità totale dell'algoritmo è $O(n \cdot m)$, dove $n$ e $m$ sono le lunghezze delle stringhe $A$ e $B$ rispettivamente.
 
 \subsubsection*{Estrazione della soluzione}
@@ -272,7 +276,7 @@ Anche in questo caso, la tabella $D$ contiene le distanze di edit per tutti i so
     \item Vogliamo trovare il percorso ottimale, ovvero quello che porta dalla cella $D(n,m)$ alla cella $D(0,0)$.
     \item Per fare ciò, per ciascuna cella $D(i,j)$ memorizziamo come il suo valore è stato calcolato.
     \begin{itemize}[nosep]
-        \item Per esempio, se $D(i,j) = D(i,j-1) + 1$, allora sappiamo il valore della cella $D(i,j)$ è stato ottenuto dalla cella $D(i,j-1)$.
+        \item Per esempio, se $D(i,j) = D(i,j-1) + 1$, allora sappiamo il valore della cella $D(i,j)$ è stato ottenuto dalla cella $D(i,j-1)$ tramite inserimento del carattere $b_{j-1}$.
     \end{itemize}
 \end{itemize}
 
@@ -288,6 +292,71 @@ La freccia orizzontale ($\leftarrow$, da $D(i,j)$ a $D(i,j-1)$) rappresenta un'o
 La freccia verticale ($\uparrow$, da $D(i,j)$ a $D(i-1,j)$) rappresenta un'operazione di \textbf{cancellazione} (Delete) del carattere $a_{i-1}$ da $A$. 
 
 La freccia diagonale ($\nwarrow$, da $D(i,j)$ a $D(i-1,j-1)$) rappresenta un'operazione di \textbf{match} (Match) se $a_{i-1} = b_{j-1}$ o di \textbf{sostituzione} (Replace) se $a_{i-1} \neq b_{j-1}$.
+
+\clearpage
+\noindent
+In riferimento all'esempio in Figura \ref{fig:edit_distance}, per capire \textit{quali} operazioni abbiamo fatto, dobbiamo partire dalla fine (la soluzione ottimale) e ripercorrere i passi all'indietro fino all'inizio.
+
+\paragraph{Gli Indici}
+Per prima cosa, fissiamo la notazione per gli indici:
+\begin{itemize}
+    \item \textbf{La Cella corrente} $D(i, j)$: È la casella della tabella in cui ci troviamo adesso.
+    \item \textbf{$i$ e $j$}: Sono le \textbf{lunghezze} dei prefissi. Se ad esempio siamo in $D(3, 2)$, stiamo guardando una sottostringa di $A$ lunga 3 e una di $B$ lunga 2, per cui gli indici reali degli ultimi caratteri sono $2$ e $1$ rispettivamente.
+    \item \textbf{$i-1$ e $j-1$}: Sono gli \textbf{indici reali} dei caratteri nelle stringhe (poiché gli array partono da 0).
+    \begin{itemize}
+        \item Il carattere ``sotto esame'' della stringa $A$ è $a_{i-1}$.
+        \item Il carattere ``sotto esame'' della stringa $B$ è $b_{j-1}$.
+    \end{itemize}
+\end{itemize}
+
+\paragraph{Il Procedimento: Camminare all'Indietro}
+Partiamo dalla cella in basso a destra $D(n, m)$ e ci chiediamo: \textit{``Da quale vicino sono arrivato qui pagando il costo minore?''}
+
+\begin{enumerate}
+    \item \textbf{Controllo Diagonale (Match o Replace):}
+    Guardiamo la cella $D(i-1, j-1)$.
+    \begin{itemize}
+        \item Se $a_{i-1} == b_{j-1}$ (i caratteri sono uguali) e il costo non è cambiato, allora c'è stato un \textbf{Match}. Decrementiamo sia $i$ che $j$.
+        \item Se i caratteri sono diversi e $D(i, j) = D(i-1, j-1) + 1$, allora c'è stata una \textbf{Sostituzione} (Replace). Decrementiamo sia $i$ che $j$.
+    \end{itemize}
+
+    \item \textbf{Controllo Sinistra (Insert):}
+    Guardiamo la cella $D(i, j-1)$.
+    Se $D(i, j) = D(i, j-1) + 1$, significa che siamo arrivati qui aggiungendo un carattere. L'operazione è stata una \textbf{Inserimento} del carattere $b_{j-1}$ dopo il carattere $a_{i-1}$.
+    \begin{itemize}
+        \item Ci spostiamo a sinistra: $j$ diventa $j-1$, ma $i$ resta uguale (perché non abbiamo consumato nulla da $A$).
+    \end{itemize}
+
+    \item \textbf{Controllo Sopra (Delete):}
+    Guardiamo la cella $D(i-1, j)$.
+    Se $D(i, j) = D(i-1, j) + 1$, significa che siamo arrivati qui rimuovendo un carattere superfluo. L'operazione è stata una \textbf{Cancellazione} del carattere $a_{i-1}$.
+    \begin{itemize}
+        \item Ci spostiamo in alto: $i$ diventa $i-1$, ma $j$ resta uguale (perché non abbiamo avanzato nella costruzione di $B$).
+    \end{itemize}
+\end{enumerate}
+
+\noindent
+Ripetiamo questi controlli finché non arriviamo alla cella $D(0, 0)$. La sequenza di operazioni trovata (letta al contrario) è la soluzione.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \clearpage
