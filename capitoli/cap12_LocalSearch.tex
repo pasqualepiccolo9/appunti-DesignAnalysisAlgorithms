@@ -40,7 +40,7 @@ A questo proposito, una distinzione cruciale è quella tra ottimi locali e globa
 \end{figure}
 
 \noindent
-Ad ogni iterazione, l'algoritmo di ricerca mantiene una soluzione corrente $S \in C$. Ad ogni step, sceglie un vicino $S'$ di $S$, dichiara $S'$ come nuova soluzione corrente se $c(S') \leq c(S)$, e itera. Durante l'esecuzione dell'algoritmo, ricorda la soluzione a costo minimo che ha visto finora, $S^*$; quindi, man mano che procede, trova soluzioni sempre migliori e aggiorna $S^*$ di conseguenza. L'algoritmo termina quando non riesce più a trovare un vicino$S'$ migliore della soluzione corrente $S$, restituendo $S^*$ come soluzione finale.
+Ad ogni iterazione, l'algoritmo di ricerca mantiene una soluzione corrente $S \in C$. Ad ogni step, sceglie un vicino $S'$ di $S$, dichiara $S'$ come nuova soluzione corrente se $c(S') \leq c(S)$, e itera. Durante l'esecuzione dell'algoritmo, ricorda la soluzione a costo minimo che ha visto finora, $S^*$; quindi, man mano che procede, trova soluzioni sempre migliori e aggiorna $S^*$ di conseguenza. L'algoritmo termina quando non riesce più a trovare un vicino $S'$ migliore della soluzione corrente $S$, restituendo $S^*$ come soluzione finale.
 
 Il \emph{punto cruciale} di un algoritmo di ricerca locale risiede nella scelta della \textbf{neighbor relation} (relazione di vicinato) e nella progettazione della regola per scegliere una soluzione vicina ad ogni passo. Da un lato, la neighbor relation deve essere sufficientemente ampia da permettere all'algoritmo di uscire da minimi locali indesiderati; dall'altro, deve essere sufficientemente ristretta da mantenere l'efficienza computazionale dell'algoritmo.
 
@@ -50,7 +50,7 @@ Il vantaggio dunque è che con Greedy si può facilmente incappare in qualche mi
 Va detto però che un algoritmo di ricerca locale che sia efficiente non esiste per tutti i problemi di ottimizzazione.
 
 \clearpage
-\section{Vertex Cover}
+\section{Problema: Vertex Cover}
 Consideriamo il problema del \textbf{Vertex Cover}. Siano dati un insieme $V$ di elementi e un insieme $E$ di coppie di elementi di $V$ (tutte le coppie di $E$ sono distinte, cioè differiscono almeno per un elemento). L'insieme $C$ delle possibili soluzioni è dato da tutti i sottoinsiemi (soluzioni) $S$ di $V$ tali che ogni coppia in $E$ ha almeno un elemento in $S$. Il costo di una soluzione $S$ è semplicemente la sua cardinalità, cioè il numero di elementi in $S$: $c(S) = |S|$.
 
 In altre parole, un \textbf{Vertex Cover} è un sottoinsieme $S \subseteq V$ che ``copre'' tutte le coppie in $E$: questo significa che, per ogni coppia presente in $E$, \textbf{almeno uno dei due elementi} che la compongono deve appartenere alla soluzione $S$.
@@ -70,7 +70,7 @@ Per applicare la ricerca locale al problema del Vertex Cover, dobbiamo definire 
 \subsection{Gradient Descent per Vertex Cover}
 L'algoritmo di ricerca locale più semplice possibile è il \textbf{Gradient Descent} (Discesa del Gradiente). In questo approccio, ad ogni iterazione, abbiamo una soluzione corrente $S$ e l'algoritmo esplora tutti i suoi vicini per poi scegliere il vicino $S'$ con il costo più basso tra quelli che migliorano la soluzione corrente (cioè quelli con $c(S') < c(S)$). Se non esistono vicini migliori, l'algoritmo termina e restituisce la soluzione corrente come risultato finale.
 
-Questo algoritmo è semplice ma può facilmente rimanere intrappolato in minimi lodali, poiché esplora solo i vicini che migliorano la soluzione corrente. Nel contesto del problema Vertex Cover, consideriamo un insieme $V$ di elementi e un insieme $E$ di coppie. L'algoritmo Gradient Descent viene inizializzato con $S=V$ e procede rimuovendo un elemento per volta fintanto che la condizione di copertura delle coppie rimane soddisfatta.
+Questo algoritmo è semplice ma può facilmente rimanere intrappolato in minimi locali, poiché esplora solo i vicini che migliorano la soluzione corrente. Nel contesto del problema Vertex Cover, consideriamo un insieme $V$ di elementi e un insieme $E$ di coppie. L'algoritmo Gradient Descent viene inizializzato con $S=V$ e procede rimuovendo un elemento per volta fintanto che la condizione di copertura delle coppie rimane soddisfatta.
 
 Per valutare l'efficacia dell'algoritmo, analizziamo il suo comportamento in tre scenari distinti. Mentre l'approccio funziona correttamente in casi banali, mostra evidenti limiti e tendenza a bloccarsi in minimi locali non appena la struttura delle coppie diventa più complessa:
 
@@ -96,7 +96,7 @@ Per valutare l'efficacia dell'algoritmo, analizziamo il suo comportamento in tre
 
 
 
-\section{Algoritmo Metropolis}
+\section{Neighbor Relation: Algoritmo Metropolis}
 Come abbiamo visto con il Gradient Descent, l'approccio puramente "greedy" (che accetta solo miglioramenti) tende a rimanere intrappolato nei minimi locali. Per risolvere questo problema, è necessario introdurre un meccanismo che permetta all'algoritmo di accettare occasionalmente soluzioni peggiori, nella speranza che queste mosse "in salita" (uphill) permettano di scavalcare le barriere dei minimi locali e raggiungere il minimo globale.
 
 Questa intuizione è alla base dell'\textbf{Algoritmo Metropolis}, che simula il comportamento di un sistema fisico basandosi sui principi della meccanica statistica.
@@ -151,7 +151,7 @@ L'intuizione fondamentale è che il processo di ricerca non è casuale ma pesato
 
 
 \clearpage
-\section{Simulated Annealing}
+\section{Neighbor Relation: Simulated Annealing}
 Il \textbf{Simulated Annealing} (Ricottura Simulata) rappresenta un'evoluzione dell'algoritmo Metropolis. 
 È fondamentale sottolineare che il meccanismo di decisione rimane invariato: il Simulated Annealing utilizza la \textbf{stessa funzione di Gibbs-Boltzmann} vista in precedenza per calcolare la probabilità di accettare una mossa peggiorativa ($\Delta E > 0$):
 
@@ -192,7 +192,7 @@ Da sottolineare che \textbf{nessuna di queste tecniche garantisce di trovare sem
 
 
 \clearpage
-\section{Max Cut}
+\section{Problema: Max Cut}
 Un altro classico problema di ottimizzazione combinatoria che ben si presta all'approccio della ricerca locale è il \textbf{Max Cut}.
 A differenza del problema del Vertex Cover, dove l'obiettivo era minimizzare un costo, nel Max Cut l'obiettivo è \textbf{massimizzare} il valore della soluzione.
 
@@ -306,7 +306,7 @@ In pratica, questo metodo permette di eseguire una lunga sequenza di flip in un 
 
 
 \clearpage
-\section{Hopfield Neural Networks}
+\section{Problema: Hopfield Neural Networks}
 Le \textbf{Reti Neurali di Hopfield} (Hopfield Neural Networks) rappresentano un modello semplice di memoria associativa, in cui una vasta collezione di unità (neuroni) è connessa da una rete sottostante, e le unità vicine cercano di correlare i propri stati.
 Il problema può essere modellato come segue:
 
