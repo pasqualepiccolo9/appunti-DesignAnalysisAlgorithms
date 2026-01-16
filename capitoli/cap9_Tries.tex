@@ -169,7 +169,9 @@ Eseguiamo il pattern matching come segue:
 
 \clearpage
 \section{The Substring Problem}
-In questa tipologia di problema abbiamo a disposizione un insieme noto e fissato di stringhe che chiameremo \textbf{database dei pattern}. Successivamente ci viene fornita una stringa $S$ per cui vogliamo trovare tutti i pattern nel database che contengono $S$ come sottostringa. 
+In questa tipologia di problema abbiamo a disposizione un insieme noto e fissato di stringhe che chiameremo \textbf{database dei pattern}. Successivamente ci viene fornita una stringa $S$ per cui vogliamo trovare tutti i pattern nel database che contengono $S$ come sottostringa\footnote{
+    Un'applicazione di questo problema riguarda l'autocompletamento all'interno di un IDE. Nel database rientrano tutti i nomi delle classi, metodi e variabili definite dal programmatore, mentre la stringa S rappresenta quello che si sta digitando (es. "List"). Come risultato l'IDE mostra istantaneamente non solo ciò che inizia con "List", ma tutto ciò che lo contiene (es. ArrayList, LinkedList, ListListener).
+}. 
 
 Osservando attentamente questo problema notiamo che si tratta in effetti del problema duale del \emph{pattern matching}, in cui abbiamo un testo fisso e cerchiamo un pattern variabile. Qui, invece, abbiamo un insieme fisso di pattern e cerchiamo una sottostringa che variabile.
 
@@ -229,7 +231,7 @@ Siano $m_1$ e $m_2$ le lunghezze delle due stringhe $S_1$ e $S_2$, e sia $m = m_
 Generalizziamo ora il problema della \emph{longest common substring} (LCS) a più di due stringhe.
 Supponiamo di avere $K$ stringhe la cui lunghezza totale è $m$. Per ogni $k$ compreso tra $2$ e $K$, definiamo $l(k)$ come la lunghezza della sottostringa comune più lunga per almeno $k$ delle $K$ stringhe. Il problema della LCS per più stringhe consiste nel calcolare i valori $l(2), l(3), \ldots, l(K)$ e le stringhe corrispondenti.
 
-\paragraph{Esempio:} Sia $S$ = \{ \emph{banana, anana, nana, fana} \}. In questo caso, $l(2) = 4$ (la sottostringa comune più lunga tra almeno due stringhe è \emph{nana}), $l(3) = 2$ (la sottostringa comune più lunga tra almeno tre stringhe è \emph{an}) e $l(4) = 0$ (non esiste alcuna sottostringa comune a tutte e quattro le stringhe).
+\paragraph{Esempio:} Sia $S$ = \{ \emph{sandollar, sandlot, handler, grand, pantry} \}. In questo caso, $l(2) = 4$ (la sottostringa comune più lunga tra almeno due stringhe è \emph{sand}), $l(3) = 3$ (la sottostringa comune più lunga tra almeno tre stringhe è \emph{and}), $l(4) = 3$ (è ancora \emph{and}) e $l(5) = 2$ (\emph{an}).
 
 
 \subsection*{Soluzione}
