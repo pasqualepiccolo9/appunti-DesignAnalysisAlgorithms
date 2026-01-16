@@ -234,9 +234,7 @@ Supponiamo di avere $K$ stringhe la cui lunghezza totale è $m$. Per ogni $k$ co
 \paragraph{Esempio:} Sia $S$ = \{ \emph{sandollar, sandlot, handler, grand, pantry} \}. In questo caso, $l(2) = 4$ (la sottostringa comune più lunga tra almeno due stringhe è \emph{sand}), $l(3) = 3$ (la sottostringa comune più lunga tra almeno tre stringhe è \emph{and}), $l(4) = 3$ (è ancora \emph{and}) e $l(5) = 2$ (\emph{an}).
 
 
-\subsection*{Soluzione}\footnote{
-    La soluzione proposta viene eseguita in tempo $O(K \cdot m)$, ma esiste una soluzione più avanzata in grado di raggiungere tempo lineare $O(n)$.
-}
+\subsection*{Soluzione}
 \begin{itemize}
     \item Costruiamo un \textbf{Suffix Tree generalizzato}\footnote{
         Un \emph{Suffix Tree generalizzato} rappresenta tutti i suffissi di un insieme di stringhe, anziché di una singola stringa; Nota: è stato utilizzato nelle soluzioni dei paragrafi precedenti ai problemi proposti.
@@ -248,7 +246,9 @@ Supponiamo di avere $K$ stringhe la cui lunghezza totale è $m$. Per ogni $k$ co
         \end{itemize}
         \item Per ogni nodo interno $v$ di $T$, calcoliamo $C(v)$ come il numero di identificatori di stringa distinti che compaiono alle foglie del sottoalbero radicato in $v$.
         \begin{itemize}
-            \item Questa operazione è il \textbf{collo di bottiglia della soluzione} e può essere eseguita in tempo $O(K \cdot m)$.
+            \item Questa operazione è il \textbf{collo di bottiglia della soluzione}\footnote{
+            La soluzione proposta viene eseguita in tempo $O(K \cdot m)$, ma esiste una soluzione più avanzata in grado di raggiungere tempo lineare $O(n)$.
+        } e può essere eseguita in tempo $O(K \cdot m)$.
         \end{itemize}
         \item Per ogni nodo $v$ di $T$, calcoliamo la lunghezza della stringa corrispondente al percorso dalla radice a $v$.
     \end{itemize}
