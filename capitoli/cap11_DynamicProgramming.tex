@@ -610,7 +610,7 @@ Come già accennato in precedenza, il problema dello 0-1 Knapsack non può esser
 \subsection*{Soluzione Dynamic Programming}
 Assumendo che i volumi $v_i$ siano interi positivi, definiamo i sotto-problemi come segue:
 \begin{itemize}
-    \item Considerimao solamente i primi $i$ oggetti $x_1, x_2, \ldots, x_i$, ed un volume massimo $j$ dello zaino, con $0 \leq i \leq n$ e $0 \leq j \leq B$.
+    \item Consideriamo solamente i primi $i$ oggetti $x_1, x_2, \ldots, x_i$, ed un volume massimo $j$ dello zaino, con $0 \leq i \leq n$ e $0 \leq j \leq B$.
     \item Definiamo $V(i,j)$ come il valore massimo ottenibile utilizzando i primi $i$ oggetti con un volume massimo $j$ dello zaino.
 \end{itemize}
 
@@ -628,7 +628,7 @@ Dal momento che vogliamo massimizzare il valore totale, l'\textbf{equazione cara
 $$
 V(i,j) = 
 \begin{cases}
-    \max(V(i-1,j), c_i + V(i-1,j-v_i)) & \text{se } v_i \leq j \\
+    \max(V(i-1,j), \quad c_i + V(i-1,j-v_i)) & \text{se } v_i \leq j \\
     V(i-1,j) & \text{se } v_i > j 
 \end{cases}
 $$
@@ -642,6 +642,7 @@ Le boundary conditions sono le seguenti:
 \end{itemize}
 
 \clearpage
+\noindent
 Un algoritmo iterativo può riempire la matrice calcolando ogni voce in tempo costante. Alla fine, il costo della soluzione ottimale è riportato nella cella $V(n,B)$. Il tempo necessario da un algoritmo per riempire la tabella è $O(nB)$. 
 
 Per costruire una soluzione ottimale, possiamo anche costruire una matrice booleana $C$ della stessa dimensione $n \times (B + 1)$. Per ogni $1 \leq i \leq n$ e $0 \leq j \leq B$, $C(i,j) = \text{True}$ se e solo se esiste una soluzione ottimale che inserisce un sottoinsieme dei primi $i$ oggetti nel volume $j$ in modo che l'oggetto $i$ sia incluso nella soluzione. Utilizzando la matrice $C$ possiamo lavorare a ritroso per ricostruire gli elementi presenti in una soluzione ottimale. 
