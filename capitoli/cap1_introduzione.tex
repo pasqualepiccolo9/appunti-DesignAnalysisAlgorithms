@@ -30,7 +30,6 @@ Esempi di pattern includono \textit{Iterator, Adapter, Factory} (Software Engine
     \item \textbf{Abstract Data Type (ADT):} È un modello matematico che descrive un tipo di dato attraverso i suoi comportamenti (semantica) e i parametri delle operazioni. Descrive \textit{cosa} fanno le operazioni, ma non \textit{come} (punto di vista dell'utente). È indipendente dall'implementazione.
     \item \textbf{Struttura Dati:} È la realizzazione concreta di un ADT. Descrive la rappresentazione in memoria dei dati e l'implementazione degli algoritmi per le operazioni (punto di vista del progettista).
 \end{itemize}
-
 In un linguaggio object-oriented, ADT e struttura dati sono realizzati tramite delle classi. Una classe definisce sia l'interfaccia pubblica (ADT) sia l'implementazione effettiva (struttura dati).
 
 \subsection{Come si crea un ADT?}
@@ -45,7 +44,7 @@ Per progettare un ADT bisogna seguire i seguenti passi:
     \begin{itemize}
         \item Scrivere la classe che rappresenta l'ADT, specificando solo i metodi pubblici (l'interfaccia) necessari all'uso dell'astrazione.
     \end{itemize}
-    \item Implementazione un testing client.
+    \item Implementazione di un testing client.
     \begin{itemize}
         \item Creare un programma di test che utilizzi l'ADT per verificare correttezza e efficienza delle operazioni.
     \end{itemize}
@@ -202,7 +201,6 @@ Una \texttt{Position} rappresenta un'astrazione di un "nodo" all'interno della s
     \item Protegge la struttura interna: l'utente manipola le posizioni, ma solo la classe albero può accedere ai collegamenti (link) tra i nodi reali sottostanti.
     \item Una Position $p$ rimane valida e non è influenzata dai cambiamenti negli altri nodi, a meno che non venga esplicitamente cancellata.
 \end{itemize}
-
 L'unica operazione pubblica principale dell'ADT Position è il metodo per accedere al dato contenuto:
 \begin{verbatim}
 p.element() # Restituisce l'elemento memorizzato in P
@@ -215,9 +213,8 @@ Ogni istanza di \texttt{Position} memorizza:
     \item Un riferimento al nodo reale (\texttt{\_node}).
     \item Un riferimento al contenitore a cui appartiene (\texttt{\_container}), utile per verificare che la posizione sia utilizzata con l'albero corretto.
 \end{enumerate}
-
-Ecco un esempio dell'implementazione come descritta nelle slide:
-
+Ecco un esempio dell'implementazione della classe \texttt{Position}:
+\clearpage
 \begin{lstlisting}[language=Python, caption=Classe Position (Wrapper)]
 class Position(BinaryTree.Position):
     """Classe pubblica che avvolge un nodo."""
