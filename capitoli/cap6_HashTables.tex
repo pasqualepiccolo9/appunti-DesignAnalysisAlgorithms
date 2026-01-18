@@ -178,9 +178,23 @@ Abbiamo visto come il \textbf{load factor} (fattore di carico) di una tabella ha
     \item \emph{open addressing}: \(\lambda \le 0.5\) (per linear probing e quadratic probing), \(\lambda \le 0.7\) (per double hashing).
 \end{itemize}
 
+\noindent
+Quando il numero di elementi inseriti fa sì che il load factor \(\lambda\) superi le soglie critiche sopra indicate, la probabilità di collisioni aumenta drasticamente. Questo comporta una degradazione della complessità temporale media delle operazioni di ricerca e inserimento, che tendono a spostarsi da \(O(1)\) verso il caso pessimo \(O(n)\).
+
+Per ripristinare l'efficienza operativa, è necessario eseguire una procedura di ridimensionamento dinamico nota come \textbf{Rehashing}.
+
+\subsection*{Il processo di Rehashing}
+La procedura operativa segue questi passi:
+\begin{enumerate}
+    \item \textbf{Allocazione}: Viene creata una nuova tabella di dimensione \(N'\), dove solitamente \(N' \approx 2N\). È preferibile che \(N'\) sia un numero primo per ottimizzare la distribuzione.
+    \item \textbf{Rimappatura}: Si scorre l'intera tabella originale. Per ogni elemento, viene ricalcolato l'hash in funzione della nuova capacità \(N'\).
+    \item \textbf{Inserimento}: Gli elementi vengono inseriti nelle nuove posizioni calcolate.
+    \item \textbf{Deallocazione}: La vecchia memoria viene liberata.
+\end{enumerate}
+Sebbene il rehashing abbia un costo immediato di \(O(n)\), l'analisi ammortizzata dimostra che, raddoppiando la capacità ad ogni espansione, il costo medio per operazione di inserimento rimane \(O(1)\).
 
 \section{Analisi delle prestazioni}
-\begin{itemize}
+\begin{itemize}[nosep]
     \item \textbf{Worst case}: Il caso peggiore si ha quando tutte le chiavi collidono, per cui si ha un tempo \(O(n)\) per tutte le operazioni principali (ricerca, inserimento, cancellazione). Se i valori di hash sono distribuiti uniformemente, il numero di probe necessarie per trovare uno slot libero è in media \(1/(1 - \lambda)\).
     \item \textbf{Average case}: Il tempo medio per tutte le operazioni principali è \(O(1)\). In pratica, con una buona funzione di hash, una hash table è estremamente efficiente se il load factor è molto minore di 1.
 \end{itemize}
