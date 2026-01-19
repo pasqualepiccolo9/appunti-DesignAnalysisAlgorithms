@@ -115,30 +115,30 @@ Per implementare in modo efficiente questo approccio, possiamo prendere ancora u
 L'algoritmo Prim è descritto nel seguente pseudocodice:
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-Input: An undirected, weighted, connected graph G with n vertices 
-        and m edges
-Output: A minimum spanning tree T for G
-1.  Algorithm PrimJarnik(G):
-2.      Pick any vertex s of G
-3.      D[s] = 0
-4.      for each vertex v != s do
-5.          D[v] = +infinity
-6.      Initialize T = empty set
-7.      Initialize a priority queue Q with an entry (D[v], (v,None))  
-            for each vertex v, where D[v] is the key in the priority  
-            queue, and (v,None) is the associated value.
-8.      while Q is not empty do
-9.          (u,e) = value returned by Q.remove min()
-10.         Connect vertex u to T using edge e.
-11.         for each edge e' = (u,v) such that v is in Q do
-12.             # check if edge (u,v) better connects v to T
-13.             if w(u,v) < D[v] then
-14.                 D[v] = w(u,v)
-15.                 Change the key of vertex v in Q to D[v].
-16.                 Change the value of vertex v in Q to (v,e').
-17.     return the tree T     
-\end{verbatim}
+\begin{alltt}
+Input: An undirected, weighted, connected graph \(G\) with \(n\) vertices 
+        and \(m\) edges
+Output: A minimum spanning tree \(T\) for \(G\)
+1.  Algorithm PrimJarnik(\(G\)):
+2.      Pick any vertex \(s\) of \(G\)
+3.      \(D[s] = 0\)
+4.      \textbf{for each} vertex \(v \neq s\) \textbf{do}
+5.          \(D[v] = +\infty\)
+6.      Initialize \(T\) = empty set
+7.      Initialize a priority queue \(Q\) with an entry (\(D[v], (v, \text{None})\))  
+             \textbf{for each} vertex \(v\), where \(D[v]\) is the key in the priority  
+             queue, and (\(v, \text{None})\) is the associated value.
+8.      \textbf{while} \(Q\) is not empty \textbf{do}
+9.          (\(u, e\)) = \text{value returned by } \(Q\).\text{remove\_min}()
+10.         Connect vertex \(u\) to \(T\) using edge \(e\).
+11.         \textbf{for each} edge \(e' = (u, v)\) such that \(v\) in \(Q\) \textbf{do}
+12.             # check if edge \((u, v)\) better connects \(v\) to \(T\)
+13.             \textbf{if} \(w(u, v) < D[v]\) \textbf{then}
+14.                 \(D[v] = w(u, v)\)
+15.                 Change the key of vertex \(v\) in \(Q\) to \(D[v]\).
+16.                 Change the value of vertex \(v\) in \(Q\) to (\(v, e'\)).
+17.     \textbf{return} the tree \(T\)     
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
@@ -245,24 +245,24 @@ Una implementazione efficiente dell'ADT Partition (basata su liste con puntatori
 L'algoritmo Kruskal è descritto nel seguente pseudocodice:
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-Input: A simple connected weighted graph G with n vertices and m edges
-Output: A minimum spanning tree T for G
-1.  Algorithm Kruskal(G):
-2.      for each vertex v in G do
-3.          Define an elementary cluster C(v) = {v}.
-4.      Initialize a priority queue Q to contain all edges in G, using 
-            the weights as keys.
-5.      T = empty set  {T will ultimately contain the edges of the MST}
-6.      while T has fewer than n - 1 edges do
-7.          (u,v) = value returned by Q.remove_min()
-8.          Let C(u) be the cluster containing u
-9.          Let C(v) be the cluster containing v
-10.         if C(u) != C(v) then
-11.             Add edge (u,v) to T.
-12.             Merge C(u) and C(v) into one cluster.
-13.     return tree T
-\end{verbatim}
+\begin{alltt}
+Input: A simple connected weighted graph \(G\) with \(n\) vertices and \(m\) edges
+Output: A minimum spanning tree \(T\) for \(G\)
+1.  Algorithm Kruskal(\(G\)):
+2.      \textbf{for each} vertex \(v\) in \(G\) \textbf{do}
+3.          Define an elementary cluster \(C(v) = \{v\}\).
+4.      Initialize a priority queue \(Q\) to contain all edges in \(G\), using 
+             the weights as keys.
+5.      \(T\) = empty set  \{T will ultimately contain the edges of the MST\}
+6.      \textbf{while} \(T\) has fewer than \(n - 1\) edges \textbf{do}
+7.          \((u, v)\) = \text{value returned by } \(Q\).\text{remove\_min}()
+8.          \textbf{Let} \(C(u)\) be the cluster containing \(u\)
+9.          \textbf{Let} \(C(v)\) be the cluster containing \(v\)
+10.         \textbf{if} \(C(u) \neq C(v)\) \textbf{then}
+11.             Add edge \((u, v)\) to \(T\).
+12.             Merge \(C(u)\) and \(C(v)\) into one cluster.
+13.     \textbf{return} tree \(T\)
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
@@ -365,20 +365,20 @@ L'algoritmo Reverse-Delete è descritto nel seguente pseudocodice:
 
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-Input: A simple connected weighted graph G with n vertices and m edges
-Output: A minimum spanning tree T for G
-1.  Algorithm ReverseDelete(G):
-2.      T = set of all edges in G
-3.      Initialize a priority queue Q to contain all edges in G, using 
-            the weights as keys. {Q is a Max-Priority Queue}
-4.      while Q is not empty do
-5.          (u,v) = value returned by Q.remove_max()
-6.          Remove edge (u,v) from T
-7.          if there is no path between u and v in the graph (V, T) then
-8.              Add edge (u,v) back to T  {(u,v) is a bridge}
-9.      return tree T
-\end{verbatim}
+\begin{alltt}
+Input: A simple connected weighted graph \(G\) with \(n\) vertices and \(m\) edges
+Output: A minimum spanning tree \(T\) for \(G\)
+1.  Algorithm ReverseDelete(\(G\)):
+2.      \(T\) = set of all edges in \(G\)
+3.      Initialize a priority queue \(Q\) to contain all edges in \(G\), using 
+             the weights as keys. \{Q is a Max-Priority Queue\}
+4.      \textbf{while} \(Q\) is not empty \textbf{do}
+5.          \((u, v)\) = \text{value returned by } \(Q\).\text{remove\_max}()
+6.          Remove edge \((u, v)\) from \(T\)
+7.          \textbf{if} there is no path between \(u\) and \(v\) in the graph \((V, T)\) \textbf{then}
+8.              Add edge \((u, v)\) back to \(T\)  \{(u, v) is a bridge\}
+9.      \textbf{return} tree \(T\)
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
