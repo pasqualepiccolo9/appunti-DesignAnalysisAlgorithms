@@ -247,23 +247,23 @@ $ D(i+1,j) \quad D(i,j+1) \quad D(i+1,j+1) $ per cui riempiamo la tabella riga p
 
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-EditDistance(A, B)
-1.  int n = len(A)
-2.  int m = len(B)
-3.  int D[n+1][m+1]
-4.  for i from 0 to n do
-5.      D[i][0] = i
-6.  for j from 0 to m do
-7.      D[0][j] = j
-8.  for i from 1 to n do
-9.      for j from 1 to m do
-10.         cost = 0 if A[i-1] == B[j-1] else 1
-11.         D[i][j] = min(D[i-1][j-1] + cost,
-12.                        D[i-1][j] + 1,
-13.                        D[i][j-1] + 1)
-14. return D[n][m]
-\end{verbatim}
+\begin{alltt}
+EditDistance(\(A, B\))
+1.  \textbf{int} \(n = \text{len(A)}\)
+2.  \textbf{int} \(m = \text{len(B)}\)
+3.  \textbf{int} \(D[n+1][m+1]\)
+4.  \textbf{for} \(i\) \textbf{from} 0 \textbf{to} \(n\) \textbf{do}
+5.      \(D[i][0] = i\)
+6.  \textbf{for} \(j\) \textbf{from} 0 \textbf{to} \(m\) \textbf{do}
+7.      \(D[0][j] = j\)
+8.  \textbf{for} \(i\) \textbf{from} 1 \textbf{to} \(n\) \textbf{do}
+9.      \textbf{for} \(j\) \textbf{from} 1 \textbf{to} \(m\) \textbf{do}
+10.          \(cost = 0\) \textbf{if} \(A[i-1] == B[j-1]\) \textbf{else} 1
+11.          \(D[i][j] = \min(D[i-1][j-1] + cost,\)
+12.                        \(D[i-1][j] + 1,\)
+13.                        \(D[i][j-1] + 1)\)
+14. \textbf{return} \(D[n][m]\)
+\end{alltt}
 \hrule 
 
 \clearpage
@@ -657,48 +657,46 @@ Per costruire una soluzione ottimale, possiamo anche costruire una matrice boole
 \clearpage
 \vspace{1\baselineskip}
 \hrule
-
-\begin{verbatim}
+\begin{alltt}
     Input:
-        v: array dei volumi (v[1]...v[n])
-        c: array dei costi (c[1]...c[n])
-        B: capacità massima
+        \(v\): array dei volumi (\(v[1] \dots v[n]\))
+        \(c\): array dei costi (\(c[1] \dots c[n]\))
+        \(B\): capacità massima
   Output:
-        V: Tabella delle soluzioni ottime
-        C: Tabella delle scelte (inclusione oggetto)
+        \(V\): Tabella delle soluzioni ottime
+        \(C\): Tabella delle scelte (inclusione oggetto)
 ------------------------------------------------------------------------
-ALGORITMO Knapsack01(v, c, B)
- 1. n = lunghezza(v)
- 2. for j = 0 to B do   // Inizializzazione riga 0 (nessun oggetto)
- 3.     V[0, j] = 0
- 4. for i = 0 to n do   // Inizializzazione colonna 0 (capacità 0)
- 5.     V[i, 0] = 0
-    // Ciclo principale: i scorre gli oggetti, j le capacità
- 6. for i = 1 to n do
- 7.     for j = 1 to B do
+ALGORITMO Knapsack01(\(v, c, B\))
+ 1. \(n = \text{len}(v)\)
+ 2. \textbf{for} \(j = 0\) \textbf{to} \(B\) \textbf{do}   // Inizializzazione riga 0 (nessun oggetto)
+ 3.     \(V[0, j] = 0\)
+ 4. \textbf{for} \(i = 0\) \textbf{to} \(n\) \textbf{do}   // Inizializzazione colonna 0 (capacità 0)
+ 5.     \(V[i, 0] = 0\)
+    // Ciclo principale: \(i\) scorre gli oggetti, \(j\) le capacità
+ 6. \textbf{for} \(i = 1\) \textbf{to} \(n\) \textbf{do}
+ 7.     \textbf{for} \(j = 1\) \textbf{to} \(B\) \textbf{do}
 
-            // 1. L'oggetto i ha volume maggiore della capacità attuale j?
+            // 1. L'oggetto \(i\) ha volume maggiore della capacità attuale \(j\)?
             // Se sì, non entra fisicamente nello zaino.
- 8.         if v[i] > j then
- 9.             V[i, j] = V[i-1, j]
-10.             C[i, j] = False
+ 8.         \textbf{if} \(v[i] > j\) \textbf{then}
+ 9.             \(V[i, j] = V[i-1, j]\)
+10.             \(C[i, j] = \text{False}\)
 
             // 2. L'oggetto entra, ma conviene prenderlo?
-            // Se il valore SENZA l'oggetto (V[i-1, j]) è MAGGIORE
+            // Se il valore SENZA l'oggetto (\(V[i-1, j]\)) è MAGGIORE
             // del valore CON l'oggetto, allora NON lo prendiamo.
-11.         else if V[i-1, j] > c[i] + V[i-1, j - v[i]] then
-12.             V[i, j] = V[i-1, j]
-13.             C[i, j] = False
+11.         \textbf{else if} \(V[i-1, j] > c[i] + V[i-1, j - v[i]]\) \textbf{then}
+12.             \(V[i, j] = V[i-1, j]\)
+13.             \(C[i, j] = \text{False}\)
 
             // 3. L'oggetto entra e conviene prenderlo.
             // (Il valore CON l'oggetto è maggiore o uguale al precedente).
-14.         else
-15.             V[i, j] = c[i] + V[i-1, j - v[i]]
-16.             C[i, j] = True
+14.         \textbf{else}
+15.             \(V[i, j] = c[i] + V[i-1, j - v[i]]\)
+16.             \(C[i, j] = \text{True}\)
 
-17. return V, C
-\end{verbatim}
-
+17. \textbf{return} \(V, C\)
+\end{alltt}
 \hrule 
 
 
