@@ -94,25 +94,25 @@ Questo approccio incrementale è facilmente implementabile seguendo lo pseudocod
 
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-Input: A directed graph G with n vertices
-Output: The transitive closure G^* of G
-1.  Algorithm FloydWarshall(G)
-2.       i = 1
-3.       for all v in G.vertices()       
-4.           denote v as v_i              
-5.           i = i + 1
-6.       G_0 = G                          
-7.       for k = 1 to n do                // k e' il vertice intermedio
-8.           G_k = G_{k-1}                // Copia stato precedente
-9.           for i = 1 to n (i != k) do   // Nodo sorgente
-10.             for j = 1 to n (j != i, k) do // Nodo destinazione
-11.                 if G_{k-1}.areAdjacent(v_i, v_k) AND 
-12.                    G_{k-1}.areAdjacent(v_k, v_j)     
-13.                    if NOT G_{k-1}.areAdjacent(v_i, v_j) 
-14.                        G_k.insertDirectedEdge(v_i, v_j, k) 
-15.      return G_n                       
-\end{verbatim}
+\begin{alltt}
+Input: A directed graph \(G\) with \(n\) vertices
+Output: The transitive closure \(G\sp{*}\) of \(G\)
+1.  Algorithm FloydWarshall(\(G\))
+2.       \(i = 1\)
+3.       \textbf{for all} \(v\) in \(G\).\text{vertices}()       
+4.           denote \(v\) as \(v\sb{i}\)              
+5.           \(i = i + 1\)
+6.       \(G\sb{0} = G\)                                  
+7.       \textbf{for} \(k = 1\) \textbf{to} \(n\) \textbf{do}                // \(k\) è il vertice intermedio
+8.           \(G\sb{k} = G\sb{k-1}\)                   // Copia stato precedente
+9.           \textbf{for} \(i = 1\) \textbf{to} \(n\) (\(i \neq k\)) \textbf{do}   // Nodo sorgente
+10.             \textbf{for} \(j = 1\) \textbf{to} \(n\) (\(j \neq i, k\)) \textbf{do} // Nodo destinazione
+11.                 \textbf{if} \(G\sb{k-1}\).\text{areAdjacent}(\(v\sb{i}, v\sb{k}\)) \textbf{AND} 
+12.                    \(G\sb{k-1}\).\text{areAdjacent}(\(v\sb{k}, v\sb{j}\))     
+13.                    \textbf{if} NOT \(G\sb{k-1}\).\text{areAdjacent}(\(v\sb{i}, v\sb{j}\)) 
+14.                        \(G\sb{k}\).\text{insertDirectedEdge}(\(v\sb{i}, v\sb{j}, k\)) 
+15.      \textbf{return} \(G\sb{n}\)                               
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
