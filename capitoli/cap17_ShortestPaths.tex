@@ -80,25 +80,25 @@ $$
 L'algoritmo di Dijkstra è descritto nel seguente pseudocodice:
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-Input: A weighted graph G with nonnegative edge weights, 
-       and a source vertex s of G.
-Output: The length of a shortest path from s to v for each 
-        vertex v of G.
-1.  Algorithm ShortestPath(G, s):   
-2.      Initialize D[s] = 0 and D[v] = +infinity for each vertex v != s
-3.      Let a priority queue Q contain all the vertices of G 
-            using the D labels as keys.
-4.      while Q is not empty do
-5.          // pull a new vertex u into the cloud
-6.          u = value returned by Q.remove_min()
-7.          for each vertex v adjacent to u such that v is in Q do
-8.              // perform the relaxation procedure on edge (u,v)
-9.              if D[u] + w(u,v) < D[v] then
-10.                 D[v] = D[u] + w(u,v)
-11.                 Change to D[v] the key of vertex v in Q.
-12.     return the label D[v] of each vertex v                  
-\end{verbatim}
+\begin{alltt}
+Input: A weighted graph \(G\) with nonnegative edge weights, 
+       and a source vertex \(s\) of \(G\).
+Output: The length of a shortest path from \(s\) to \(v\) for each 
+        vertex \(v\) of \(G\).
+1.  Algorithm ShortestPath(\(G, s\)):   
+2.      Initialize \(D[s] = 0\) and \(D[v] = +\infty\) for each vertex \(v \neq s\)
+3.      \textbf{Let} a priority queue \(Q\) contain all the vertices of \(G\) 
+            using the \(D\) labels as keys.
+4.      \textbf{while} \(Q\) is not empty \textbf{do}
+5.          // pull a new vertex \(u\) into the cloud
+6.          \(u = \text{value returned by } Q.\text{remove\_min}()\)
+7.          \textbf{for each} vertex \(v\) adjacent to \(u\) such that \(v\) in \(Q\) \textbf{do}
+8.              // perform the relaxation procedure on edge \((u,v)\)
+9.              \textbf{if} \(D[u] + w(u,v) < D[v]\) \textbf{then}
+10.                 \(D[v] = D[u] + w(u,v)\)
+11.                 Change to \(D[v]\) the key of vertex \(v\) in \(Q\).
+12.     \textbf{return} the label \(D[v]\) of each vertex \(v\)                                  
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
@@ -416,22 +416,22 @@ Questo algoritmo è particolarmente interessante in quanto è alla base dei prot
 \subsection*{Pseudocodice dell'Algoritmo}
 \hrule 
 \vspace{1\baselineskip}
-\begin{verbatim}
-1.  Algorithm BellmanFord(G, s)
-2.      for all v in G.vertices() do
-3.          if v = s then
-4.              d(v) = 0
-5.          else
-6.              d(v) = infinity
-7.      for i = 1 to n - 1 do
-8.          for each e in G.edges() do
-9.              // relax edge e
-10.             u = G.origin(e)
-11.             v = G.opposite(u, e)
-12.             r = d(u) + weight(e)
-13.             if r < d(v) then
-14.                 d(v) = r
-\end{verbatim}
+\begin{alltt}
+1.  Algorithm BellmanFord(\(G, s\))
+2.      \textbf{for all} \(v\) in \(G\).\text{vertices}() \textbf{do}
+3.          \textbf{if} \(v = s\) \textbf{then}
+4.              \(d(v) = 0\)
+5.          \textbf{else}
+6.              \(d(v) = \infty\)
+7.      \textbf{for} \(i = 1\) \textbf{to} \(n - 1\) \textbf{do}
+8.          \textbf{for each} \(e\) in \(G\).\text{edges}() \textbf{do}
+9.              // relax edge \(e\)
+10.             \(u = G\).\text{origin}(\(e\))
+11.             \(v = G\).\text{opposite}(\(u, e\))
+12.             \(r = d(u) + \text{weight}(e)\)
+13.             \textbf{if} \(r < d(v)\) \textbf{then}
+14.                 \(d(v) = r\)
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
@@ -481,22 +481,22 @@ L'algoritmo procede in due fasi:
 
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-1.  Algorithm DagDistances(G, s)
-2.      for all v in G.vertices() do
-3.          if v = s then
-4.              d(v) = 0
-5.          else
-6.              d(v) = infinity
+\begin{alltt}
+1.  Algorithm DagDistances(\(G, s\))
+2.      \textbf{for all} \(v\) in \(G\).\text{vertices}() \textbf{do}
+3.          \textbf{if} \(v = s\) \textbf{then}
+4.              \(d(v) = 0\)
+5.          \textbf{else}
+6.              \(d(v) = \infty\)
 7.      // build a topological sort of the vertices
-8.      for u = 1 to n - 1 do // in topological order
-9.          for each e in G.outEdges(u) do
-10.             // relax edge e
-11.             v = G.opposite(u, e)
-12.             r = d(u) + weight(e)
-13.             if r < d(v) then
-14.                 d(v) = r            
-\end{verbatim}
+8.      \textbf{for} \(u = 1\) \textbf{to} \(n - 1\) \textbf{do} // in topological order
+9.          \textbf{for each} \(e\) in \(G\).\text{outEdges}(\(u\)) \textbf{do}
+10.             // relax edge \(e\)
+11.             \(v = G\).\text{opposite}(\(u, e\))
+12.             \(r = d(u) + \text{weight}(e)\)
+13.             \textbf{if} \(r < d(v)\) \textbf{then}
+14.                 \(d(v) = r\)            
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
