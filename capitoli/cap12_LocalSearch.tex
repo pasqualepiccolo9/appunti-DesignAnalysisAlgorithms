@@ -238,15 +238,15 @@ Possiamo implementare un semplice algoritmo Greedy (o di ascesa del gradiente - 
 
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-1.  MaxCutLocal(G, w):
-2.      Inizializza una partizione casuale (A, B) di V
-3.      while esiste un nodo v che migliora il cut value:
-4.          if v in A:  Sposta v da A a B
-5.          else:       Sposta v da B a A
-6.      return (A, B)
-\end{verbatim}
-\hrule 
+\begin{alltt}
+1.  MaxCutLocal(\(G, w\)):
+2.      Inizializza una partizione casuale (\(A, B\)) di \(V\)
+3.      \textbf{while} esiste un nodo \(v\) che migliora il cut value:
+4.          \textbf{if} \(v\) in \(A\):  Sposta \(v\) da \(A\) a \(B\)
+5.          \textbf{else}:       Sposta \(v\) da \(B\) a \(A\)
+6.      \textbf{return} (\(A, B\))
+\end{alltt}
+\hrule
 \vspace{1\baselineskip}
 
 \noindent
@@ -361,13 +361,13 @@ La logica è estremamente semplice: partendo da una configurazione arbitraria, f
 
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-1.  HopfieldFlip(G, w):
-2.      S = configurazione arbitraria
-3.      while esiste un nodo insoddisfatto u in S:
-4.          s_u = -s_u  # Inverti lo stato di u
-5.      return S
-\end{verbatim}
+\begin{alltt}
+1.  HopfieldFlip(\(G, w\)):
+2.      \(S\) = configurazione arbitraria
+3.      \textbf{while} esiste un nodo insoddisfatto \(u\) in \(S\):
+4.          \(s\sb{u} = -s\sb{u}\)  # Inverti lo stato di \(u\)
+5.      \textbf{return} \(S\)
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
