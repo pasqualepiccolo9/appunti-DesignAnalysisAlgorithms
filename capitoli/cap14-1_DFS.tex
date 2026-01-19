@@ -62,37 +62,38 @@ Per implementare DFS abbiamo bisogno di etichettare i vertici e gli archi del gr
 
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-Input: graph G
-Output: labeling of the edges of G as discovery or back
-1.  Algorithm DFS(G):
-2.      for all u in G.vertices()
-3.          setLabel(u, UNEXPLORED)
-4.      for all e in G.edges()
-5.          setLabel(e, UNEXPLORED)
-6.      for all v in G.vertices()
-7.          if getLabel(v) = UNEXPLORED
-8.              DFS-Visit(G, v)
-\end{verbatim}
+\begin{alltt}
+Input: graph \(G\)
+Output: labeling of the edges of \(G\) as discovery or back
+1.  Algorithm DFS(\(G\)):
+2.      \textbf{for all} \(u\) in \(G\).\text{vertices}()
+3.          \text{setLabel}(\(u\), UNEXPLORED)
+4.      \textbf{for all} \(e\) in \(G\).\text{edges}()
+5.          \text{setLabel}(\(e\), UNEXPLORED)
+6.      \textbf{for all} \(v\) in \(G\).\text{vertices}()
+7.          \textbf{if} \text{getLabel}(\(v\)) = UNEXPLORED
+8.              DFS(\(G, v\))
+\end{alltt}
 \hrule 
+
 \vspace{1\baselineskip}
 
 \hrule
-\begin{verbatim}
-Input: graph G and a source vertex v
+\begin{alltt}
+Input: graph \(G\) and a source vertex \(v\)
 Output: labels for the edges in the connected component 
- of G containing v
-1.  Algorithm DFS(G,v):
-2.    setLabel(v, VISITED)
-3.    for all e in G.incidentEdges(v)
-4.        if getLabel(e) = UNEXPLORED
-5.            w = opposite(v,e)
-6.            if getLabel(w) = UNEXPLORED
-7.                setLabel(e, DISCOVERY)
-8.                DFS(G, w)
-9.            else
-10.               setLabel(e, BACK)
-\end{verbatim}
+ of \(G\) containing \(v\)
+1.  Algorithm DFS(\(G, v\)):
+2.    \text{setLabel}(\(v\), VISITED)
+3.    \textbf{for all} \(e\) in \(G\).\text{incidentEdges}(\(v\))
+4.        \textbf{if} \text{getLabel}(\(e\)) = UNEXPLORED
+5.            \(w = \text{opposite}(v, e)\)
+6.            \textbf{if} \text{getLabel}(\(w\)) = UNEXPLORED
+7.                \text{setLabel}(\(e\), DISCOVERY)
+8.                DFS(\(G, w\))
+9.            \textbf{else}
+10.               \text{setLabel}(\(e\), BACK)
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
@@ -213,24 +214,24 @@ Possiamo utilizzare DFS per trovare un cammino tra due vertici $v$ e $z$:
 
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-1.  Algorithm pathDFS(G, v, z):
-2.      setLabel(v, VISITED)    // Segna v come visitato
-3.      S.push(v)               // Aggiunge v al percorso corrente
-4.      if v = z                // Caso base: destinazione raggiunta
-5.          return S.elements() // Restituisce il percorso trovato
-6.      for all e in G.incidentEdges(v)
-7.          if getLabel(e) = UNEXPLORED
-8.              w = opposite(v,e)
-9.              if getLabel(w) = UNEXPLORED
-10.                 setLabel(e, DISCOVERY)
-11.                 S.push(e)   // Aggiunge l'arco al percorso corrente
-12.                 pathDFS(G, w, z)
-13.                 S.pop(e)    // Backtracking: strada fallimentare
-14.             else
-15.                 setLabel(e, BACK)
-16.     S.pop(v)                // Backtracking: vicolo cieco
-\end{verbatim}
+\begin{alltt}
+1.  Algorithm pathDFS(\(G, v, z\)):
+2.      \text{setLabel}(\(v\), VISITED)    // Segna \(v\) come visitato
+3.      \(S\).\text{push}(\(v\))               // Aggiunge \(v\) al percorso corrente
+4.      \textbf{if} \(v = z\)               // Caso base: destinazione raggiunta
+5.          \textbf{return} \(S\).\text{elements}() // Restituisce il percorso trovato
+6.      \textbf{for all} \(e\) in \(G\).\text{incidentEdges}(\(v\))
+7.          \textbf{if} \text{getLabel}(\(e\)) = UNEXPLORED
+8.              \(w = \text{opposite}(v, e)\)
+9.              \textbf{if} \text{getLabel}(\(w\)) = UNEXPLORED
+10.                 \text{setLabel}(\(e\), DISCOVERY)
+11.                 \(S\).\text{push}(\(e\))   // Aggiunge l'arco al percorso corrente
+12.                 pathDFS(\(G, w, z\))
+13.                 \(S\).\text{pop}(\(e\))    // Backtracking: strada fallimentare
+14.             \textbf{else}
+15.                 \text{setLabel}(\(e\), BACK)
+16.     \(S\).\text{pop}(\(v\))                // Backtracking: vicolo cieco
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
@@ -269,27 +270,27 @@ Possiamo utilizzare l'algoritmo DFS per verificare l'esistenza di un ciclo sempl
 
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-1.  Algorithm cycleDFS(G, v):
-2.      setLabel(v, VISITED)    // Marca v come visitato
-3.      S.push(v)               // Aggiunge v al percorso corrente
-4.      for all e in G.incidentEdges(v)
-5.          if getLabel(e) = UNEXPLORED
-6.              w = opposite(v,e)
-7.              S.push(e)       // Aggiunge l'arco corrente allo stack
-8.              if getLabel(w) = UNEXPLORED
-9.                  setLabel(e, DISCOVERY)
-10.                 cycleDFS(G, w) // Chiamata ricorsiva
-11.                 S.pop(e)    // Backtracking: nessun ciclo qui
-12.             else            // w è già visitato: CICLO TROVATO
-13.                 T = new empty stack
-14.                 repeat  // Travasa lo stack per isolare il ciclo
-15.                     o = S.pop()
-16.                     T.push(o)
-17.                 until o = w 
-18.                 return T.elements() // Restituisce la sequenza
-19.     S.pop(v)        // Backtracking: rimuove v (vicolo cieco)
-\end{verbatim}
+\begin{alltt}
+1.  Algorithm cycleDFS(\(G, v\)):
+2.      \text{setLabel}(\(v\), VISITED)    // Marca \(v\) come visitato
+3.      \(S\).\text{push}(\(v\))               // Aggiunge \(v\) al percorso corrente
+4.      \textbf{for all} \(e\) in \(G\).\text{incidentEdges}(\(v\))
+5.          \textbf{if} \text{getLabel}(\(e\)) = UNEXPLORED
+6.              \(w = \text{opposite}(v, e)\)
+7.              \(S\).\text{push}(\(e\))       // Aggiunge l'arco corrente allo stack
+8.              \textbf{if} \text{getLabel}(\(w\)) = UNEXPLORED
+9.                  \text{setLabel}(\(e\), DISCOVERY)
+10.                 cycleDFS(\(G, w\)) // Chiamata ricorsiva
+11.                 \(S\).\text{pop}(\(e\))    // Backtracking: nessun ciclo qui
+12.             \textbf{else}            // \(w\) è già visitato: CICLO TROVATO
+13.                 \(T\) = new empty stack
+14.                 \textbf{repeat}  // Travasa lo stack per isolare il ciclo
+15.                     \(o = S\).\text{pop}()
+16.                     \(T\).\text{push}(\(o\))
+17.                 \textbf{until} \(o = w\) 
+18.                 \textbf{return} \(T\).\text{elements}() // Restituisce la sequenza
+19.     \(S\).\text{pop}(\(v\))        // Backtracking: rimuove \(v\) (vicolo cieco)
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
