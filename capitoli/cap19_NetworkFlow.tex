@@ -168,19 +168,19 @@ Di seguito definiamo l'operazione \texttt{augment(f, P)}, che produce un nuovo f
 
 \vspace{1\baselineskip}
 \hrule
-\begin{verbatim}
-Input: P è un cammino semplice s-t in G_f
-       f è un flusso in G
-Output: f' è un flusso in G ottenuto aumentando f lungo P
-1.  Algorithm augment(P, f):
-2.      let b = bottleneck(P, f)
-3.      for each edge e = (u, v) in P do  # P composto da archi di G_f
-4.          if e is a forward edge then
-5.              f'(e) = f(e) + b
-6.          else
-7.              f'(e) = f(e) - b
-8.      return f'  
-\end{verbatim}
+\begin{alltt}
+Input: \(P\) è un cammino semplice \(s\)-\(t\) in \(G\sb{f}\)
+        \(f\) è un flusso in \(G\)
+Output: \(f'\) è un flusso in \(G\) ottenuto aumentando \(f\) lungo \(P\)
+1.  Algorithm augment(\(P, f\)):
+2.      \textbf{let} \(b = \text{bottleneck}(P, f)\)
+3.      \textbf{for each} edge \(e = (u, v)\) in \(P\) \textbf{do}  # \(P\) composto da archi di \(G\sb{f}\)
+4.          \textbf{if} \(e\) is a forward edge \textbf{then}
+5.              \(f'(e) = f(e) + b\)
+6.          \textbf{else}
+7.              \(f'(e) = f(e) - b\)
+8.      \textbf{return} \(f'\)  
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
@@ -255,7 +255,7 @@ Di seguito è riportato lo pseudocodice dell'algoritmo \textbf{MaxFlow}, o algor
 \vspace{1\baselineskip}
 \hrule
 \begin{alltt}
-1. \textbf{Algorithm} Max-Flow(\(G\)):
+1. Algorithm Max-Flow(\(G\)):
 2.     Initialize \(f(e) = 0\) for all edges \(e\) in \(G\)
 3.     Construct the residual graph \(G\sb{f}\)
 4.     \textbf{while} there is an \(s\)-\(t\) path in \(G\sb{f}\) \textbf{do}
