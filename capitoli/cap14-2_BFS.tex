@@ -41,45 +41,45 @@ Per implementare BFS abbiamo bisogno di etichettare i vertici e gli archi del gr
 
 \clearpage
 \hrule
-\begin{verbatim}
-Input: graph G
-Output: labeling of the edges and partition of the vertices of G
-1.  Algorithm BFS(G)
-2.      for all u in G.vertices()
-3.          setLabel(u, UNEXPLORED)
-4.      for all e in G.edges()
-5.          setLabel(e, UNEXPLORED)
-6.      for all v in G.vertices()
-7.          if getLabel(v) = UNEXPLORED
-8.              BFS(G, v)
-\end{verbatim}
+\begin{alltt}
+Input: graph \(G\)
+Output: labeling of the edges and partition of the vertices of \(G\)
+1.  Algorithm BFS(\(G\))
+2.      \textbf{for all} \(u\) in \(G\).\text{vertices}()
+3.          \text{setLabel}(\(u\), UNEXPLORED)
+4.      \textbf{for all} \(e\) in \(G\).\text{edges}()
+5.          \text{setLabel}(\(e\), UNEXPLORED)
+6.      \textbf{for all} \(v\) in \(G\).\text{vertices}()
+7.          \textbf{if} \text{getLabel}(\(v\)) = UNEXPLORED
+8.              BFS(\(G, v\))
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
 \hrule
-\begin{verbatim}
-Input: graph G and a source vertex s
+\begin{alltt}
+Input: graph \(G\) and a source vertex \(s\)
 Output: labeling of the edges and vertices in the connected component 
- of G containing s
-1.  Algorithm BFS(G, s)
-2.      L_0 = new empty sequence
-3.      L_0.addLast(s)
-4.      setLabel(s, VISITED)
-5.      i = 0
-6.      while not L_i.isEmpty()
-7.          L_{i+1} = new empty sequence
-8.          for all v in L_i.elements()
-9.              for all e in G.incidentEdges(v)
-10.                 if getLabel(e) = UNEXPLORED
-11.                     w = opposite(v,e)
-12.                     if getLabel(w) = UNEXPLORED
-13.                         setLabel(e, DISCOVERY)
-14.                         setLabel(w, VISITED)
-15.                         L_{i+1}.addLast(w)
-16.                     else
-17.                         setLabel(e, CROSS)
-18.         i = i + 1   // interno al while
-\end{verbatim}
+ of \(G\) containing \(s\)
+1.  Algorithm BFS(\(G, s\))
+2.      \(L\sb{0}\) = new empty sequence
+3.      \(L\sb{0}\).\text{addLast}(\(s\))
+4.      \text{setLabel}(\(s\), VISITED)
+5.      \(i = 0\)
+6.      \textbf{while} not \(L\sb{i}\).\text{isEmpty}()
+7.          \(L\sb{i+1}\) = new empty sequence
+8.          \textbf{for all} \(v\) in \(L\sb{i}\).\text{elements}()
+9.          |    \textbf{for all} \(e\) in \(G\).\text{incidentEdges}(\(v\))
+10.         |         \textbf{if} \text{getLabel}(\(e\)) = UNEXPLORED
+11.         |             \(w = \text{opposite}(v, e)\)
+12.         |             \textbf{if} \text{getLabel}(\(w\)) = UNEXPLORED
+13.         |                 \text{setLabel}(\(e\), DISCOVERY)
+14.         |                 \text{setLabel}(\(w\), VISITED)
+15.         |                 \(L\sb{i+1}\).\text{addLast}(\(w\))
+16.         |             \textbf{else}
+17.         |                 \text{setLabel}(\(e\), CROSS)
+18.          \(i = i + 1\)   // move to the next level
+\end{alltt}
 \hrule 
 \vspace{1\baselineskip}
 
