@@ -33,15 +33,15 @@ Indichiamo con $S$ la soluzione parziale corrente, e con $P$ il sotto problema c
 \vspace{1\baselineskip}
 \hrule
 
-\begin{verbatim}
-1. Generate all candidate choices as list L for current sub-problem P.
-2. While (L is not empty or other finish condition is not met)
-3.     Compute the feasible value of each choice in L;
-4.     Modify S and P by taking choice with the highest feasible value;
-5.     Update L according to S and P;
-6. Endwhile
-7. Return the resulting complete solution.
-\end{verbatim}
+\begin{alltt}
+1. Generate all candidate choices as list \(L\) for current sub-problem \(P\).
+2. \textbf{While} (\(L\) is not empty \textbf{or} other finish condition is not met)
+3.     Compute the feasible value of each choice in \(L\);
+4.     Modify \(S\) and \(P\) by taking choice with the highest feasible value;
+5.     Update \(L\) according to \(S\) and \(P\);
+6. \textbf{Endwhile}
+7. \textbf{Return} the resulting complete solution.
+\end{alltt}
 
 \hrule 
 \vspace{1\baselineskip}
@@ -75,18 +75,18 @@ Il problema prende in input un importo R (in centesimi di euro) e richiede in ou
 \vspace{1\baselineskip}
 \hrule
 
-\begin{verbatim}
-Sort coins denominations by value: c[1] > c[2] > ... > c[k] 
-1. S = {}           // inizializza soluzione parziale (insieme vuoto)
-2. while (x != 0) { // finché l'importo da cambiare non è zero
-3.    let k be the largest integer such that c[k] <= x
-4.    if (k = 0)
-5.        return "no solution found"
-6.    x = x - c[k]  // riduci l'importo rimanente
-7.    S = {S, c[k]} // aggiungi c[k] alla soluzione
-8. }
-9. return S         // restituisci la soluzione completa
-\end{verbatim}
+\begin{alltt}
+Sort coins denominations by value: \(c[1] > c[2] > \dots > c[k]\) 
+1. \(S = \{\}\)           // inizializza soluzione parziale (insieme vuoto)
+2. \textbf{while} (\(x \neq 0\)) \{ // finché l'importo da cambiare non è zero
+3.    \textbf{let} \(k\) be the largest integer such that \(c[k] \leq x\)
+4.    \textbf{if} (\(k = 0\))
+5.        \textbf{return} "no solution found"
+6.    \(x = x - c[k]\)  // riduci l'importo rimanente
+7.    \(S = \{S, c[k]\}\) // aggiungi \(c[k]\) alla soluzione
+8. \}
+9. \textbf{return} \(S\)         // restituisci la soluzione completa
+\end{alltt}
 
 \hrule 
 \vspace{1\baselineskip}
@@ -142,19 +142,19 @@ Una soluzione greedy molto intuitiva per questo problema consiste nell'ordinare 
 \vspace{1\baselineskip}
 \hrule
 
-\begin{verbatim}
-Sort intervals by starting time so that s[1] <= s[2] <= ... <= s[n]
-1.  d = 0    // inizializza il numero di macchine
-2.  for j = 1 to n {
-3.      if (task j is compatible with some machine k)
-4.          schedule task j on machine K
-5.      else 
-6.          allocate a new machine d + 1
-7.          schedule task j on machine d + 1
-8.          d = d + 1
-9.  }
-10. return d  // restituisci il numero di macchine utilizzate
-\end{verbatim}
+\begin{alltt}
+Sort intervals by starting time so that \(s[1] \leq s[2] \leq \dots \leq s[n]\)
+1.  \(d = 0\)    // inizializza il numero di macchine
+2.  \textbf{for} \(j = 1\) \textbf{to} \(n\) \{
+3.      \textbf{if} (task \(j\) is compatible with some machine \(k\))
+4.          schedule task \(j\) on machine \(k\)
+5.      \textbf{else} 
+6.          allocate a new machine \(d + 1\)
+7.          schedule task \(j\) on machine \(d + 1\)
+8.          \(d = d + 1\)
+9.  \}
+10. \textbf{return} \(d\)  // restituisci il numero di macchine utilizzate
+\end{alltt}
 
 \hrule
 \vspace{2\baselineskip}
@@ -211,18 +211,18 @@ Tra queste strategie, solo l'\textbf{ordinamento per tempo di fine crescente} ga
 \vspace{1\baselineskip}
 \hrule
 
-\begin{verbatim}
-Sort intervals by finishing time so that f[1] < f[2] < ... < f[n]
-1.  n = s.length    // number of activities
-2.  A = {a[1]}      // initialize solution with first activity
-3.  k = 1           // index of last activity added to A
-4.  for m=2 to n {
-5.      if (s[m] >= f[k])
-6.          A = {A, a[m]} // add activity a[m] to A
-7.          k = m   // update index of last activity added to A
-8.  }
-9.  return A        // return the set of accepted activities 
-\end{verbatim}
+\begin{alltt}
+Sort intervals by finishing time so that \(f[1] < f[2] < \dots < f[n]\)
+1.  \(n = s.length\)    // number of activities
+2.  \(A = \{a[1]\}\)      // initialize solution with first activity
+3.  \(k = 1\)           // index of last activity added to \(A\)
+4.  \textbf{for} \(m = 2\) \textbf{to} \(n\) \{
+5.      \textbf{if} (\(s[m] \geq f[k]\))
+6.          \(A = \{A, a[m]\}\) // add activity \(a[m]\) to \(A\)
+7.          \(k = m\)   // update index of last activity added to \(A\)
+8.  \}
+9.  \textbf{return} \(A\)        // return the set of accepted activities 
+\end{alltt}
 
 \hrule
 \vspace{2\baselineskip}
@@ -253,23 +253,23 @@ Successivamente, gli elementi vengono inseriti per intero nello zaino in questo 
 
 \clearpage
 \hrule
-\begin{verbatim}
-Input:  Set S of items i with weight pi and value vi all positive
-        Knapsack capacity P>0
-Output: Amount xi of i that maximizes the total benefit without 
+\begin{alltt}
+Input:  Set \(S\) of items \(i\) with weight \(p\sb{i}\) and value \(v\sb{i}\) all positive
+        Knapsack capacity \(P > 0\)
+Output: Amount \(x\sb{i}\) of \(i\) that maximizes the total benefit without 
         exceeding in the capacity
 
-1.  FractionalKnapsack(S, P):
-2.      for each i in S do
-3.          xi = 0              // initially the knapsack is empty
-4.          bi = vi/wi          // the benefit of item i
-5.      p = P       // remaining capacity in knapsack (initially p = P)
-6.      while p > 0 do
-7.          remove from S an item of amaximal benefit    // greedy choice
-8.          xi = min(pi,  p)    // can't carry more than p
-9.          p -= xi             // update remaining capacity
+1.  FractionalKnapsack(\(S, P\)):
+2.      \textbf{for each} \(i\) \textbf{in} \(S\) \textbf{do}
+3.          \(x\sb{i} = 0\)        // initially the knapsack is empty
+4.          \(b\sb{i} = v\sb{i} / w\sb{i}\)          // the benefit of item \(i\)
+5.      \(p = P\)                  // remaining capacity in knapsack (initially \(p = P\))
+6.      \textbf{while} \(p > 0\) \textbf{do}
+7.          remove from \(S\) an item of a maximal benefit      // greedy choice
+8.          \(x\sb{i} = \min(p\sb{i}, p)\)    // can't carry more than \(p\)
+9.          \(p = p - x\sb{i}\)             // update remaining capacity
 
-\end{verbatim}
+\end{alltt}
 
 \hrule
 \vspace{1\baselineskip}
@@ -332,27 +332,25 @@ Sebbene una giustificazione completa della correttezza di questo algoritmo sia a
 
 \vspace{1\baselineskip}
 \hrule
+\begin{alltt}
+Input:  String \(X\) of length \(n\) with \(d\) distinct characters
+Output: Encoding tree for \(X\)
 
-\begin{verbatim}
-Input:  String X of length n with d distinct characters
-Output: Encoding tree for X
-
-1.  Huffman(X):
-2.      Compute the frequency f(c) of each character c of X
-3.      Initialize a priority queue Q
-4.      for each character c in X do
-5.          Create a single-node binary tree T storing c
-6.          Insert T into Q with key f(c)
-7.      while len(Q) > 1 do
-8.          (f_1, T_1) = Q.remove_min()
-9.          (f_2, T_2) = Q.remove_min()
-10.         Create a new binary tree T with left subtree T_1 and 
-            right subtree T_2
-11.         Insert T into Q with key f_1 + f_2
-12.     (f, T) = Q.remove_min()
-13.     return tree T
-\end{verbatim}
-
+1.  Huffman(\(X\)):
+2.      Compute the frequency \(f(c)\) of each character \(c\) of \(X\)
+3.      Initialize a priority queue \(Q\)
+4.      \textbf{for each} character \(c\) \textbf{in} \(X\) \textbf{do}
+5.          Create a single-node binary tree \(T\) storing \(c\)
+6.          Insert \(T\) into \(Q\) with key \(f(c)\)
+7.      \textbf{while} len(\(Q\)) > 1 \textbf{do}
+8.          (\(f\sb{1}\), \(T\sb{1}\)) = \(Q\).remove_min()
+9.          (\(f\sb{2}\), \(T\sb{2}\)) = \(Q\).remove_min()
+10.         Create a new binary tree \(T\) with left subtree \(T\sb{1}\) and 
+            right subtree \(T\sb{2}\)
+11.         Insert \(T\) into \(Q\) with key \(f\sb{1} + f\sb{2}\)
+12.     (\(f, T\)) = \(Q\).remove_min()
+13.     \textbf{return} tree \(T\)
+\end{alltt}
 \hrule
 \vspace{1\baselineskip}
 
