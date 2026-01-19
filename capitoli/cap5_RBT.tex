@@ -80,7 +80,10 @@ Da notare che seguendo l'algoritmo sopra descritto, un nodo rosso avrà sempre u
 
 
 
-\section{Altezza di un Red-Black Trees}
+\section{Altezza di un Red-Black Tree}
+L'altezza di un Red-Black Tree con $n$ nodi è $O(\log n)$.
+
+\paragraph{Dimostrazione}
 Sia $T$ un Red-Black Tree con $n$ nodi interni e altezza $h$, allora vale la seguente disuguaglianza:
 \[ 
 \log (n + 1) -1 \le h \le 2 \log(n + 1) - 2 
@@ -90,7 +93,7 @@ Sia $d$ la black-depth di $T$. Sia $T'$ il (2, 4)-Tree associato a $T$, e sia $h
 
 
 \section{Insert}
-Per inserire un nuovo nodo in un Red-Black Tree, si segue lo stesso procedimento di un normale BST:
+Per inserire un nuovo nodo in un Red-Black Tree si procede come in un normale BST:
 \begin{itemize}[nosep]
     \item Se il nuovo nodo $z$ è la radice, coloralo di nero.
     \item Altrimenti, inseriscilo come un nodo rosso.

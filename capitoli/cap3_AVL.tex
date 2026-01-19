@@ -36,6 +36,46 @@ Un albero \textbf{AVL} è un albero binario di ricerca (BST) che soddisfa una sp
 \]
 Questo vincolo, se mantenuto dopo ogni operazione, è sufficiente a garantire che l'altezza totale dell'albero $h$ rimanga sempre logaritmica ($h = O(\log n)$). Se un'operazione di inserimento o cancellazione viola questa proprietà (creando un nodo con $\beta(v) = +2$ o $-2$), l'albero esegue delle specifiche operazioni chiamate \textbf{rotazioni} per ripristinare il bilanciamento.
 
+\section{Altezza di un AVL Tree}
+L'altezza di un AVL Tree con $n$ nodi è $O(\log n)$.
+
+\paragraph{Dimostrazione}
+Definiamo $n(h)$ come il numero minimo di nodi che un albero AVL di altezza $h$ può avere. Notiamo subito che $n(1) = 1$ e $n(2) = 2$ (considerando i nodi esterni None come nodi foglia, e quindi considerando che un albero con solo la radice abbia altezza 1).
+
+Per $h \ge 3$, il numero minimo di nodi in un albero AVL di altezza $h$ si ottiene quando uno dei sottoalberi ha altezza $h-1$ e l'altro ha altezza $h-2$ (la differenza massima consentita di 1 tra le altezze dei sottoalberi). Quindi, possiamo definire la seguente relazione ricorsiva:
+\[
+n(h) = 1 + n(h-1) + n(h-2)
+\]
+Ciò implica che $n(h)$ è una funzione strettamente crescente di $h$, e quindi sappiamo che $n(h) > n(h-1) > n(h-2)$. Sostituendo $n(h-1)$ con $n(h-2)$ nella relazione ricorsiva, ed eliminando $1$, otteniamo:
+\[
+n(h) > 2 \cdot n(h-2)
+\]
+Questo ci indica che $n(h)$ almeno raddoppia ogni volta che $h$ aumenta di 2, il che intuitivamente significa che $n(h)$ cresce esponenzialmente.
+\[
+    n(h) > 2 \cdot n(h-2) > 4 \cdot n(h-4) > 8 \cdot n(h-6) > \ldots > 2^i \cdot n(h - 2i)
+\]
+Questa relazione vale per ogni intero $i$ tale che $h - 2i \ge 1$. Dato che conosciamo i valori di $n(1)$ e $n(2)$, scegliamo $i$ in modo che $h - 2i$ sia uguale a 1 o 2. In altre parole, scegliamo:
+\[
+i = \left\lceil \frac{h}{2} \right\rceil - 1
+\]
+
+\clearpage
+\noindent
+Sostituendo questo valore di $i$ nella disuguaglianza precedente, otteniamo:
+\[
+    n(h) 
+    > 2^{\left\lceil \frac{h}{2} \right\rceil - 1} \cdot n(1) 
+    \ge 2^{\frac{h}{2} - 1}
+\]
+Applicando il logaritmo in base 2 a entrambi i membri, otteniamo:
+\[
+    \log_2(n(h)) > \frac{h}{2} - 1
+\]
+Riorganizzando questa disuguaglianza, otteniamo:
+\[
+    h < 2 \log_2(n(h)) + 2
+\]
+Che dimostra che un AVL Tree con $n$ elementi ha altezza al più $2 \log_2(n)$, ovvero $O(\log n)$.
 
 
 \section{Mantenimento della Proprietà AVL: Ristrutturazione}
@@ -73,7 +113,7 @@ Questo caso si verifica quando $y$ è il figlio sinistro di $z$ e $x$ è il figl
 \paragraph{Soluzione: Rotazione Singola a Destra (su $z$)}
 Il nodo $b$ diventa la nuova radice del sottoalbero. Il nodo $a$ rimane il figlio sinistro di $b$, mentre $c$ diventa il figlio destro di $b$. Inoltre, il sottoalbero destro di $b$ viene agganciato come nuovo sottoalbero sinistro di $c$.
 
-\begin{figure}[ht!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=1\textwidth]{immagini/AVL/AVL_LL_rotation.png}
     \label{fig:AVL_LL_rotation}
@@ -90,13 +130,13 @@ Questo è il caso speculare. $y$ è il figlio destro di $z$ e $x$ è il figlio d
 
 \paragraph{Soluzione: Rotazione Singola a Sinistra (su $z$)}
 Il nodo $b$ diventa la nuova radice del sottoalbero. Il nodo $a$ diventa il figlio sinistro di $b$, mentre $c$ rimane il figlio destro di $b$. Inoltre, il sottoalbero sinistro di $b$ viene agganciato come nuovo sottoalbero destro di $a$.
+\clearpage
 
-\begin{figure}[ht!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=1\textwidth]{immagini/AVL/AVL_RR_rotation.png}
     \label{fig:AVL_RR_rotation}
 \end{figure}
-
 
 
 \subsection{Caso 3 e 4: Rotazioni Doppie (Casi Interni)}

@@ -265,7 +265,6 @@ In generale, si preferisce l'implementazione basata su heap quando il grafo è s
 
 \clearpage
 \subsection{Implementazione Python dell'algoritmo di Dijkstra}
-\vspace{2\baselineskip}
 \begin{lstlisting}[
     language=Python,
     caption={Implementazione Python dell'algoritmo di Dijkstra per il calcolo delle distanze degli shortest path da una singola sorgente a tutti i vertici raggiungibili in un grafo pesato. Si assume che il metodo \texttt{e.element()} per un arco \texttt{e} rappresenti il peso di quell'arco.},
@@ -280,10 +279,17 @@ def shortest_path_lengths(g, src):
 
     Return dictionary mapping each reachable vertex to its distance from src.
     """
-    d = { }                   # d[v] is upper bound from s to v
-    cloud = { }               # map reachable v to its d[v] value
-    pq = AdaptableHeapPriorityQueue( )  # vertex v will have key d[v]
-    pqlocator = { }           # map from vertex to its pq locator
+    # MAPPA: Vertice (oggetto) -> Distanza stimata (numero)
+    d = {}
+
+    # MAPPA: Vertice (oggetto) -> Distanza definitiva (numero)
+    cloud = {}
+
+    # CODA CON PRIORITA': Priorita'=Distanza (d[v]), Elemento=Vertice (v)
+    pq = AdaptableHeapPriorityQueue()
+
+    # MAPPA: Vertice (oggetto) -> Locator (oggetto handle)
+    pqlocator = {}
 
     # for each vertex v of g, add an entry to the priority queue, with
     # the source having distance 0 and all others having infinite distance
