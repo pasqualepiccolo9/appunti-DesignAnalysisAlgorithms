@@ -72,7 +72,7 @@ La posizione del nodo nel quale inserire il nuovo elemento può essere trovato i
 \begin{itemize}
     \item Si parte dal riferimento all'ultimo nodo.
     \item Si risale l'albero fino alla radice o ad un nodo che è figlio sinistro del suo genitore.
-    \item Se il nodo in cui si è giunti è il figlio sinistro del suo genitore, vai al nodo fratello.
+    \item Se il nodo in cui si è giunti è il figlio sinistro del suo genitore, vai al nodo fratello (cioè il figlio destro del genitore).
     \item Infine, scendi sempre a sinistra fino a raggiungere un nodo foglia (None). Questa sarà la posizione in cui inserire il nuovo nodo.
 \end{itemize}
 
@@ -97,8 +97,15 @@ Dal momento che l'altezza dell'Heap è $O(\log n)$, l'operazione di up-heap bubb
 
 \clearpage
 \subsection*{Cancellazione \texttt{remove\_min()}}
-Il metodo \texttt{remove\_min()} rimuove e restituisce l'elemento con la chiave minima dalla Priority Queue. In un Heap, l'elemento con la chiave minima si trova sempre nella radice dell'albero. Per mantenere la proprietà di albero binario completo dopo la rimozione della radice, dobbiamo sostituire la radice con l'ultimo nodo dell'Heap (cioè il nodo più a destra nell'ultimo livello dell'albero) e poi rimuovere l'ultimo nodo.
+Il metodo \texttt{remove\_min()} rimuove e restituisce l'elemento con la chiave minima dalla Priority Queue. In un Heap, l'elemento con la chiave minima si trova sempre nella radice dell'albero. Per mantenere la proprietà di albero binario completo, dobbiamo sostituire la radice con l'ultimo nodo dell'Heap (cioè il nodo più a destra nell'ultimo livello dell'albero) e poi rimuovere l'ultimo nodo.
 
+Dopo aver rimosso il nodo, è fondamentale aggiornare il riferimento all'ultimo nodo dell'Heap affinché punti al predecessore del nodo appena eliminato (secondo l'ordine di livello). La posizione del nuovo ultimo nodo può essere trovata in un tempo $O(\log n)$ a partire dal riferimento all'ultimo nodo rimosso:
+\begin{itemize}
+    \item Si parte dalla posizione del nodo che è stato appena rimosso (il vecchio ultimo nodo).
+    \item Si risale l'albero fino alla radice o ad un nodo che è figlio destro del suo genitore.
+    \item Se il nodo in cui si è giunti è il figlio destro del suo genitore, vai al nodo fratello (cioè il figlio sinistro del genitore).
+    \item Infine, scendi sempre a destra fino a raggiungere un nodo foglia. Questo sarà il nuovo riferimento all'ultimo nodo.
+\end{itemize}
 
 \subsection*{Down-Heap Bubbling dopo la cancellazione}
 Dopo aver effettuato la sostituzione della radice con l'ultimo nodo, è possibile che la proprietà di heap-order venga violata, poiché la chiave del nuovo nodo radice potrebbe essere maggiore della chiave di uno o entrambi i suoi figli. Per ripristinare la proprietà di heap-order, si esegue un processo chiamato \textbf{down-heap bubbling}.

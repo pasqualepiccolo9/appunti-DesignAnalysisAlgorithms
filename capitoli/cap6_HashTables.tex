@@ -116,7 +116,7 @@ Nel caso peggiore, le operazioni su di uno specifico bucket impiegano tempo prop
 
 \clearpage
 \subsection{Open Addressing}
-La tecniche di \emph{separate chaining} è effiente e facile da implementare, ma richiede inevitabilmente spazio aggiuntivo per le strutture dati ausiliarie. Se si vuole evitare di utilizzare spazio aggiuntivo per gestire le collisioni, l'unico approccio possibile è quello di cercare uno slot alternativo, sempre all'interno del nostro array, in cui memorizzare l'elemento che causa la collisione. 
+La tecnica di \emph{separate chaining} è efficiente e facile da implementare, ma richiede inevitabilmente spazio aggiuntivo per le strutture dati ausiliarie. Se si vuole evitare di utilizzare spazio aggiuntivo per gestire le collisioni, l'unico approccio possibile è quello di cercare uno slot alternativo, sempre all'interno del nostro array, in cui memorizzare l'elemento che causa la collisione. 
 
 Ci sono diverse varianti che utilizzano questo approccio, noti come tecniche di \textbf{open addressing}. Queste tecniche richiedono che il load factor \(\lambda = n/N\) sia sempre inferiore a 1, ovvero che \(n < N\), poiché ogni elemento deve essere memorizzato in uno slot dell'array.
 
@@ -159,7 +159,7 @@ La procedura di inserimento con double hashing funziona come segue:
     \item Se si esauriscono tutti gli \(N\) tentativi senza trovare uno slot libero, la tabella è piena e l'inserimento fallisce.
     \item La funzione di offset \(d(k)\) non può restituire zero.
     \item $N$ dovrebbe essere un numero primo per garantire che tutti gli slot vengano sondati.
-    \item Una scelta comune per \(d(k)\) è \(d(k) = q - (h_1(k) \mod q)\), dove \(q\) è un numero primo più piccolo di \(N\).
+    \item Una scelta comune per \(d(k)\) è \(d(k) = q - (k \mod q)\), dove \(q\) è un numero primo più piccolo di \(N\).
 \end{itemize}
 
 \begin{figure}[ht!]
