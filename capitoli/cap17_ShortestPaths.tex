@@ -297,7 +297,7 @@ def shortest_path_lengths(g, src):
         if v is src:
             d[v] = 0
         else:
-            d[v] = float( inf )      # syntax for positive infinity
+            d[v] = float('inf')      # syntax for positive infinity
         pqlocator[v] = pq.add(d[v], v)  # save locator for future updates
 
     while not pq.is_empty( ):
