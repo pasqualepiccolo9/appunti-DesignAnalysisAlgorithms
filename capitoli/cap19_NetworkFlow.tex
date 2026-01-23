@@ -143,8 +143,12 @@ Questa operazione porta il flusso totale a $30$. L'intuizione fondamentale è ch
 Data una rete di flusso $G = (V, E)$, e un flusso $f$ su $G$. Definiamo il \textbf{grafo residuo} $G_f$ di $G$ rispetto a $f$ come segue.
 \begin{itemize}
     \item L'insieme dei nodi di $G_f$ è lo stesso di quello di $G$.
-    \item \textbf{Archi in avanti (\emph{forward edges}):} Per ogni arco $e = (u, v) \in E$ tale che $f(e) < c_e$, includiamo in $G_f$ l'arco $e' = (u, v)$ con capacità residua: $$c_f(e') = c_e - f(e)$$ \emph{Spiegazione:} Questi archi rappresentano la disponibilità residua del canale. Indicano che è possibile spingere ulteriori $c_e - f(e)$ unità di flusso da $u$ a $v$ senza violare la capacità originale.
-    \item \textbf{Archi all'indietro (\emph{backward edges}):} Per ogni arco $e = (u, v) \in E$ tale che $f(e) > 0$, includiamo in $G_f$ l'arco inverso $e' = (v, u)$ con capacità residua: $$c_f(e') = f(e)$$\emph{Spiegazione:} Questi archi rappresentano la possibilità di "annullare" fino a $f(e)$ unità di flusso precedentemente inviate, spingendo flusso all'indietro.
+    \item \textbf{Archi in avanti (\emph{forward edges}):} Per ogni arco $e = (u, v) \in E$ tale che $f(e) < c_e$, includiamo in $G_f$ l'arco $e' = (u, v)$ con capacità residua: 
+    $$f(e) < c_e \implies c_f(e') = c_e - f(e)$$ 
+    \emph{Spiegazione:} Questi archi rappresentano la disponibilità residua del canale. Indicano che è possibile spingere ulteriori $c_e - f(e)$ unità di flusso da $u$ a $v$ senza violare la capacità originale.
+    \item \textbf{Archi all'indietro (\emph{backward edges}):} Per ogni arco $e = (u, v) \in E$ tale che $f(e) > 0$, includiamo in $G_f$ l'arco inverso $e' = (v, u)$ con capacità residua: 
+    $$f(e) > 0 \implies c_f(e') = f(e)$$
+    \emph{Spiegazione:} Questi archi rappresentano la possibilità di "annullare" fino a $f(e)$ unità di flusso precedentemente inviate, spingendo flusso all'indietro.
 \end{itemize}
 
 \begin{figure}[!ht]
