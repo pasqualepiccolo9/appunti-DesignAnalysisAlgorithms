@@ -143,8 +143,8 @@ Questa operazione porta il flusso totale a $30$. L'intuizione fondamentale è ch
 Data una rete di flusso $G = (V, E)$, e un flusso $f$ su $G$. Definiamo il \textbf{grafo residuo} $G_f$ di $G$ rispetto a $f$ come segue.
 \begin{itemize}
     \item L'insieme dei nodi di $G_f$ è lo stesso di quello di $G$.
-    \item Per ogni arco $e = (u, v)$ di $G$ per cui $f(e) < c_e$, esistono $c_e - f(e)$ unità di capacità "residua" su cui possiamo provare a spingere flusso in avanti. Quindi includiamo l'arco $e = (u, v)$ in $G_f$, con una capacità di $c_e - f(e)$. Chiameremo questi archi \textbf{archi in avanti} (\emph{forward edges}).
-    \item Per ogni arco $e = (u, v)$ di $G$ per cui $f(e) > 0$, esistono $f(e)$ unità di flusso che possiamo eventualmente "annullare" spingendo flusso all'indietro. Quindi includiamo l'arco $e' = (v, u)$ in $G_f$, con una capacità di $f(e)$. Si noti che $e'$ ha gli stessi estremi di $e$, ma la sua direzione è invertita; chiameremo questi archi \textbf{archi all'indietro} (\emph{backward edges}). 
+    \item \textbf{Archi in avanti (\emph{forward edges}):} Per ogni arco $e = (u, v) \in E$ tale che $f(e) < c_e$, includiamo in $G_f$ l'arco $e' = (u, v)$ con capacità residua: $$c_f(e') = c_e - f(e)$$ \emph{Spiegazione:} Questi archi rappresentano la disponibilità residua del canale. Indicano che è possibile spingere ulteriori $c_e - f(e)$ unità di flusso da $u$ a $v$ senza violare la capacità originale.
+    \item \textbf{Archi all'indietro (\emph{backward edges}):} Per ogni arco $e = (u, v) \in E$ tale che $f(e) > 0$, includiamo in $G_f$ l'arco inverso $e' = (v, u)$ con capacità residua: $$c_f(e') = f(e)$$\emph{Spiegazione:} Questi archi rappresentano la possibilità di "annullare" fino a $f(e)$ unità di flusso precedentemente inviate, spingendo flusso all'indietro.
 \end{itemize}
 
 \begin{figure}[!ht]
@@ -164,7 +164,7 @@ A volte ci riferiremo alla capacità di un arco nel grafo residuo come \textbf{c
 \clearpage
 \subsection{Augmenting Path}
 Sia $P$ un cammino semplice da $s$ a $t$ in $G_f$ (cioè, $P$ non visita alcun nodo più di una volta). Definiamo \texttt{bottleneck(P, f)} come la \textbf{capacità residua minima} di qualsiasi arco su $P$, rispetto al flusso $f$.
-Di seguito definiamo l'operazione \texttt{augment(f, P)}, che produce un nuovo flusso $f'$ in $G$.
+Di seguito definiamo l'operazione \texttt{augment(P, f)}, che produce un nuovo flusso $f'$ in $G$.
 
 \vspace{1\baselineskip}
 \hrule
@@ -186,10 +186,10 @@ Output: \(f'\) è un flusso in \(G\) ottenuto aumentando \(f\) lungo \(P\)
 
 \noindent
 È stato proprio per poter eseguire questa operazione che abbiamo definito il grafo residuo; per riflettere l'importanza di \texttt{augment}, si indica spesso come \textbf{cammino aumentante} (\emph{augmenting path}) qualsiasi cammino $s-t$ nel grafo residuo.
-Il risultato di \texttt{augment(f , P)} è un nuovo flusso $f'$ in $G$, ottenuto aumentando e diminuendo i valori di flusso sugli archi di $P$. 
+Il risultato di \texttt{augment(P, f)} è un nuovo flusso $f'$ in $G$, ottenuto aumentando e diminuendo i valori di flusso sugli archi di $P$. 
 
 \paragraph{Proposizione}
-Sia $G = (V, E)$ una rete di flusso, e sia $f$ un flusso in $G$. Sia $P$ un cammino semplice $s-t$ in $G_f$. Allora l'output $f'$ di \texttt{augment(f , P)} è un flusso in $G$.
+Sia $G = (V, E)$ una rete di flusso, e sia $f$ un flusso in $G$. Sia $P$ un cammino semplice $s-t$ in $G_f$. Allora l'output $f'$ di \texttt{augment(P, f)} è un flusso in $G$.
 
 \paragraph{Dimostrazione}
 Per dimostrare che $f'$ sia effettivamente un flusso, dobbiamo verificare che $f'$ soddisfi le capacity conditions e conservation conditions.
