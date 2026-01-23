@@ -150,6 +150,7 @@ Data una rete di flusso $G = (V, E)$, e un flusso $f$ su $G$. Definiamo il \text
     $$f(e) > 0 \implies c_f(e') = f(e)$$
     \emph{Spiegazione:} Questi archi rappresentano la possibilità di "annullare" fino a $f(e)$ unità di flusso precedentemente inviate, spingendo flusso all'indietro.
 \end{itemize}
+Da notare che, per come sono costruiti gli archi del grafo residuo, questi sono tutti strettamente positivi: $c_f(e') > 0$ per ogni arco $e'$ in $G_f$.
 
 \begin{figure}[!ht]
     \centering
@@ -162,7 +163,7 @@ Data una rete di flusso $G = (V, E)$, e un flusso $f$ su $G$. Definiamo il \text
 \noindent
 Da notare che ciascun arco $e$ in $G$ può generare uno o due archi in $G_f$. Se $0 < f(e) < c_e$ risulta che sia un arco in avanti sia uno all'indietro sono inclusi in $G_f$. Questo comporta quindi che $G_f$ ha al più il doppio degli archi di $G$. 
 
-A volte ci riferiremo alla capacità di un arco nel grafo residuo come \textbf{capacità residua}, per distinguere dalla capacità dell'arco corrispondente nella rete di flusso originale $G$.
+Ci riferiamo alla capacità di un arco nel grafo residuo come \textbf{capacità residua}, per distinguere dalla capacità dell'arco corrispondente nella rete di flusso originale $G$.
 
 
 \clearpage
@@ -493,7 +494,7 @@ Questo risultato ci porta al seguente teorema fondamentale nella teoria dei flus
 Oltre a dimostrare l'ottimalità del flusso, questa costruzione ci fornisce un algoritmo efficiente per trovare il taglio minimo in una rete.
 Dato un flusso massimo $f$ (calcolato ad esempio con l'algoritmo Max-Flow), possiamo trovare il taglio di capacità minima $(A^*, B^*)$ in tempo $O(m)$:
 \begin{enumerate}
-    \item Costruiamo il grafo residuo $G_f$.
+    \item Costruiamo il grafo residuo $G_f$ (a partire da $f$ flusso massimo, calcolato con Max-Flow).
     \item Eseguiamo una visita (BFS o DFS) partendo da $s$ in $G_f$ per identificare l'insieme $A^*$ di tutti i nodi raggiungibili.
     \item Poniamo $B^* = V \setminus A^*$.
     \item Il taglio $(A^*, B^*)$ è il taglio minimo cercato.
