@@ -114,7 +114,7 @@ Per eliminare un elemento ($k, v$) in un (a, b)-Tree, si procede come segue:
         \item Se il nodo $x$ fratello sinistro di $w$ (con lo stesso genitore $p$) ha più di $a-1$ elementi, si esegue un \textbf{transfer}:
         \begin{itemize}
             \item Sia $k'$ la chiave salvata nel genitore $p$ "che sta tra il puntatore a $x$ e il puntatore a $w$".
-            \item Sia $k''$ la chiave più grande nel nodo $x$(ricordiamo che $x$ è il fratello a sinistra di $w$).
+            \item Sia $k''$ la chiave più grande nel nodo $x$ (ricordiamo che $x$ è il fratello a sinistra di $w$).
             \item Cancella $k$ da $w$, cancella $k''$ da $x$ e sostituisci $k'$ con $k''$ in $p$, e aggiungi $k'$ in $w$.
         \end{itemize}
         \item Se il nodo $x$ fratello destro di $w$ (con lo stesso genitore $p$) ha più di $a-1$ elementi, si esegue un \textbf{transfer}:
